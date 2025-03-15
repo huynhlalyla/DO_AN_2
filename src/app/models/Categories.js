@@ -3,10 +3,8 @@ const mongoose = require('mongoose');
 const { float } = require('webidl-conversions');
 const Schema = mongoose.Schema;
 
-const Budget = new Schema({
-    limit_amount: {type: String, required: true},
-    start_date: {type: Date, required: true},
-    end_date: {type: Date, required: true},
+const Category = new Schema({
+    name: {type: String, required: true},
     user_id: {
         type: Schema.Types.ObjectId,
         ref: 'User',
@@ -15,12 +13,17 @@ const Budget = new Schema({
     transactions: [
         {
             type: Schema.Types.ObjectId,
-            ref: 'Category',
+            ref: 'Transaction',
             default: []
         }
     ],
+    budget_id: {
+        type: Schema.Types.ObjectId,
+            ref: 'Budget',
+            default: null
+    }
 }, {
     timestamps: true
 });
     
-module.exports = mongoose.model('Budget', Budget);
+module.exports = mongoose.model('Category', Category);

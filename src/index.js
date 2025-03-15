@@ -1,6 +1,8 @@
 const express = require('express');
 const app = express();
 const Users = require('./app/models/Users');
+const Categories = require('./app/models/Categories')
+const Transactions = require('./app/models/Transactions');
 const Budgets = require('./app/models/Budgets');
 const db = require('./config/dbconfig');
 const mongoose = require('mongoose');
@@ -9,10 +11,11 @@ db.connect();
 
 
 app.get('/', (req, res) => {
-    Budgets.find({}).populate('user_id')
-    .then(budgets => {
+    Users.find({}).populate('created_categories', 'name user_id',)
+    .populate('created_transactions')
+    .then(users => {
         // res.send(`Ngân sach: ${budgets.limit_amount} - Của: ${budgets.user_id.name}`)
-        res.json(budgets)
+        res.json(users)
     })
     // Users.find({})
     // .then(users => {
@@ -21,39 +24,54 @@ app.get('/', (req, res) => {
 })
 app.get('/add-user', (req, res) => {
     const data = {
-        name: 'Nguyen Van A',
-        password: '123456',
-        email: 'a@gmail.com',
-        phone: '0123456789',
+        name: 'Nguyen Van B',
+        password: '24689',
+        email: 'b@gmail.com',
+        phone: '0987987678',
     }
     const user = new Users(data);
     user.save()
     res.redirect('/');
 })
-app.get('/add-budget', (req, res) => {
-    const user_id = '67cb1d3a477bf8ff71d5a8fa'; // cai id nay nua dang nhap vao la biet - viet tam
-    const data = {
-        limit_amount: 2500000,
-        period: 1,
-        start_date: 2021-10-10,
-        end_date: 2021-11-10,
-        user_id: user_id,
-    }
+// app.get('/add-category', (req, res) => {
+//     const data = {
+//         name: "Food",
+//         user_id: "67d53d9812e7efe1e290728e",
+//     }
+//     const category = new Categories(data);
+//     category.save()
+//     .then(category => {
+//         Users.findById(category.user_id)
+//         .then(user => {
+//             user.created_categories.push(category._id);
+//             user.save();
+//         })
+//     })    
+//     res.redirect('/');
+// })
+// app.get('/add-transaction', (req, res) => {
+//     const data = {
+//         name: 'Chicken',
+//         amount: '200000',
+//         type: 'expense',
+//         category_id: '67d53dc83bb0ea9cff466dbe',
+//         date: Date.now(),
+//         user_id: '67d53d9812e7efe1e290728e'
+//     }
+//     const transaction = new Transactions(data);
+//     transaction.save()
+//     .then(transaction => {
+//         Users.findById(transaction.user_id)
+//         .then(user => {
+//             user.created_transactions.push(transaction._id);
+//             user.save();
 
-    const budget = new Budgets(data);
-    budget.save() 
-    .then(budget_saved => {
-        return Users.findByIdAndUpdate(user_id, {
-            $push: {created_budgets: budget_saved._id}
-        })
-    })
-    res.redirect('/');
-})
+//         })
+//     })
+//             res.redirect('/');
 
-app.get('/find', (req, res) => {
-    
-})
 
+// })
 
 app.listen(3000, () => {
     console.log('Server is running on port 3000');

@@ -13,6 +13,20 @@ const User = new Schema({
             default: []
         }
     ],
+    created_transactions: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: 'Transaction',
+            default: []
+        }
+    ],
+    created_categories: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: 'Category',
+            default: []
+        }
+    ],
 }, {
     timestamps: true
 });
