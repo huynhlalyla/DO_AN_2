@@ -12,6 +12,11 @@ const Budget = new Schema({
         ref: 'User',
         required: true
     },
+    category_id: {
+        type: Schema.Types.ObjectId,
+        ref: 'Category',
+        required: true
+    },
     transactions: [
         {
             type: Schema.Types.ObjectId,
@@ -19,6 +24,7 @@ const Budget = new Schema({
             default: []
         }
     ],
+
 }, {
     timestamps: true
 });

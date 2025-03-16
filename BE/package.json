@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/huynhlalyla/DO_AN_2.git#readme",
   "dependencies": {
+    "cors": "^2.8.5",
     "do_an_2": "file:",
     "express": "^4.21.1",
     "express-session": "^1.18.1",

@@ -10,6 +10,12 @@ const Category = new Schema({
         ref: 'User',
         required: true
     },
+    type: {
+        type: String,
+        enum: ['income', 'expense'],
+        required: true,
+        default: 'expense'
+    },
     transactions: [
         {
             type: Schema.Types.ObjectId,
