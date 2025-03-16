@@ -1,0 +1,70 @@
+body {
+    background: url('../image/1.jpg') no-repeat center center fixed;
+    background-size: cover; /* Hiển thị ảnh phủ toàn bộ màn hình */
+}
+
+#logo {
+    display: flex; /* Hiển thị logo và chữ theo hàng ngang */
+    align-items: center; /* Căn giữa theo chiều dọc */
+    position: absolute;
+    top: 20px; /* Điều chỉnh khoảng cách từ trên xuống */
+    left: 20px; /* Điều chỉnh khoảng cách từ trái vào */
+    text-decoration: none;
+    color: black; /* Giữ màu chữ mặc định */
+}
+
+#logo img {
+    max-width: 50px; /* Điều chỉnh kích thước logo */
+    height: auto;
+    margin-right: 10px; /* Khoảng cách giữa logo và chữ */
+}
+
+#logo h5 {
+    font-size: 16px; /* Điều chỉnh kích thước chữ */
+}
+/* Form đăng nhập */
+.login-form {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 30px;
+    background: white;
+    transition: opacity 0.3s ease-in-out;
+}
+
+/* Form đăng ký */
+.register-form {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 40px 30px;
+    background: white;
+    transition: opacity 0.3s ease-in-out;
+}
+
+/* Độ dài khác nhau nhưng không làm lệch vị trí */
+.login-form {
+    border: 1px solid rgb(138, 138, 138);
+    height: 400px; /* Ngắn hơn */
+}
+
+.register-form {
+    border: 1px solid rgb(138, 138, 138);
+    height: 500px; /* Dài hơn */
+}
+/* Tạo khung tròn cho chữ "Trang chủ" */
+.home {
+    padding: 8px 10px; /* Khoảng cách bên trong */
+    border-radius: 50px; /* Bo tròn thành hình tròn */
+    background-color:#ffb2d9; /* Màu nền */
+    transition: all 0.1s ease-in-out; /* Hiệu ứng mượt */
+}
+
+.home:hover {
+    background-color: #ff9ece; /* Đổi màu nền */
+    color: rgb(0, 0, 0); /* Đổi màu chữ */
+    transform: scale(1.1); /* Phóng to nhẹ */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Đổ bóng */
+}
