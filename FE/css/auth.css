@@ -1,5 +1,5 @@
 body {
-    background: url('../image/1.jpg') no-repeat center center fixed;
+    background: url('../image/nen1.jpg') no-repeat center center fixed;
     background-size: cover; 
 }
 
@@ -29,7 +29,7 @@ body {
     left: 0;
     width: 100%;
     padding: 30px;
-    background: white;
+    background: rgba(245, 245, 245, 0.788);
     transition: opacity 0.3s ease-in-out;
 }
 
@@ -40,7 +40,7 @@ body {
     left: 0;
     width: 100%;
     padding: 40px 30px;
-    background: white;
+    background: rgba(245, 245, 245, 0.788);
     transition: opacity 0.3s ease-in-out;
 }
  
