@@ -5,6 +5,7 @@ const Users = require('./app/models/Users');
 const Categories = require('./app/models/Categories')
 const Transactions = require('./app/models/Transactions');
 const Budgets = require('./app/models/Budgets');
+const Reports = require('./app/models/Reports');
 const db = require('./config/dbconfig');
 const cors = require('cors');
 db.connect();
@@ -25,61 +26,71 @@ app.get('/', (req, res) => {
     //     res.json(users)
     // })
 })
-// app.get('/add-user', (req, res) => {
-//     const data = {
-//         name: 'Nguyen Thi S',
-//         password: '3333',
-//         email: 's@gmail.com',
-//         phone: '0965344443',
-//     }
-//     const user = new Users(data);
-//     user.save()
-//     res.redirect('/');
-// })
-// app.get('/add-category', (req, res) => {
-//     const data = {
-//         name: "Luong",
-//         user_id: "67d675c05cdb352fc853b402",
-//         type: "income"
-        
-//     }
-//     const category = new Categories(data);
-//     category.save()
-//     .then(category => {
-//         Users.findById(category.user_id)
-//         .then(user => {
-//             user.created_categories.push(category._id);
-//             user.save();
-//         })
-//     })    
-//     res.redirect('/');
-// })
-// app.get('/add-budget', async (req, res) => {
-//     const data = {
-//         limit_amount: '3000000',
-//         start_date: '2025-03-01',
-//         end_date: '2025-04-01',
-//         user_id: '67d675c05cdb352fc853b402',
-//         category_id: '67d67700f0e20c30caae2b1f',
-        
-//     }
-//     const budget = new Budgets(data);
-//     await budget.save()
-//     .then(async budget => {
-//         await Users.findByIdAndUpdate(budget.user_id, {
-//             $push: {created_budgets: budget._id}
-//         })
-//         await Categories.findByIdAndUpdate(budget.category_id, {
-//             budget_id: budget._id
-//         })
 
-//     })
-//     res.redirect('/');
-// })
+
+//  Thêm người dùng
+app.get('/add-user', (req, res) => {
+    const data = {
+        name: 'Kim Ngan',  
+        password: 'mnop3456',  
+        email: 'kimngan@gmail.com',  
+        phone: '0965344415', 
+
+    }
+    const user = new Users(data);
+    user.save()
+    res.redirect('/');
+})
+
+// Thêm danh mục
+app.get('/add-category', (req, res) => {
+    const data = {
+        name: "Mua sắm",
+        user_id: "67d9082b46abb84bbfada5c2",
+        type: "expense"
+        
+    }
+    const category = new Categories(data);
+    category.save()
+    .then(category => {
+        Users.findById(category.user_id)
+        .then(user => {
+            user.created_categories.push(category._id);
+            user.save();
+        })
+    })    
+    res.redirect('/');
+})
+
+// Thêm ngân sách
+app.get('/add-budget', async (req, res) => {
+    const data = {
+        limit_amount: '3000000',
+        start_date: '2025-03-01',
+        end_date: '2025-04-01',
+        user_id: '67d675c05cdb352fc853b402',
+        category_id: '67d67700f0e20c30caae2b1f',
+        
+    }
+    const budget = new Budgets(data);
+    await budget.save()
+    .then(async budget => {
+        await Users.findByIdAndUpdate(budget.user_id, {
+            $push: {created_budgets: budget._id}
+        })
+        await Categories.findByIdAndUpdate(budget.category_id, {
+            budget_id: budget._id
+        })
+
+    })
+    res.redirect('/');
+})
+
+// Thêm giao dịch
 app.get('/add-transaction', async (req, res) => {
     const data = {
-        name: 'Vegetable',
-        amount: '20000',
+        name: 'Orange fruit',
+        amount: '52500',
         type: 'expense',
         category_id: '67d67da40fbfa99f52024f88',
         date: Date.now(),
@@ -103,6 +114,45 @@ app.get('/add-transaction', async (req, res) => {
             res.redirect('/');
 
 
+})
+
+app.get('/create-report', async (req, res) => {
+    const user_id = "67d675c05cdb352fc853b402";
+    const user = await Users.findById(user_id);
+    const categories = await Categories.find({user_id: user_id});
+
+    const data = {
+        user_id: user_id,
+        total_income: [],
+        total_expense: [],
+        balance: 0
+    }
+
+    //lap qua tung category, neu category.type === 'income' thi them vao data.total_income
+    categories.forEach(category => {
+        if(category.type == 'income') {
+            data.total_income.push(category);
+        } else {
+            data.total_expense.push(category);
+        }
+    })
+
+    //lap qua het cac giao dich
+    //tinh tong so tien cua giao dich
+    const transactions = await Transactions.find({user_id: user_id});
+    for(let i = 0; i < transactions.length; i++) {
+        const transaction = transactions[i];
+        if(transaction.type === 'income') {
+            data.balance += parseFloat(transaction.amount);
+            console.log(parseFloat(transaction.amount));
+        } else {
+            data.balance -= parseFloat(transaction.amount);
+            console.log(parseFloat(transaction.amount));
+        }
+    }
+    const report = new Reports(data);
+    await report.save();
+    res.json(report);
 })
 
 
