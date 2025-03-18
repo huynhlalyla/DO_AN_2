@@ -45,9 +45,9 @@ app.get('/add-user', (req, res) => {
 // Thêm danh mục
 app.get('/add-category', (req, res) => {
     const data = {
-        name: "Mua sắm",
-        user_id: "67d9082b46abb84bbfada5c2",
-        type: "expense"
+        name: "Gia dinh",
+        user_id: "67d9093ac31624c45abf001d",
+        type: "income"
         
     }
     const category = new Categories(data);
@@ -65,11 +65,11 @@ app.get('/add-category', (req, res) => {
 // Thêm ngân sách
 app.get('/add-budget', async (req, res) => {
     const data = {
-        limit_amount: '3000000',
+        limit_amount: '2500000',
         start_date: '2025-03-01',
         end_date: '2025-04-01',
-        user_id: '67d675c05cdb352fc853b402',
-        category_id: '67d67700f0e20c30caae2b1f',
+        user_id: '67d908ef4abdd3937e27b62f',
+        category_id: '67d9408bea0c5bb824ed4e4a',
         
     }
     const budget = new Budgets(data);
@@ -89,12 +89,12 @@ app.get('/add-budget', async (req, res) => {
 // Thêm giao dịch
 app.get('/add-transaction', async (req, res) => {
     const data = {
-        name: 'Orange fruit',
-        amount: '52500',
+        name: 'Ao GUCCI',
+        amount: '1500000',
         type: 'expense',
-        category_id: '67d67da40fbfa99f52024f88',
+        category_id: '67d9408bea0c5bb824ed4e4a',
         date: Date.now(),
-        user_id: '67d675c05cdb352fc853b402'
+        user_id: '67d908ef4abdd3937e27b62f'
     }
     const transaction = new Transactions(data);
     await transaction.save()
@@ -117,7 +117,7 @@ app.get('/add-transaction', async (req, res) => {
 })
 
 app.get('/create-report', async (req, res) => {
-    const user_id = "67d675c05cdb352fc853b402";
+    const user_id = "67d908ef4abdd3937e27b62f";
     const user = await Users.findById(user_id);
     const categories = await Categories.find({user_id: user_id});
 
@@ -155,7 +155,7 @@ app.get('/create-report', async (req, res) => {
     res.json(report);
 })
 
-
+// Xác thực người dùng
 app.post('/auth', async (req, res, next) => {
     const data = req.body;
     await Users.findOne({phone: data.sdt})
@@ -172,3 +172,16 @@ app.listen(3000, () => {
     console.log('Server is running on port http://localhost:3000');
 })
 
+// Lấy tất cả giao dịch hiện có ra xem
+app.post('/transactions', async (req, res, next) => {
+    const data = req.body;
+    await Transactions.find({user_id: data.user_id})
+    .then(transactions => {
+        if (transactions) {
+            res.json(transactions);
+        }
+        else {
+            res.json({message: 'fail'});
+        }
+    })
+})
