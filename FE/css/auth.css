@@ -22,7 +22,25 @@ body {
 #logo h5 {
     font-size: 16px; 
 }
-
+.form-wrapper {
+    position: relative;
+    position: relative;
+    width: 400px; 
+    height: 550px; 
+}
+.form-container {
+    position: absolute;
+    width: 100%;
+    top: 0;
+    left: 0;
+    transition: opacity 0.4s ease-in-out, visibility 0.4s ease-in-out;
+    opacity: 0;
+    visibility: hidden;
+}
+.active {
+    opacity: 1;
+    visibility: visible;
+}
 .login-form {
     position: absolute;
     top: 0;
@@ -32,8 +50,6 @@ body {
     background: rgba(245, 245, 245, 0.788);
     transition: opacity 0.3s ease-in-out;
 }
-
-
 .register-form {
     position: absolute;
     top: 0;
