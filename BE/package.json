@@ -20,7 +20,7 @@
   "dependencies": {
     "cors": "^2.8.5",
     "do_an_2": "file:",
-    "express": "^4.21.1",
+    "express": "^4.21.2",
     "express-session": "^1.18.1",
     "handlebars": "^4.7.8",
     "method-override": "^3.0.0",

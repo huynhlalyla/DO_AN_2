@@ -1,33 +1,11 @@
 const express = require('express');
-const route = express.Router();
-const Users = require('../app/models/Users');
+const router = express.Router();
+const userController = require('../app/controller/userController');
 
-//  Thêm người dùng
-route.get('/add', (req, res) => {
-    const data = {
-        name: 'Hà',  
-        password: '1111',  
-        email: 'h@gmail.com',  
-        phone: '0965342432', 
+// Định tuyến và gọi controller
+router.get('/add', userController.addUser);
+router.post('/auth', userController.authenticateUser);
+router.post('/register', userController.registerUser);
+router.post('/login', userController.loginUser);
 
-    }
-    const user = new Users(data);
-    user.save()
-    res.redirect('/');
-})
-
-// Xác thực người dùng
-route.post('/auth', async (req, res, next) => {
-    const data = req.body;
-    await Users.findOne({phone: data.sdt})
-    .then(user => {
-        if(user.password === data.password) {
-            res.json({message: 'success', user: user})
-        } else {
-            res.json({message: 'fail'})
-        }
-    })
-})
-
-
-module.exports = route;
+module.exports = router;
