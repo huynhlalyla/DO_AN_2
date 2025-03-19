@@ -1,81 +1,10 @@
-/* Ảnh nền full-width giữa menu và danh mục */
-.banner {
-    width: 100vw; /* Chiều rộng toàn màn hình */
-    max-height: 400px;
-    object-fit: cover;
-    display: block;
-    margin: 20px auto;
-    border-radius: 10px;
+@import url("./styles.css");
+*{
+    margin: 0;
 }
-
-/* Tạo hình tròn cho danh mục */
-.category-item {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    background: #f8f9fa;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 30px;
-    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
-    transition: all 0.3s;
+body {             
+    background-color: #fff5fa;             overflow: hidden;
 }
-
-/* Hover hiệu ứng */
-.category-item:hover {
-    background: #007bff;
-    color: white;
-    transform: scale(1.1);
-}
-
-/* Tên danh mục */
-.category-text {
-    font-size: 16px;
-    text-align: center;
-    margin-top: 8px;
-}
-
-/* Điều chỉnh menu */
-.nav-tabs {
-    border-bottom: 2px solid #007bff;
-    display: flex;
-    justify-content: center;
-    background: #f8f9fa;
-    padding: 10px 0;
-    border-radius: 10px;
-}
-
-/* Tab item */
-.nav-tabs .nav-item {
-    margin: 0 10px;
-}
-
-/* Tab button */
-.nav-tabs .nav-link {
-    font-size: 18px;
-    font-weight: bold;
-    color: #007bff;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 8px;
-    transition: all 0.3s ease-in-out;
-}
-
-/* Khi tab được chọn */
-.nav-tabs .nav-link.active {
-    background: #007bff;
-    color: white;
-    box-shadow: 0 3px 6px rgba(0, 123, 255, 0.3);
-}
-
-/* Hover */
-.nav-tabs .nav-link:hover {
-    background: rgba(0, 123, 255, 0.1);
-    color: #0056b3;
-}
-
-/* Responsive */
 @media (max-width: 768px) {
     .nav-tabs {
         flex-wrap: wrap;

@@ -1,0 +1,191 @@
+.menu-title {
+    position: absolute;
+    top: 30px;
+    margin-right: 70px;
+    font-weight: bold;
+    font-size: 30px;
+}
+.user-menu {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+}
+
+.user-avatar {
+    position: relative;
+    margin-right: 20px;
+    top: 18px;
+    width: 30px;
+    height: 30px;
+    border: 2px solid #ff66b2;
+    border-radius: 50%;
+    cursor: pointer;
+    object-fit: cover;
+}
+
+.user-name {
+    position: relative;
+    margin-right: 20px;
+    top: 18px;
+    font-size: 10px;
+    color: #333;
+    margin-top: 5px;
+}
+
+#userDropdown {
+    position: absolute;
+    top: 70px; /* Hiển thị dropdown ngay dưới avatar */
+    right: 10px;
+    background-color: #ffb5ce;
+    border: 1px solid #ffa0a0;
+    border-radius: 7px;
+    display: none;
+    min-width: 100px;
+    padding: 0; /* Xóa padding mặc định của Bootstrap */
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+#userDropdown a.dropdown-item:hover {
+    border: 1px solid #ffa0a0;
+    border-radius: 7px;
+    background-color: #ff76bb; /* Màu nền khi hover */
+    color: white; /* Màu chữ khi hover */
+}
+
+#userDropdown.show {
+    display: block;
+}
+
+
+.nav-tabs {
+    border-bottom: 2px solid #ff66b2;
+    background: #ffccdd;
+    border-radius: 10px;
+}
+a{
+    text-decoration: none;
+    font-weight: bold;
+    color: #000;
+}
+a:hover{
+    color: rgb(25, 98, 255);
+}
+.nav-tabs .nav-link {
+    font-size: 18px;
+    font-weight: bold;
+    color: #1f1f1f;
+    padding: 10px 20px;
+    border: none;
+    margin: 17px;
+    box-shadow: 0 3px 6px rgba(248, 2, 125, 0.3);
+    border-radius: 8px;
+    transition: all 0.3s ease-in-out;
+}
+.nav-tabs .nav-link:hover {
+    background: #ff66b2;
+    color: white;
+}
+.nav-tabs .nav-link.active {
+    background-color: #ff4081; /* Màu nền khi active */
+    color: white; /* Màu chữ khi active */
+    font-weight: bold;
+    border-radius: 5px;
+}
+.container-custom {
+    display: flex;
+    gap: 20px;          
+}
+.category-container::-webkit-scrollbar {
+    width: 8px;
+}
+.category-container::-webkit-scrollbar-thumb {
+    background-color: #ff66b2;
+    border-radius: 4px;
+}
+.category-container::-webkit-scrollbar-track {
+    background-color: #ffccdd;
+}
+.category-container .row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); 
+    gap: 10px;
+}
+.category-container {
+    flex: 2;
+    max-height: 550px;              
+    overflow: auto;
+    padding: 10px;
+    padding-bottom: 50px;
+}
+.category {
+    display: flex;
+    flex-direction: column;              
+    align-items: center;              
+    justify-content: center;              
+    text-align: center;
+}
+.category-item {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: #ffccdd;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s;
+    margin-bottom: 5px;          
+}
+.category-item img {
+    width: 70%;
+    height: 70%;
+    object-fit: contain;
+}
+.category-text {
+    width: 100%;
+    text-align: center;              
+    font-size: 14px;
+    font-weight: bold;
+}
+.category-item:hover {
+    background: #ffb0d8;
+    color: white;
+    transform: scale(1.1);
+}
+.category-item.active {
+    background: #ff66b2 !important;
+    color: white;
+    transform: scale(1.1);
+    box-shadow: 0 4px 8px rgba(255, 102, 178, 0.5);
+}
+.input-box {
+    flex: 1;
+    position: sticky;
+    top: 20px;
+    height: fit-content;          
+}
+.input-wrapper {
+    display: flex;
+    align-items: center;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    width: 250px;              
+    background: #fff;
+    position: relative;
+}
+.money-input {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-size: 16px;
+    padding-right: 60px;              
+    width: 100%;
+    white-space: nowrap;
+}
+.currency {
+    position: absolute;
+    right: 10px;
+    font-size: 14px;
+    font-weight: bold;
+    color: #000;
+}
