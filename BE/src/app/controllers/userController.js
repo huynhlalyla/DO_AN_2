@@ -4,10 +4,10 @@ const Users = require('../models/Users');
 const addUser = async (req, res) => {
     try {
         const data = {
-            name: 'Hà',
-            password: '1111',
-            email: 'h@gmail.com',
-            phone: '0965342432',
+            name: 'Ly Ly',
+            password: '1191',
+            email: 'll@gmail.com',
+            phone: '0965356321',
         };
         const user = new Users(data);
         await user.save();
@@ -18,6 +18,8 @@ const addUser = async (req, res) => {
 };
 
 // Xác thực người dùng
+//POST /users/authenticate
+
 const authenticateUser = async (req, res) => {
     try {
         const data = req.body;
@@ -73,7 +75,7 @@ const loginUser = async (req, res) => {
 
 module.exports = {
     addUser,
-    authenticateUser,
-    registerUser,
-    loginUser
+    authenticateUser, 
+    registerUser, 
+    loginUser 
 };
