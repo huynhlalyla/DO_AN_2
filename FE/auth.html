@@ -29,12 +29,13 @@
                             </div>
                             <div class="mb-3 position-relative">
                                 <label class="form-label">Mật khẩu</label>
-                                <input name="password" type="password" class="form-control password-input" required>
-                                <span class="position-absolute top-50 end-0 me-3 password-toggle" style="cursor: pointer;">
-                                    <i class="bi bi-eye-slash"></i> <!-- Icon mặc định là ẩn -->
-                                </span>
-                            </div>
-                            
+                                <div class="position-relative">
+                                    <input name="password" type="password" class="form-control password-input pe-5" required>
+                                    <span class="position-absolute password-toggle">
+                                        <i class="bi bi-eye-slash"></i>
+                                    </span>
+                                </div>
+                            </div>                            
                             <!-- Phần Quên mật khẩu?-->
                             <div class="mb-3 text-end" style="margin-top: -10px">
                                 <a href="/forgot-password" class="forgot-password">Quên mật khẩu?</a>
@@ -62,11 +63,13 @@
                             </div>
                             <div class="mb-3 position-relative">
                                 <label class="form-label">Mật khẩu</label>
-                                <input name="password" type="password" class="form-control password-input" required>
-                                <span class="position-absolute top-50 end-0 me-3 password-toggle" style="cursor: pointer;">
-                                    <i class="bi bi-eye-slash"></i> <!-- Icon mặc định là ẩn -->
-                                </span>
-                            </div>
+                                <div class="position-relative">
+                                    <input name="password" type="password" class="form-control password-input pe-5" required>
+                                    <span class="position-absolute password-toggle">
+                                        <i class="bi bi-eye-slash"></i>
+                                    </span>
+                                </div>
+                            </div>  
                             <div class="form-check">
                                 <input type="checkbox" class="form-check-input">
                                 <label class="form-check-label">Tôi đồng ý với các điều khoản</label>
@@ -98,28 +101,54 @@
             });
         });
     });
-
-    document.addEventListener("DOMContentLoaded", function () {
-        document.querySelectorAll(".password-toggle").forEach(toggle => {
-            toggle.addEventListener("click", function () {
-                let passwordInput = this.previousElementSibling; // Lấy input mật khẩu
-                let icon = this.querySelector("i"); // Lấy icon
+    document.addEventListener('DOMContentLoaded', function () { 
+        const loginForm = document.getElementById('loginForm');
+        const registerForm = document.getElementById('registerForm');
+        const passwordInputs = document.querySelectorAll('.password-input');
+        const passwordToggles = document.querySelectorAll('.password-toggle');
+        const errorMessages = {}; // Lưu thông báo lỗi để quản lý dễ dàng
     
-                if (passwordInput.type === "password") {
-                    passwordInput.type = "text"; // Hiện mật khẩu
-                    icon.classList.replace("bi-eye-slash", "bi-eye"); // Đổi icon
+        function showError(input, message) {
+            let error = errorMessages[input.name];
+            if (!error) {
+                error = document.createElement('div');
+                error.classList.add('text-danger', 'mt-1', 'error-message');
+                input.parentNode.appendChild(error);
+                errorMessages[input.name] = error;
+            }
+            error.textContent = message;
+            error.style.display = 'block';
+        }
+    
+        function hideError(input) {
+            if (errorMessages[input.name]) {
+                errorMessages[input.name].style.display = 'none';
+            }
+        }
+    
+        document.addEventListener('click', (event) => {
+            if (!event.target.closest('.error-message')) {
+                Object.values(errorMessages).forEach(error => error.style.display = 'none');
+            }
+        });
+    
+        passwordInputs.forEach(input => {
+            input.addEventListener('input', () => hideError(input));
+        });
+    
+        passwordToggles.forEach(toggle => {
+            toggle.addEventListener('click', () => {
+                const input = toggle.previousElementSibling;
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    toggle.innerHTML = '<i class="bi bi-eye"></i>';
                 } else {
-                    passwordInput.type = "password"; // Ẩn mật khẩu
-                    icon.classList.replace("bi-eye", "bi-eye-slash"); // Đổi lại icon
+                    input.type = 'password';
+                    toggle.innerHTML = '<i class="bi bi-eye-slash"></i>';
                 }
             });
         });
-    });
-    document.addEventListener('DOMContentLoaded', function () {
-        const loginForm = document.getElementById('loginForm');
-        const registerForm = document.getElementById('registerForm');
     
-        // Xử lý đăng ký
         registerForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const formData = new FormData(registerForm);
@@ -132,10 +161,27 @@
             });
     
             const result = await response.json();
-            alert(result.message);
+    
+            if (result.success) {
+                alert('Đăng ký thành công! Nhấn OK để chuyển đến trang đăng nhập.');
+                registerForm.reset();
+                document.querySelector('[data-target="loginForm"]').click();
+            } else {
+                // Xóa lỗi cũ
+                Object.keys(errorMessages).forEach(key => hideError(registerForm.querySelector(`[name="${key}"]`)));
+    
+                // Hiển thị lỗi từng ô input
+                if (result.errors) {
+                    Object.keys(result.errors).forEach(field => {
+                        const input = registerForm.querySelector(`[name="${field}"]`);
+                        if (input) showError(input, result.errors[field]);
+                    });
+                } else {
+                    alert(result.message);
+                }
+            }
         });
     
-        // Xử lý đăng nhập
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const formData = new FormData(loginForm);
@@ -148,15 +194,26 @@
             });
     
             const result = await response.json();
-            alert(result.message);
-            
-            if (result.message === 'Đăng nhập thành công') {
+    
+            if (result.success) {
                 localStorage.setItem('user', JSON.stringify(result.user));
-                window.location.href = '/dashboard.html'; // Điều hướng đến trang chính
+                window.location.href = '/dashboard.html';
+            } else {
+                // Xóa lỗi cũ
+                Object.keys(errorMessages).forEach(key => hideError(loginForm.querySelector(`[name="${key}"]`)));
+    
+                // Nếu có lỗi từng ô input thì hiển thị
+                if (result.errors) {
+                    Object.keys(result.errors).forEach(field => {
+                        const input = loginForm.querySelector(`[name="${field}"]`);
+                        if (input) showError(input, result.errors[field]);
+                    });
+                } else {
+                    alert(result.message);
+                }
             }
         });
     });
-    
 </script>
 </body>
 </html>
