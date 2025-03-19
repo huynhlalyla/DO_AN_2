@@ -36,7 +36,7 @@
                 <div class="w-100">
                     <div class="text-start mb-3 d-none d-md-flex align-items-center">
                         <a href="/" id="logo" class="d-flex align-items-center">
-                            <img src="../FE/image/logo.png" alt="Image" class="img-fluid" style="max-width: 50px;">
+                            <img src="../FE/css/image/logo.png" alt="Image" class="img-fluid" style="max-width: 50px;">
                             <h5 class="mt-2 ms-2 home">Trang chủ</h5>
                         </a>
                     </div>        
@@ -46,11 +46,11 @@
                             <h2 class="text-center">Đăng nhập</h2>
                             <div class="mb-3">
                                 <label class="form-label">Số điện thoại</label>
-                                <input name="userName" type="text" class="form-control" required>
+                                <input name="phone" type="phone" class="form-control" required>
                             </div>
                             <div class="mb-3 position-relative">
                                 <label class="form-label">Mật khẩu</label>
-                                <input name="userPassword" type="password" class="form-control password-input" required>
+                                <input name="password" type="password" class="form-control password-input" required>
                                 <span class="position-absolute top-50 end-0 me-3 password-toggle" style="cursor: pointer;">
                                     <i class="bi bi-eye-slash"></i> <!-- Icon mặc định là ẩn -->
                                 </span>
@@ -71,19 +71,19 @@
                             <h2 class="text-center">Đăng ký</h2>
                             <div class="mb-3">
                                 <label class="form-label">Họ và tên</label>
-                                <input name="userName" type="text" class="form-control" required>
+                                <input name="name" type="text" class="form-control" required>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Số điện thoại</label>
-                                <input name="userEmail" type="email" class="form-control" required>
+                                <input name="phone" type="phone" class="form-control" required>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Email</label>
-                                <input name="userEmail" type="email" class="form-control" required>
+                                <input name="email" type="email" class="form-control" required>
                             </div>
                             <div class="mb-3 position-relative">
                                 <label class="form-label">Mật khẩu</label>
-                                <input name="userPassword" type="password" class="form-control password-input" required>
+                                <input name="password" type="password" class="form-control password-input" required>
                                 <span class="position-absolute top-50 end-0 me-3 password-toggle" style="cursor: pointer;">
                                     <i class="bi bi-eye-slash"></i> <!-- Icon mặc định là ẩn -->
                                 </span>
@@ -136,6 +136,48 @@
             });
         });
     });
+    document.addEventListener('DOMContentLoaded', function () {
+        const loginForm = document.getElementById('loginForm');
+        const registerForm = document.getElementById('registerForm');
+    
+        // Xử lý đăng ký
+        registerForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(registerForm);
+            const data = Object.fromEntries(formData.entries());
+    
+            const response = await fetch('http://localhost:3000/user/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+    
+            const result = await response.json();
+            alert(result.message);
+        });
+    
+        // Xử lý đăng nhập
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(loginForm);
+            const data = Object.fromEntries(formData.entries());
+    
+            const response = await fetch('http://localhost:3000/user/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+    
+            const result = await response.json();
+            alert(result.message);
+            
+            if (result.message === 'Đăng nhập thành công') {
+                localStorage.setItem('user', JSON.stringify(result.user));
+                window.location.href = '/dashboard.html'; // Điều hướng đến trang chính
+            }
+        });
+    });
+    
 </script>
 </body>
 </html>
