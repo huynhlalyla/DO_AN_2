@@ -5,6 +5,14 @@
     font-weight: bold;
     font-size: 30px;
 }
+.input-group .btn {
+    background-color: #ff6196; /* Nền nút xanh đậm */
+    color: white !important; /* Màu icon trắng */
+    border: none;
+}
+.input-group .btn:hover {
+    background-color: #ff4382; /* Màu xanh đậm hơn khi hover */
+}
 .user-menu {
     display: flex;
     flex-direction: column;
@@ -27,10 +35,9 @@
 .user-name {
     position: relative;
     margin-right: 20px;
-    top: 18px;
+    top: 15px;
     font-size: 10px;
     color: #333;
-    margin-top: 5px;
 }
 
 #userDropdown {
@@ -61,6 +68,7 @@
     border-bottom: 2px solid #ff66b2;
     background: #ffccdd;
     border-radius: 10px;
+    
 }
 a{
     text-decoration: none;
@@ -71,12 +79,11 @@ a:hover{
     color: rgb(25, 98, 255);
 }
 .nav-tabs .nav-link {
-    font-size: 18px;
+
     font-weight: bold;
     color: #1f1f1f;
-    padding: 10px 20px;
     border: none;
-    margin: 17px;
+    margin: 10px;
     box-shadow: 0 3px 6px rgba(248, 2, 125, 0.3);
     border-radius: 8px;
     transition: all 0.3s ease-in-out;
@@ -157,35 +164,4 @@ a:hover{
     color: white;
     transform: scale(1.1);
     box-shadow: 0 4px 8px rgba(255, 102, 178, 0.5);
-}
-.input-box {
-    flex: 1;
-    position: sticky;
-    top: 20px;
-    height: fit-content;          
-}
-.input-wrapper {
-    display: flex;
-    align-items: center;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    width: 250px;              
-    background: #fff;
-    position: relative;
-}
-.money-input {
-    flex: 1;
-    border: none;
-    outline: none;
-    font-size: 16px;
-    padding-right: 60px;              
-    width: 100%;
-    white-space: nowrap;
-}
-.currency {
-    position: absolute;
-    right: 10px;
-    font-size: 14px;
-    font-weight: bold;
-    color: #000;
 }
