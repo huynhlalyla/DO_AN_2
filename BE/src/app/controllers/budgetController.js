@@ -6,26 +6,36 @@ const Transactions = require('../models/Transactions');
 
 // GET /budget/add
 async function addBudget(req, res) {
-    const data = {
-        limit_amount: '100000000',
-        start_date: '2025-03-01',
-        end_date: '2025-04-01',
-        user_id: '67d908ef4abdd3937e27b62f',
-        category_id: '67d98e61a56b08c003098b83',
-        
-    }
-    const budget = new Budgets(data);
-    await budget.save()
-    .then(async budget => {
-        await Users.findByIdAndUpdate(budget.user_id, {
-            $push: {created_budgets: budget._id}
-        })
-        await Categories.findByIdAndUpdate(budget.category_id, {
-            budget_id: budget._id
-        })
+    try {
+        // Lấy dữ liệu từ người dùng gửi lên
+        const data = req.body;
+        // Kiểm tra xem budget đã tồn tại chưa
+        const allBudgets = await Budgets.find({user_id: data.user_id});
+        const budget = allBudgets.find(budget => budget.name === data.name);
+        // Nếu đã tồn tại thì trả về thông báo lỗi
+        if(budget) {
+            return res.status(400).json({message: "Budget already exists"});
+        } else {
+            // Nếu chưa tồn tại thì tạo mới
+            const budget = new Budgets(data);
+            await budget.save()
+            .then(async budget => {
+                await Users.findByIdAndUpdate(budget.user_id, {
+                    $push: {created_budgets: budget._id}
+                })
+                await Categories.findByIdAndUpdate(budget.category_id, {
+                    budget_id: budget._id
+                })
 
-    })
-    res.redirect('/');
+            })
+            res.redirect('/');
+        }
+    } catch (error) {
+        // Nếu việc đó lỗi chạy ở đây
+        res.status(500).json({message: 'Lỗi server:', error});
+    }
+    
+    
 }
 
 // GET /budget/view-all
