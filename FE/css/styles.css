@@ -6,12 +6,12 @@
     font-size: 30px;
 }
 .input-group .btn {
-    background-color: #ff6196; /* Nền nút xanh đậm */
-    color: white !important; /* Màu icon trắng */
+    background-color: #ff6196;  
+    color: white !important;  
     border: none;
 }
 .input-group .btn:hover {
-    background-color: #ff4382; /* Màu xanh đậm hơn khi hover */
+    background-color: #ff4382;  
 }
 .user-menu {
     display: flex;
@@ -23,7 +23,7 @@
 .user-avatar {
     position: relative;
     margin-right: 20px;
-    top: 18px;
+    top: 16px;
     width: 30px;
     height: 30px;
     border: 2px solid #ff66b2;
@@ -42,21 +42,21 @@
 
 #userDropdown {
     position: absolute;
-    top: 70px; /* Hiển thị dropdown ngay dưới avatar */
+    top: 70px;  
     right: 10px;
     background-color: #ffb5ce;
     border: 1px solid #ffa0a0;
     border-radius: 7px;
     display: none;
     min-width: 100px;
-    padding: 0; /* Xóa padding mặc định của Bootstrap */
+    padding: 0;  
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
 }
 #userDropdown a.dropdown-item:hover {
     border: 1px solid #ffa0a0;
     border-radius: 7px;
-    background-color: #ff76bb; /* Màu nền khi hover */
-    color: white; /* Màu chữ khi hover */
+    background-color: #ff76bb;  
+    color: white;  
 }
 
 #userDropdown.show {
@@ -93,8 +93,8 @@ a:hover{
     color: white;
 }
 .nav-tabs .nav-link.active {
-    background-color: #ff4081; /* Màu nền khi active */
-    color: white; /* Màu chữ khi active */
+    background-color: #ff4081;  
+    color: white;  
     font-weight: bold;
     border-radius: 5px;
 }

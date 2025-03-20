@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Trang chủ</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="../FE/css/main.css">
+</head>
+<style>
+     
+.btn-primary.dropdown-toggle {
+    background-color: #ffccdd!important;  
+    border: none;
+    color: black;
+    font-weight: bold;
+    box-shadow: 0 3px 6px rgba(255, 0, 128, 0.3);
+    padding: 8px 10px;
+    margin: 0 10px;
+    position: relative;
+    transition: all 0.3s ease-in-out;
+}
+ 
+.btn-primary.dropdown-toggle:hover {
+    background-color: #ff78ae !important;  
+    color: white;
+}
+ 
+.dropdown-menu {
+    background-color: #ffccdd !important;
+    border: 1px solid rgb(255, 151, 215);
+    border-radius: 10px !important;
+    padding: 0px !important;
+    min-width: 8rem !important;     
+    box-shadow: 0 3px 6px rgba(248, 2, 125, 0.3);
+}
+
+ 
+.dropdown-item {
+    color: #1f1f1f;
+}
+
+ 
+.dropdown-item:hover {
+    background: #ff66a3;
+    color: white;
+    border-radius: 8px;
+}
+
+</style>
+<body>
+    <div class="container-fluid mt-3">
+        <div class="d-flex align-items-center justify-content-between nav-tabs">
+            <!-- Logo & Trang chủ -->
+            <div class="d-flex align-items-center">
+                <a href="home.html" id="logo" class="d-flex align-items-center text-decoration-none">
+                    <img src="../FE/css/image/logo.png" alt="Image" class="img-fluid" style="max-width: 50px;">
+                    <h5 class="mt-2 ms-2 home">Trang chủ</h5>
+                </a>
+            </div>
+            <div class="flex-grow-1 mx-4 d-flex justify-content-center">
+                <div class="input-group" style="max-width: 400px; width: 100%;">
+                    <input type="text" class="form-control" placeholder="Tìm kiếm..." id="searchInput">
+                    <button class="btn btn-outline-secondary" type="button" id="searchButton">
+                        <i class="bi bi-search"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="d-flex align-items-center">
+                <ul class="nav">
+                    <li class="nav-item"><a class="nav-link" href="exchange.html">Giao dịch</a></li>
+                    <li class="nav-item"><a class="nav-link" href="">Ngân sách</a></li>
+                </ul>
+                <div class="dropdown">
+                    <button class="btn btn-primary dropdown-toggle" type="button" id="categoryMenu" data-bs-toggle="dropdown" aria-expanded="false">
+                        Danh mục
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-start mt-3 ms-n3">
+                        <li><a class="dropdown-item" href="expensex.html">Chi tiêu</a></li>
+                        <li><a class="dropdown-item" href="income.html">Thu nhập</a></li>
+                    </ul>
+                </div>                
+                <div class="user-menu position-relative ms-3">
+                    <img id="userAvatar" src="../FE/image/user.png" alt="User Avatar" class="user-avatar">
+                    <p id="userName" class="user-name">Tên người dùng</p>
+                    <div class="dropdown-menu text-center" id="userDropdown">
+                        <a class="dropdown-item" href="settings.html">Tùy chỉnh</a>
+                        <a class="dropdown-item" href="#" id="logoutBtn">Đăng xuất</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="container mt-4">
+        <div class="row text-center">
+            <div class="col-md-4">
+                <div class="card bg-danger text-white">
+                    <h4>Tổng Chi Phí</h4>
+                    <h6 id="total-expense">500,000 đ</h6>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card bg-success text-white">
+                    <h4>Tổng Thu Nhập</h4>
+                    <h6 id="total-income">1,200,000 đ</h6>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card bg-primary text-white">
+                    <h4>Số Dư</h4>
+                    <h6 id="balance">700,000 đ</h6>
+                </div>
+            </div>
+        </div>
+    
+        <h4 class="mt-4">Lịch sử Giao dịch</h4>
+        <ul class="list-group" id="transaction-list">
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center">
+                    <img src="shopping.png" alt="mua" class="rounded-circle border" width="40">
+                    <div class="ms-2">
+                        <small>20/03/2025</small><br>
+                        <strong>Mua sắm</strong>
+                    </div>
+                </div>
+                <span class="text-danger"><i class="fa fa-arrow-down"></i> -500,000 đ</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center">
+                    <img src="salary.png" alt="Lương" class="rounded-circle border" width="40">
+                    <div class="ms-2">
+                        <small>19/03/2025</small><br>
+                        <strong>Lương</strong>
+                    </div>
+                </div>
+                <span class="text-success"><i class="fa fa-arrow-up"></i> +1,200,000 đ</span>
+            </li>
+        </ul>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", async function () {
+            try {
+                const response = await fetch("/api/user"); // API lấy thông tin user
+                const userData = await response.json();
+        
+                if (userData) {
+                    document.getElementById("userName").textContent = userData.name;
+                    document.getElementById("userAvatar").src = userData.avatar ? userData.avatar : "../FE/image/user.png";
+                }
+            } catch (error) {
+                console.error("Lỗi khi tải dữ liệu user:", error);
+            }
+        
+            // Hiển thị / Ẩn dropdown khi click vào avatar
+            const avatar = document.getElementById("userAvatar");
+            const dropdown = document.getElementById("userDropdown");
+        
+            avatar.addEventListener("click", function () {
+                dropdown.classList.toggle("show");
+            });
+        
+            // Ẩn dropdown khi click ra ngoài
+            document.addEventListener("click", function (event) {
+                if (!avatar.contains(event.target) && !dropdown.contains(event.target)) {
+                    dropdown.classList.remove("show");
+                }
+            });
+        
+            document.getElementById("logoutBtn").addEventListener("click", function () {
+                const confirmLogout = confirm("Bạn có chắc chắn muốn đăng xuất không?");
+                if (confirmLogout) {
+                    window.location.href = "/login"; // Chuyển hướng sau khi xác nhận đăng xuất
+                }
+            });
+        });
+    </script>
+</body>
+</html>
