@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giao diện ngân sách</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+        body {
+            background-color: #f8f9fa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            padding: 20px;
+        }
+        .book-container {
+            width: 100%;
+            min-height: 200px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.3);
+            padding: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            border-left: 15px solid #ff9eea;
+            cursor: pointer;
+            transition: transform 0.2s ease-in-out;
+        }
+        .book-container:hover { 
+            transform: scale(1.05); 
+            background-color: #e9ecef; 
+        }
+        .budget {
+            font-size: 16px;
+            font-weight: bold;
+            max-width: 90%;
+            max-height: 150px;
+            overflow: auto;
+            word-wrap: break-word;
+            text-align: center;
+        }
+        /* CSS cho modal */
+        .modal-content {
+            border-radius: 10px;
+        }
+        .form-group {
+            margin-bottom: 10px;
+        }
+        
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="row" id="budgetSection">
+            <div class="col-md-2 col-sm-4 col-6 mb-3">
+                <div class="book-container" onclick="openBudgetForm(this)">
+                    <div class="budget">+</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Form -->
+    <div class="modal fade" id="budgetModal" tabindex="-1" aria-labelledby="budgetModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="budgetModalLabel">Thêm ngân sách</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="budgetForm">
+                        <div class="form-group">
+                            <label for="budgetName">Tên ngân sách:</label>
+                            <input type="text" class="form-control" id="budgetName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="budgetAmount">Số tiền:</label>
+                            <input type="number" class="form-control" id="budgetAmount" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="startDate">Ngày bắt đầu:</label>
+                            <input type="date" class="form-control" id="startDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="endDate">Ngày kết thúc:</label>
+                            <input type="date" class="form-control" id="endDate" required>
+                        </div>
+                        <button type="button" class="btn btn-primary w-100 mt-3" onclick="saveBudget()">Lưu</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentElement = null;
+
+        function openBudgetForm(element) {
+            currentElement = element; // Lưu lại phần tử đang được chọn
+            const budgetModal = new bootstrap.Modal(document.getElementById('budgetModal'));
+            budgetModal.show();
+        }
+
+        function saveBudget() {
+            let name = document.getElementById("budgetName").value;
+            let amount = document.getElementById("budgetAmount").value;
+            let startDate = document.getElementById("startDate").value;
+            let endDate = document.getElementById("endDate").value;
+
+            if (name && amount && startDate && endDate) {
+                currentElement.innerHTML = `<div class='budget'>
+                    <strong>${name}</strong><br>
+                    Số tiền: ${amount} VNĐ<br>
+                    Bắt đầu: ${startDate}<br>
+                    Kết thúc: ${endDate}
+                </div>`;
+                currentElement.onclick = null; // Vô hiệu hóa click
+
+                // Đóng modal
+                let modal = bootstrap.Modal.getInstance(document.getElementById('budgetModal'));
+                modal.hide();
+
+                createNewBook();
+            } else {
+                alert("Vui lòng nhập đầy đủ thông tin!");
+            }
+        }
+
+        function createNewBook() {
+            let newBook = document.createElement("div");
+            newBook.className = "col-md-2 col-sm-4 col-6 mb-3";
+            newBook.innerHTML = `<div class='book-container' onclick='openBudgetForm(this)'>
+                                    <div class='budget'>+</div>
+                                </div>`;
+            document.getElementById("budgetSection").appendChild(newBook);
+        }
+    </script>
+
+</body>
+</html>
