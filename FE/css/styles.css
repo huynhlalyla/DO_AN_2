@@ -147,3 +147,53 @@ a:hover{
     background: #ffb0d8;
     transform: scale(1.1);
 }
+.btn-primary.dropdown-toggle {
+    background-color: #ffccdd!important;  
+    border: none;
+    color: black;
+    font-weight: bold;
+    box-shadow: 0 3px 6px rgba(255, 0, 128, 0.3);
+    padding: 8px 10px;
+    margin: 0 10px;
+    position: relative;
+    transition: all 0.3s ease-in-out;
+}
+ 
+.btn-primary.dropdown-toggle:hover {
+    background-color: #ff78ae !important;  
+    color: white;
+}
+ 
+.dropdown-menu {
+    background-color: #ffccdd !important;
+    border: 1px solid rgb(255, 151, 215);
+    border-radius: 10px !important;
+    padding: 0px !important;
+    min-width: 8rem !important;     
+    box-shadow: 0 3px 6px rgba(248, 2, 125, 0.3);
+}
+ 
+.dropdown-item {
+    color: #1f1f1f;
+}
+
+.dropdown-item:hover {
+    background: #ff66a3;
+    color: white;
+    border-radius: 8px;
+}
+.form-control {
+    width: 350px !important;
+}
+.nav-tabs {
+    padding: 5px;
+}
+.table-dark th {
+    border: 1px solid rgb(158, 158, 158);
+    background-color: rgb(255, 182, 233) !important;
+    color: black;
+}
+.table-container {
+    max-height: 300px; /* Giới hạn chiều cao bảng, sẽ có thanh cuộn nếu vượt quá */
+    overflow-y: auto;
+}

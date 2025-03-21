@@ -9,47 +9,6 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <link rel="stylesheet" href="../FE/css/main.css">
 </head>
-<style>
-     
-.btn-primary.dropdown-toggle {
-    background-color: #ffccdd!important;  
-    border: none;
-    color: black;
-    font-weight: bold;
-    box-shadow: 0 3px 6px rgba(255, 0, 128, 0.3);
-    padding: 8px 10px;
-    margin: 0 10px;
-    position: relative;
-    transition: all 0.3s ease-in-out;
-}
- 
-.btn-primary.dropdown-toggle:hover {
-    background-color: #ff78ae !important;  
-    color: white;
-}
- 
-.dropdown-menu {
-    background-color: #ffccdd !important;
-    border: 1px solid rgb(255, 151, 215);
-    border-radius: 10px !important;
-    padding: 0px !important;
-    min-width: 8rem !important;     
-    box-shadow: 0 3px 6px rgba(248, 2, 125, 0.3);
-}
-
- 
-.dropdown-item {
-    color: #1f1f1f;
-}
-
- 
-.dropdown-item:hover {
-    background: #ff66a3;
-    color: white;
-    border-radius: 8px;
-}
-
-</style>
 <body>
     <div class="container-fluid mt-3">
         <div class="d-flex align-items-center justify-content-between nav-tabs">
@@ -69,11 +28,11 @@
             </div>
             <div class="d-flex align-items-center">
                 <ul class="nav">
-                    <li class="nav-item"><a class="nav-link" href="exchange.html">Giao dịch</a></li>
+                    <li class="nav-item"><a class="nav-link" href="transaction.html">Giao dịch</a></li>
                     <li class="nav-item"><a class="nav-link" href="">Ngân sách</a></li>
                 </ul>
                 <div class="dropdown">
-                    <button class="btn btn-primary dropdown-toggle" type="button" id="categoryMenu" data-bs-toggle="dropdown" aria-expanded="false">
+                    <button class="btn btn-primary dropdown-toggle" type="button" id="categoryMenu">
                         Danh mục
                     </button>
                     <ul class="dropdown-menu dropdown-menu-start mt-3 ms-n3">
@@ -92,7 +51,6 @@
             </div>
         </div>
     </div>
-    
     <div class="container mt-4">
         <div class="row text-center">
             <div class="col-md-4">
@@ -139,43 +97,5 @@
             </li>
         </ul>
     </div>
-
-    <script>
-        document.addEventListener("DOMContentLoaded", async function () {
-            try {
-                const response = await fetch("/api/user"); // API lấy thông tin user
-                const userData = await response.json();
-        
-                if (userData) {
-                    document.getElementById("userName").textContent = userData.name;
-                    document.getElementById("userAvatar").src = userData.avatar ? userData.avatar : "../FE/image/user.png";
-                }
-            } catch (error) {
-                console.error("Lỗi khi tải dữ liệu user:", error);
-            }
-        
-            // Hiển thị / Ẩn dropdown khi click vào avatar
-            const avatar = document.getElementById("userAvatar");
-            const dropdown = document.getElementById("userDropdown");
-        
-            avatar.addEventListener("click", function () {
-                dropdown.classList.toggle("show");
-            });
-        
-            // Ẩn dropdown khi click ra ngoài
-            document.addEventListener("click", function (event) {
-                if (!avatar.contains(event.target) && !dropdown.contains(event.target)) {
-                    dropdown.classList.remove("show");
-                }
-            });
-        
-            document.getElementById("logoutBtn").addEventListener("click", function () {
-                const confirmLogout = confirm("Bạn có chắc chắn muốn đăng xuất không?");
-                if (confirmLogout) {
-                    window.location.href = "/auth"; // Chuyển hướng sau khi xác nhận đăng xuất
-                }
-            });
-        });
-    </script>
 </body>
 </html>
