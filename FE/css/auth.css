@@ -3,25 +3,14 @@ body {
     background-size: cover; 
 }
 
-#logo {
-    display: flex; 
-    align-items: center; 
+.logo {
     position: absolute;
-    top: 20px; 
-    left: 20px; 
-    text-decoration: none;
-    color: black; 
+    top: 10px;  /* Điều chỉnh khoảng cách với mép trên */
+    left: 20px; /* Đưa logo về góc trái */
+    width: 70px; /* Tăng kích thước logo */
+    height: auto; /* Giữ tỷ lệ ảnh */
 }
 
-#logo img {
-    max-width: 50px; 
-    height: auto;
-    margin-right: 10px; 
-}
-
-#logo h5 {
-    font-size: 16px; 
-}
 .form-wrapper {
     position: relative;
     position: relative;
@@ -52,7 +41,7 @@ body {
 }
 .register-form {
     position: absolute;
-    top: 0;
+    top: -40px;
     left: 0;
     width: 100%;
     padding: 40px 30px;
@@ -72,20 +61,6 @@ body {
     height: 580px;
     box-shadow: 0px 0px 20px rgba(255, 195, 230, 0.911); /* Đổ bóng nhẹ */
     border-radius: 8px;
-}
-
-.home {
-    padding: 8px 10px; 
-    border-radius: 50px; 
-    background-color:#ffb2d9; 
-    transition: all 0.1s ease-in-out; 
-}
-
-.home:hover {
-    background-color: #ff9ece; 
-    color: rgb(0, 0, 0); 
-    transform: scale(1.1); 
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
 }
 .password-toggle {
     position: absolute;

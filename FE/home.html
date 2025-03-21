@@ -55,10 +55,9 @@
         <div class="d-flex align-items-center justify-content-between nav-tabs">
             <!-- Logo & Trang chủ -->
             <div class="d-flex align-items-center">
-                <a href="home.html" id="logo" class="d-flex align-items-center text-decoration-none">
-                    <img src="../FE/css/image/logo.png" alt="Image" class="img-fluid" style="max-width: 50px;">
-                    <h5 class="mt-2 ms-2 home">Trang chủ</h5>
-                </a>
+                <div class="text-start mb-3  d-md-flex align-items-center">
+                    <img src="../FE/css/image/logo.png" alt="Logo" class="logo">
+                </div>
             </div>
             <div class="flex-grow-1 mx-4 d-flex justify-content-center">
                 <div class="input-group" style="max-width: 400px; width: 100%;">
@@ -173,7 +172,7 @@
             document.getElementById("logoutBtn").addEventListener("click", function () {
                 const confirmLogout = confirm("Bạn có chắc chắn muốn đăng xuất không?");
                 if (confirmLogout) {
-                    window.location.href = "/login"; // Chuyển hướng sau khi xác nhận đăng xuất
+                    window.location.href = "/auth"; // Chuyển hướng sau khi xác nhận đăng xuất
                 }
             });
         });
