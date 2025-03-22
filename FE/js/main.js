@@ -4,8 +4,9 @@ function loadPartials() {
         .then(data => {
             document.getElementById('header').innerHTML = data;
 
-            // Chờ DOM cập nhật xong rồi mới gán sự kiện
-            setTimeout(attachDropdownEvents, 100);
+            // Gán sự kiện dropdown và sidebar sau khi header đã được load
+            attachDropdownEvents();
+            attachSidebarEvents();
         });
 
     fetch('partials/footer.html')
@@ -13,32 +14,6 @@ function loadPartials() {
         .then(data => {
             document.getElementById('footer').innerHTML = data;
         });
-}
-
-document.addEventListener("DOMContentLoaded", loadPartials);
-
-function attachDropdownEvents() {
-    const sidebar = document.getElementById("sidebar");
-    const overlay = document.getElementById("overlay");
-    const toggleButton = document.getElementById("sidebarToggle");
-
-    if (!sidebar || !overlay || !toggleButton) {
-        console.error("Không tìm thấy sidebar hoặc overlay!");
-        return;
-    }
-
-    // Mở hoặc đóng sidebar khi nhấn nút
-    toggleButton.addEventListener("click", function () {
-        const isOpen = sidebar.classList.contains("show");
-        sidebar.classList.toggle("show");
-        overlay.classList.toggle("show", !isOpen);
-    });
-
-    // Đóng sidebar khi nhấn vào overlay
-    overlay.addEventListener("click", function () {
-        sidebar.classList.remove("show");
-        overlay.classList.remove("show");
-    });
 }
 
 // Gọi khi trang đã tải xong
@@ -49,8 +24,6 @@ function attachDropdownEvents() {
     const userDropdown = document.getElementById("userDropdown");
     const categoryMenu = document.getElementById("categoryMenu");
     const categoryDropdown = document.querySelector(".dropdown-menu");
-    const sidebarToggle = document.getElementById("sidebarToggle");
-    const sidebar = document.getElementById("sidebar");
 
     function closeAllDropdowns() {
         if (userDropdown) userDropdown.classList.remove("show");
@@ -75,13 +48,37 @@ function attachDropdownEvents() {
         });
     }
 
-    if (sidebarToggle && sidebar) {
-        sidebarToggle.addEventListener("click", function () {
-            sidebar.classList.toggle("show");
-        });
-    }
-
     document.addEventListener("click", function () {
         closeAllDropdowns();
+    });
+}
+
+function attachSidebarEvents() {
+    const menuToggle = document.getElementById("menuToggle");
+    const closeMenu = document.getElementById("closeMenu");
+    const sideMenu = document.getElementById("sideMenu");
+    const menuOverlay = document.getElementById("menuOverlay");
+
+    if (!menuToggle || !closeMenu || !sideMenu || !menuOverlay) {
+        console.error("Không tìm thấy các phần tử sidebar cần thiết!");
+        return;
+    }
+
+    // Mở menu
+    menuToggle.addEventListener("click", function () {
+        sideMenu.style.left = "0";
+        menuOverlay.style.display = "block";
+    });
+
+    // Đóng menu khi nhấn nút X
+    closeMenu.addEventListener("click", function () {
+        sideMenu.style.left = "-250px";
+        menuOverlay.style.display = "none";
+    });
+
+    // Đóng menu khi click ra ngoài lớp phủ
+    menuOverlay.addEventListener("click", function () {
+        sideMenu.style.left = "-250px";
+        menuOverlay.style.display = "none";
     });
 }

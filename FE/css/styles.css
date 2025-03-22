@@ -196,3 +196,78 @@ a:hover{
     max-height: 300px; /* Giới hạn chiều cao bảng, sẽ có thanh cuộn nếu vượt quá */
     overflow-y: auto;
 }
+/* Menu Overlay */
+#menuOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: none;
+    z-index: 998;
+}
+
+/* Sidebar Menu */
+.side-menu {
+    position: fixed;
+    top: 0;
+    left: -250px;
+    width: 250px;
+    height: 100%;
+    background: pink; /* Nền màu hồng */
+    transition: left 0.3s ease-in-out;
+    z-index: 999;
+    padding: 20px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+}
+
+/* Nút đóng menu */
+.btn-close {
+    color: #000;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    position: absolute;
+    right: 10px;
+    top: 10px;
+}
+
+/* Danh sách menu */
+.side-menu ul {
+    list-style: none;
+    padding: 0;
+    margin-top: 30px;
+}
+
+/* Các mục menu */
+.side-menu ul li {
+    padding: 10px 15px;
+}
+
+.side-menu ul li a {
+    margin-top: 15px;
+    color: black; /* Màu chữ đen */
+    display: block;
+    font-size: 16px;
+    transition: background 0.3s ease-in-out;
+}
+
+/* Hiệu ứng hover */
+.side-menu a:hover {
+    color:  red; /* Hover màu đỏ */
+}
+#menuToggle {
+    background-color: #ff66b2; /* Màu hồng */
+    color: #ffffff; /* Màu chữ trắng */
+    border: none; /* Xóa viền */
+    padding: 8px 12px; 
+    border-radius: 5px; /* Bo góc */
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+#menuToggle:hover {
+    background-color: #c82333; /* Màu đỏ khi hover */
+    transform: scale(1.05); /* Hiệu ứng phóng to nhẹ */
+    color: #fff; /* Giữ màu chữ trắng */
+}
