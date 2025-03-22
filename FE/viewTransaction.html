@@ -7,14 +7,34 @@
     <link rel="stylesheet" href="../FE/css/main.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
+<style>
+    .line-chart {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        max-width: 100%;
+    }
+    .line-chart canvas {
+        width: 100% !important;
+        height: auto !important;
+    }
+    
+</style>
 <body>
     <div id="header"></div>
     <div class="container mt-4">
         <h3 class="text-center">Thống kê tổng Quan</h3>
-        <canvas id="lineChart"></canvas>
+        <div class="line-chart">
+            <canvas id="lineChart"></canvas>
+        </div>
     </div>
     <div class="container mt-4">
-        <h2 class="mb-3 text-center">Danh sách Chi tiêu</h2>
+        <h2 class="mb-3 text-center">Danh sách chi tiêu & thu nhập</h2>
         <div class="table-container">
             <table class="table table-bordered table-striped text-center">
                 <thead class="table-dark">
