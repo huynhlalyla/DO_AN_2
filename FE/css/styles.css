@@ -182,9 +182,7 @@ a:hover{
     color: white;
     border-radius: 8px;
 }
-.form-control {
-    width: 350px !important;
-}
+
 .nav-tabs {
     padding: 5px;
 }
