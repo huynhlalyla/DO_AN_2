@@ -24,9 +24,7 @@
             cursor: pointer;
             transition: transform 0.2s ease-in-out;
         }
-        .form-control {
-            width: 350px !important;
-        }
+
         .book-container:hover { 
             transform: scale(1.05); 
             background-color: #e9ecef; 
@@ -41,6 +39,7 @@
             text-align: center;
         }
         .modal-content {
+            padding: 30px;
             border-radius: 10px;
         }
         .form-group {
@@ -82,8 +81,11 @@
                         </div>
                         <div class="form-group">
                             <label for="budgetAmount">Số tiền:</label>
-                            <input type="text" class="form-control" id="budgetAmount" required oninput="formatCurrency(this)">
-                        </div>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="budgetAmount" required oninput="formatCurrency(this)">
+                                <span class="input-group-text">VNĐ</span>
+                            </div>
+                        </div>                        
                         <div class="form-group">
                             <label for="startDate">Ngày bắt đầu:</label>
                             <input type="date" class="form-control" id="startDate" required>

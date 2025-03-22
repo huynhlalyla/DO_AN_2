@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Quản lý Chi tiêu</title>
+    <title>Quản lý Giao dịch</title>
     <link rel="stylesheet" href="../FE/css/main.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
@@ -17,7 +17,8 @@
         justify-content: center;
         align-items: center;
         width: 100%;
-        max-width: 100%;
+        max-width: 90%;
+        margin: auto;
     }
     .line-chart canvas {
         width: 100% !important;
@@ -28,7 +29,7 @@
 <body>
     <div id="header"></div>
     <div class="container mt-4">
-        <h3 class="text-center">Thống kê tổng Quan</h3>
+        <h3 class="text-center">Thống kê chi tiêu & thu nhập</h3>
         <div class="line-chart">
             <canvas id="lineChart"></canvas>
         </div>

@@ -16,23 +16,25 @@
             </div>
         </div>
         <div class="d-flex align-items-center">
-            <ul class="nav">
+            <ul class="nav d-flex flex-nowrap">
+                <li class="nav-item"><a class="nav-link" href="statistical.html">Thống kê</a></li>
                 <li class="nav-item"><a class="nav-link" href="transaction.html">Giao dịch</a></li>
                 <li class="nav-item"><a class="nav-link" href="budget.html">Ngân sách</a></li>
             </ul>
-            <div class="dropdown">
+            <div class="dropdown ms-2">
                 <button class="btn btn-primary dropdown-toggle" type="button" id="categoryMenu">
                     Danh mục
                 </button>
-                <ul class="dropdown-menu dropdown-menu-start mt-3 ms-n3">
+                <ul class="dropdown-menu dropdown-menu-start mt-3">
                     <li><a class="dropdown-item" href="expensex.html">Chi tiêu</a></li>
                     <li><a class="dropdown-item" href="income.html">Thu nhập</a></li>
                 </ul>
             </div>                
-            <div class="user-menu position-relative ms-3">
+            <div class="user-menu d-flex align-items-center ms-3">
                 <img id="userAvatar" src="../FE/image/user.png" alt="User Avatar" class="user-avatar">
-                <p id="userName" class="user-name">Tên người dùng</p>
+                <p id="userName" class="user-name" style="white-space:nowrap">Tên người dùng</p>
                 <div class="dropdown-menu text-center" id="userDropdown">
+                    <a class="dropdown-item" href="settings.html">Tài khoản</a>
                     <a class="dropdown-item" href="settings.html">Tùy chỉnh</a>
                     <a class="dropdown-item" href="#" id="logoutBtn">Đăng xuất</a>
                 </div>
