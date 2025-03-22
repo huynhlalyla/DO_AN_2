@@ -4,8 +4,8 @@ function loadPartials() {
         .then(data => {
             document.getElementById('header').innerHTML = data;
 
-            // Gán sự kiện dropdown sau khi header đã được load
-            attachDropdownEvents();
+            // Chờ DOM cập nhật xong rồi mới gán sự kiện
+            setTimeout(attachDropdownEvents, 100);
         });
 
     fetch('partials/footer.html')
@@ -15,15 +15,42 @@ function loadPartials() {
         });
 }
 
+document.addEventListener("DOMContentLoaded", loadPartials);
+
+function attachDropdownEvents() {
+    const sidebar = document.getElementById("sidebar");
+    const overlay = document.getElementById("overlay");
+    const toggleButton = document.getElementById("sidebarToggle");
+
+    if (!sidebar || !overlay || !toggleButton) {
+        console.error("Không tìm thấy sidebar hoặc overlay!");
+        return;
+    }
+
+    // Mở hoặc đóng sidebar khi nhấn nút
+    toggleButton.addEventListener("click", function () {
+        const isOpen = sidebar.classList.contains("show");
+        sidebar.classList.toggle("show");
+        overlay.classList.toggle("show", !isOpen);
+    });
+
+    // Đóng sidebar khi nhấn vào overlay
+    overlay.addEventListener("click", function () {
+        sidebar.classList.remove("show");
+        overlay.classList.remove("show");
+    });
+}
+
 // Gọi khi trang đã tải xong
 document.addEventListener("DOMContentLoaded", loadPartials);
 
-// Hàm gán sự kiện dropdown
 function attachDropdownEvents() {
     const userMenu = document.querySelector(".user-menu");
     const userDropdown = document.getElementById("userDropdown");
     const categoryMenu = document.getElementById("categoryMenu");
     const categoryDropdown = document.querySelector(".dropdown-menu");
+    const sidebarToggle = document.getElementById("sidebarToggle");
+    const sidebar = document.getElementById("sidebar");
 
     function closeAllDropdowns() {
         if (userDropdown) userDropdown.classList.remove("show");
@@ -45,6 +72,12 @@ function attachDropdownEvents() {
             const isOpen = categoryDropdown.classList.contains("show");
             closeAllDropdowns();
             if (!isOpen) categoryDropdown.classList.add("show");
+        });
+    }
+
+    if (sidebarToggle && sidebar) {
+        sidebarToggle.addEventListener("click", function () {
+            sidebar.classList.toggle("show");
         });
     }
 
