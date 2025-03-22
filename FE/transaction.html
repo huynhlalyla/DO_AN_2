@@ -8,47 +8,7 @@
     <link rel="stylesheet" href="../FE/css/main.css">
 </head>
 <body>
-    <div class="container-fluid mt-3">
-        <div class="d-flex align-items-center justify-content-between nav-tabs">
-            <!-- Logo & Trang chủ -->
-            <div class="d-flex align-items-center">
-                <div class="text-start mb-3  d-md-flex align-items-center">
-                    <img src="../FE/css/image/logo.png" alt="Logo" class="logo">
-                </div>
-            </div>
-            <div class="flex-grow-1 mx-4 d-flex justify-content-center">
-                <div class="input-group" style="max-width: 400px; width: 100%;">
-                    <input type="text" class="form-control" placeholder="Tìm kiếm..." id="searchInput">
-                    <button class="btn btn-outline-secondary" type="button" id="searchButton">
-                        <i class="bi bi-search"></i>
-                    </button>
-                </div>
-            </div>
-            <div class="d-flex align-items-center">
-                <ul class="nav">
-                    <li class="nav-item"><a class="nav-link" href="transaction.html">Giao dịch</a></li>
-                    <li class="nav-item"><a class="nav-link" href="">Ngân sách</a></li>
-                </ul>
-                <div class="dropdown">
-                    <button class="btn btn-primary dropdown-toggle" type="button" id="categoryMenu">
-                        Danh mục
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-start mt-3 ms-n3">
-                        <li><a class="dropdown-item" href="expensex.html">Chi tiêu</a></li>
-                        <li><a class="dropdown-item" href="income.html">Thu nhập</a></li>
-                    </ul>
-                </div>                
-                <div class="user-menu position-relative ms-3">
-                    <img id="userAvatar" src="../FE/image/user.png" alt="User Avatar" class="user-avatar">
-                    <p id="userName" class="user-name">Tên người dùng</p>
-                    <div class="dropdown-menu text-center" id="userDropdown">
-                        <a class="dropdown-item" href="settings.html">Tùy chỉnh</a>
-                        <a class="dropdown-item" href="#" id="logoutBtn">Đăng xuất</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    <div id="header"></div>
     <div class="container mt-4">
         <div class="row justify-content-center">
             <div class="col-md-6 col-lg-5">
@@ -101,6 +61,7 @@
             </div>
         </div>
     </div>
+    <div id="footer"></div>
 <script src="../FE/js/main.js"></script>
 </body>
 </html>

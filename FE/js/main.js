@@ -1,53 +1,54 @@
-document.addEventListener("DOMContentLoaded", function () {
+function loadPartials() {
+    fetch('partials/header.html')
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById('header').innerHTML = data;
+
+            // Gán sự kiện dropdown sau khi header đã được load
+            attachDropdownEvents();
+        });
+
+    fetch('partials/footer.html')
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById('footer').innerHTML = data;
+        });
+}
+
+// Gọi khi trang đã tải xong
+document.addEventListener("DOMContentLoaded", loadPartials);
+
+// Hàm gán sự kiện dropdown
+function attachDropdownEvents() {
     const userMenu = document.querySelector(".user-menu");
     const userDropdown = document.getElementById("userDropdown");
     const categoryMenu = document.getElementById("categoryMenu");
     const categoryDropdown = document.querySelector(".dropdown-menu");
 
-    // Hàm đóng tất cả dropdowns
     function closeAllDropdowns() {
-        userDropdown.classList.remove("show");
-        categoryDropdown.classList.remove("show");
+        if (userDropdown) userDropdown.classList.remove("show");
+        if (categoryDropdown) categoryDropdown.classList.remove("show");
     }
 
-    // Toggle dropdown User
-    userMenu.addEventListener("click", function (event) {
-        event.stopPropagation();
-        const isOpen = userDropdown.classList.contains("show");
-        closeAllDropdowns();
-        if (!isOpen) userDropdown.classList.add("show");
-    });
+    if (userMenu && userDropdown) {
+        userMenu.addEventListener("click", function (event) {
+            event.stopPropagation();
+            const isOpen = userDropdown.classList.contains("show");
+            closeAllDropdowns();
+            if (!isOpen) userDropdown.classList.add("show");
+        });
+    }
 
-    // Toggle dropdown Category
-    categoryMenu.addEventListener("click", function (event) {
-        event.stopPropagation();
-        const isOpen = categoryDropdown.classList.contains("show");
-        closeAllDropdowns();
-        if (!isOpen) categoryDropdown.classList.add("show");
-    });
+    if (categoryMenu && categoryDropdown) {
+        categoryMenu.addEventListener("click", function (event) {
+            event.stopPropagation();
+            const isOpen = categoryDropdown.classList.contains("show");
+            closeAllDropdowns();
+            if (!isOpen) categoryDropdown.classList.add("show");
+        });
+    }
 
-    // Ẩn dropdown khi click ra ngoài
     document.addEventListener("click", function () {
         closeAllDropdowns();
     });
-
-    document.getElementById("logoutBtn").addEventListener("click", async function (event) {
-        event.preventDefault(); // Ngăn chặn chuyển trang mặc định
-    
-        try {
-            const response = await fetch("http://localhost:3000/user/logout", {
-                method: "GET",
-                credentials: "include" // Đảm bảo cookie session được gửi kèm
-            });
-    
-            if (response.ok) {
-                window.location.href = "auth.html"; // Chuyển hướng về trang đăng nhập
-            } else {
-                console.error("Đăng xuất thất bại");
-            }
-        } catch (error) {
-            console.error("Lỗi khi đăng xuất:", error);
-        }
-    });
-});
-
+}

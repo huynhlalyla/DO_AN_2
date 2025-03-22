@@ -23,3 +23,13 @@ body {
     width: 50px; 
     height: auto;
 }
+footer {
+    background: #ffb4cd !important; /* Hồng */
+    color: black !important; /* Chữ đen */
+    padding: 20px 0 !important;
+}
+
+footer a:hover {
+    text-decoration: underline !important;
+    color: #ff0000 !important;
+}
