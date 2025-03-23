@@ -19,7 +19,7 @@
             justify-content: center;
             align-items: center;
             width: 100%;
-            max-width: 90%;
+            max-width: 70%;
             margin: auto;
         }
         .chart-container canvas {
@@ -38,11 +38,17 @@
             </div>
         </div>
     <div class="container " style="padding-top: 20px;">
-        <h2 class="text-center mb-4">Danh sách Ngân sách</h2>
+        <h2 class="text-center">Danh sách ngân sách</h2>
+        <div class="d-flex align-items-center justify-content-between mb-3">
+            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addBudgetModal">
+                + Thêm
+            </button>
+        </div>
         <table class="table table-bordered table-striped">
             <thead class="table-dark">
                 <tr>
                     <th>Tên</th>
+                    <th>Danh mục chi tiêu</th>
                     <th>Số tiền</th>
                     <th>Ngày bắt đầu</th>
                     <th>Ngày kết thúc</th>
@@ -52,6 +58,7 @@
             <tbody id="budget-list">
                 <tr>
                     <td>Ngân sách Tháng 3</td>
+                    <td>Ăn uống</td>
                     <td>2.000.000</td>
                     <td>2025-03-01</td>
                     <td>2025-03-31</td>
@@ -62,27 +69,8 @@
                 </tr>
                 <tr>
                     <td>Ngân sách Tháng 4</td>
+                    <td>Mua sắm</td>
                     <td>2.000.000</td>
-                    <td>2025-03-01</td>
-                    <td>2025-03-31</td>
-                    <td class="actions">
-                        <button class="btn btn-warning btn-sm" >Sửa</button>
-                        <button class="btn btn-danger btn-sm" >Xóa</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>Ngân sách Tháng 3</td>
-                    <td>10.000.000</td>
-                    <td>2025-03-01</td>
-                    <td>2025-03-31</td>
-                    <td class="actions">
-                        <button class="btn btn-warning btn-sm" >Sửa</button>
-                        <button class="btn btn-danger btn-sm" >Xóa</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>Ngân sách Tháng 3</td>
-                    <td>1.000.000</td>
                     <td>2025-03-01</td>
                     <td>2025-03-31</td>
                     <td class="actions">
@@ -93,6 +81,54 @@
             </tbody>
         </table>
     </div>
+<!-- Modal thêm ngân sách -->
+<div class="modal fade" id="addBudgetModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header text-center w-100">
+                <h5 class="modal-title w-100">Thêm ngân sách</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4">
+                <form>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Tên ngân sách</label>
+                        <input type="text" class="form-control" placeholder="Nhập tên ngân sách">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Danh mục</label>
+                        <select class="form-select">
+                            <option selected disabled>Chọn danh mục</option>
+                            <option>Ăn uống</option>
+                            <option>Mua sắm</option>
+                            <option>Giải trí</option>
+                            <option>Học tập</option>
+                            <option>Khác</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Số tiền</label>
+                        <input type="number" class="form-control" placeholder="Nhập số tiền">
+                    </div>
+                    <div class="row">
+                        <div class="col mb-3">
+                            <label class="form-label fw-bold">Ngày bắt đầu</label>
+                            <input type="date" class="form-control">
+                        </div>
+                        <div class="col mb-3">
+                            <label class="form-label fw-bold">Ngày kết thúc</label>
+                            <input type="date" class="form-control">
+                        </div>
+                    </div>
+                    <div class="text-center mt-3">
+                        <button type="submit" class="btn btn-success px-4 py-2">Thêm</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
     </main>
     <div id="footer"></div>
     <script src="../FE/js/main.js"></script>
@@ -100,67 +136,70 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         function drawChart() {
-            let labels = [];
-            let data = [];
-            let colors = [];
-            let dateRanges = [];
-    
-            // Mảng màu sắc khác nhau
-            const colorPalette = [
-                "rgba(255, 99, 132, 0.8)", "rgba(54, 162, 235, 0.8)", 
-                "rgba(255, 206, 86, 0.8)", "rgba(75, 192, 192, 0.8)", 
-                "rgba(153, 102, 255, 0.8)", "rgba(255, 159, 64, 0.8)",
-                "rgba(0, 128, 128, 0.8)", "rgba(128, 0, 128, 0.8)"
-            ];
-    
-            // Lấy dữ liệu từ bảng HTML
-            document.querySelectorAll("#budget-list tr").forEach((row, index) => {
-                const name = row.children[0].textContent;  // Cột "Tên"
-                const amount = parseInt(row.children[1].textContent.replace(/\./g, ''));  // Cột "Số tiền"
-                const startDate = row.children[2].textContent;  // Ngày bắt đầu
-                const endDate = row.children[3].textContent;  // Ngày kết thúc
-    
-                labels.push(name);
-                data.push(amount);
-                dateRanges.push(`Từ ${startDate} đến ${endDate}`);
-                colors.push(colorPalette[index % colorPalette.length]); // Gán màu sắc khác nhau cho mỗi cột
-            });
-    
-            // Vẽ biểu đồ bằng Chart.js
-            const ctx = document.getElementById("budgetChart").getContext("2d");
-            new Chart(ctx, {
-                type: "bar",
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: "Ngân sách (VNĐ)",
-                        data: data,
-                        backgroundColor: colors,
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: { display: false }, // Ẩn chú thích màu cột
-                        tooltip: {
-                            callbacks: {
-                                label: function (tooltipItem) {
-                                    const index = tooltipItem.dataIndex;
-                                    return `Số tiền: ${data[index].toLocaleString()} VNĐ\n${dateRanges[index]}`;
-                                }
-                            }
+    let categoryMap = {}; // Đối tượng để lưu tổng số tiền theo danh mục
+
+    // Mảng màu sắc khác nhau
+    const colorPalette = [
+        "rgba(255, 99, 132, 0.8)", "rgba(54, 162, 235, 0.8)", 
+        "rgba(255, 206, 86, 0.8)", "rgba(75, 192, 192, 0.8)", 
+        "rgba(153, 102, 255, 0.8)", "rgba(255, 159, 64, 0.8)",
+        "rgba(0, 128, 128, 0.8)", "rgba(128, 0, 128, 0.8)"
+    ];
+
+    // Lấy dữ liệu từ bảng HTML
+    document.querySelectorAll("#budget-list tr").forEach((row) => {
+        const category = row.children[1].textContent.trim(); // Cột "Danh mục chi tiêu"
+        const amount = parseInt(row.children[2].textContent.replace(/\./g, '').trim()); // Cột "Số tiền"
+
+        if (!isNaN(amount)) {
+            if (categoryMap[category]) {
+                categoryMap[category] += amount;
+            } else {
+                categoryMap[category] = amount;
+            }
+        }
+    });
+
+    // Chuyển đổi dữ liệu thành mảng cho Chart.js
+    const labels = Object.keys(categoryMap);
+    const data = Object.values(categoryMap);
+    const colors = labels.map((_, index) => colorPalette[index % colorPalette.length]); // Gán màu sắc khác nhau
+
+    // Vẽ biểu đồ bằng Chart.js
+    const ctx = document.getElementById("budgetChart").getContext("2d");
+    new Chart(ctx, {
+        type: "bar",
+        data: {
+            labels: labels,
+            datasets: [{
+                label: "Ngân sách theo danh mục (VNĐ)",
+                data: data,
+                backgroundColor: colors,
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { display: false }, // Ẩn chú thích màu cột
+                tooltip: {
+                    callbacks: {
+                        label: function (tooltipItem) {
+                            return `Số tiền: ${data[tooltipItem.dataIndex].toLocaleString()} VNĐ`;
                         }
-                    },
-                    scales: {
-                        y: { beginAtZero: true }
                     }
                 }
-            });
+            },
+            scales: {
+                y: { beginAtZero: true }
+            }
         }
-    
-        // Gọi hàm vẽ biểu đồ khi trang tải xong
-        document.addEventListener("DOMContentLoaded", drawChart);
+    });
+}
+
+// Gọi hàm vẽ biểu đồ khi trang tải xong
+document.addEventListener("DOMContentLoaded", drawChart);
+
     </script>
 </body>
 </html>

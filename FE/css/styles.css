@@ -117,6 +117,7 @@ a:hover{
 }
 
 .category {
+    position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -267,7 +268,148 @@ a:hover{
 }
 
 #menuToggle:hover {
-    background-color: #c82333; /* Màu đỏ khi hover */
+    background-color: #f34a99; /* Màu đỏ khi hover */
     transform: scale(1.05); /* Hiệu ứng phóng to nhẹ */
     color: #fff; /* Giữ màu chữ trắng */
+}
+/* Căn chỉnh dropdown thông báo */
+#notificationDropdown {
+    display: none;
+    top: 65px;
+    position: absolute;
+    right: 0;
+    background: white;
+    border: 1px solid #ddd;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.15);
+    border-radius: 8px;
+    width: 300px; /* Đặt chiều rộng cố định */
+    max-height: 400px; /* Đặt chiều cao tối đa */
+    overflow-y: auto; /* Hiển thị thanh cuộn khi nội dung vượt quá */
+    overflow-x: hidden; /* Ẩn thanh cuộn ngang */
+    white-space: normal; /* Cho phép nội dung xuống dòng */
+
+}
+.notification-icon {
+    margin:0px 10px;
+    padding-top: 6px;
+}
+/* Hiển thị dropdown khi mở */
+#notificationDropdown.show {
+    display: block;
+}
+
+/* Header thông báo */
+.notification-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 10px;
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 10px;
+}
+
+.notification-item {
+    display: flex;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.notification-item:last-child {
+    border-bottom: none; /* Bỏ viền dưới cho item cuối */
+}
+
+.notification-item a {
+    display: block;
+    white-space: normal; /* Cho phép xuống dòng */
+    word-wrap: break-word; /* Xuống dòng khi quá dài */
+}
+
+/* Điều chỉnh icon thông báo */
+.notification-item i {
+    margin-right: 8px;
+}
+.notification-item:hover {
+    background: #f8f9fa;
+}
+
+
+/* Chỉnh lại badge thông báo */
+#notificationBadge {
+    font-size: 12px;
+    padding: 5px 7px;
+    border-radius: 50%;
+}
+/* Thay đổi nền của nút thông báo */
+#notificationBtn {
+    background-color: #ff66b2 !important; /* Màu hồng đậm */
+    color: white; /* Màu chữ trắng để dễ nhìn */
+    border: none; /* Loại bỏ viền */
+}
+
+#notificationBtn:hover {
+    background-color: #f34a99 !important; /* Hồng nhạt hơn khi hover */
+}
+
+/* Thay đổi nền của nút xóa tất cả */
+#clearNotifications {
+    background-color: #ff66b2 !important; /* Hồng đậm */
+    color: white; /* Màu chữ trắng */
+    border: none; /* Loại bỏ viền */
+}
+
+#clearNotifications:hover {
+    background-color: #f34a99 !important; /* Hồng nhạt khi hover */
+}
+.delete-button-wrapper {
+    display: flex;
+    justify-content: center; /* Canh giữa */
+    margin: 20px auto;
+    padding: 10px;
+    background-color: white; /* Nền trắng */
+    border: 1px solid rgb(206, 206, 206); /* Viền xám */
+    border-radius: 8px; /* Bo góc */
+    width: fit-content;
+}
+
+#deleteButton {
+    background-color: rgb(224, 59, 59); /* Nền đỏ */
+    color: rgb(0, 0, 0);
+    padding: 5px 10px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+#deleteButton i {
+    font-size: 19px;
+}
+
+#deleteButton:hover {
+    background-color: rgb(202, 42, 42); /* Hiệu ứng hover */
+}
+
+.delete-icon {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: #d82424;
+    color: white;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;  /* Căn giữa theo chiều dọc */
+    justify-content: center; /* Căn giữa theo chiều ngang */
+    font-size: 16px; /* Điều chỉnh kích thước chữ */
+    font-weight: bold;
+    cursor: pointer;
+    display: none;
+}
+
+.delete-icon:hover{
+    background-color: #ff0000;
 }

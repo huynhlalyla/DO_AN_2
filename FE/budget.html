@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="../FE/css/main.css">
     <style>
         .book-container {
+            position: relative;
             width: 150px;             
             height: 200px;              
             min-width: 150px;              
@@ -56,6 +57,12 @@
 </head>
 <body>
 <div id="header"></div>
+    <div class="delete-button-wrapper">
+        <button id="deleteButton">
+            <i class="bi bi-trash"></i></i> Xóa
+        </button>
+    </div>
+
     <div class="container">
         <div class="row" id="budgetSection">
             <div class="book-container" onclick="openBudgetForm(this)">
@@ -79,6 +86,19 @@
                             <label for="budgetName">Tên ngân sách:</label>
                             <input type="text" class="form-control" id="budgetName" required>
                         </div>
+                        <div class="form-group">
+                            <label for="budgetCategory">Danh mục chi tiêu:</label>
+                            <select class="form-control" id="budgetCategory" required>
+                                <option value="" disabled selected>Chọn danh mục</option>
+                                <option value="an_uong">Ăn uống</option>
+                                <option value="di_chuyen">Di chuyển</option>
+                                <option value="mua_sam">Mua sắm</option>
+                                <option value="giai_tri">Giải trí</option>
+                                <option value="suc_khoe">Sức khỏe</option>
+                                <option value="khac">Khác</option>
+                            </select>
+                        </div>
+                        
                         <div class="form-group">
                             <label for="budgetAmount">Số tiền:</label>
                             <div class="input-group">
@@ -127,23 +147,26 @@
             let amount = document.getElementById("budgetAmount").value;
             let startDate = document.getElementById("startDate").value;
             let endDate = document.getElementById("endDate").value;
+            let category = document.getElementById("budgetCategory").value; // Lấy danh mục
         
-            if (name && amount && startDate && endDate) {
-                // Gán dữ liệu và chuyển sang trang chi tiết khi click vào
-                currentElement.innerHTML = `<div class='budget'><strong>${name}</strong></div>`;
-                currentElement.onclick = function () {
-                    window.location.href = `managerBudget.html?name=${encodeURIComponent(name)}&amount=${encodeURIComponent(amount)}&start=${encodeURIComponent(startDate)}&end=${encodeURIComponent(endDate)}`;
-                };
-        
-                // Đóng modal
-                let modal = bootstrap.Modal.getInstance(document.getElementById('budgetModal'));
-                modal.hide();
-        
-                createNewBook();
-            } else {
+            if (!name || !amount || !startDate || !endDate || category === "") {
                 alert("Vui lòng nhập đầy đủ thông tin!");
+                return;
             }
+        
+            // Gán dữ liệu và chuyển sang trang chi tiết khi click vào
+            currentElement.innerHTML = `<div class='budget'><strong>${name}</strong></div>`;
+            currentElement.onclick = function () {
+                window.location.href = `managerBudget.html?name=${encodeURIComponent(name)}&amount=${encodeURIComponent(amount)}&start=${encodeURIComponent(startDate)}&end=${encodeURIComponent(endDate)}&category=${encodeURIComponent(category)}`;
+            };
+        
+            // Đóng modal
+            let modal = bootstrap.Modal.getInstance(document.getElementById('budgetModal'));
+            modal.hide();
+        
+            createNewBook();
         }
+        
         
         function createNewBook() {
             let newBook = document.createElement("div");
