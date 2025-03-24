@@ -24,10 +24,16 @@ body {
     width: 50px; 
     height: auto;
 }
+.main-content {
+    flex: 1; /* Đẩy footer xuống nếu nội dung ít */
+}
 footer {
     background: #ffb4cd !important; /* Hồng */
     color: black !important; /* Chữ đen */
     padding: 20px 0 !important;
+    position: relative;
+    width: 100%;
+    bottom: 0;
 }
 
 footer a:hover {

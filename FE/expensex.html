@@ -8,17 +8,8 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
     <link rel="stylesheet" href="../FE/css/main.css">
 </head>
-<style>
-    .row.text-center .btn {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 5px; /* Khoảng cách giữa icon và chữ */
-    }
-    
-</style>
 <body>
-    <div id="header"></div>
+<div id="header"></div>
     <div class="container mt-4">
         <div class="card">
             <div class="card-header text-center text-white" style="background-color:rgb(255, 182, 233);    border: 1px solid rgb(145, 145, 145);">
@@ -27,79 +18,65 @@
             <div class="card-body">
                 <div class="row text-center">
                     <div class="col-4">
-                        <button class="btn btn-success w-100" style="color: black;"><i class="bi bi-plus-circle"></i> Thêm</button>
+                        <button class="btn btn-success w-100"><i class="bi bi-plus-circle"></i> Thêm</button>
                     </div>
                     <div class="col-4">
                         <button class="btn btn-warning w-100"><i class="bi bi-pencil-square"></i> Sửa</button>
                     </div>
                     <div class="col-4">
-                        <button id="deleteButton" class="btn btn-danger w-100"><i class="bi bi-trash"></i> Xóa</button>
+                        <button class="btn btn-danger w-100"><i class="bi bi-trash"></i> Xóa</button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <!-- Danh mục chi tiêu -->
-    <div class="mt-3 category-container">
-        <div class="row justify-content-start">
-            <div class="col-6 col-md-4 col-lg-2 d-flex flex-column align-items-center">
-                <div class="category">
-                    <div class="category-item" data-url="education.html">
-                        <img src="../FE/css/image/icon1.png" alt="Học tập">
+    <div class="container mt-3">
+        <div class="category-container">
+            <div class="row justify-content-center">
+                <div class="col-6 col-md-4 col-lg-3 d-flex flex-column align-items-center">
+                    <div class="category">
+                        <div class="category-item">
+                            <img src="../FE/image/entertainment.png" alt="Giải trí">
+                        </div>
+                        <p class="category-text">Giải trí</p>
                     </div>
-                    <p class="category-text">Học tập</p>
                 </div>
-            </div>
-            <div class="col-6 col-md-4 col-lg-2 d-flex flex-column align-items-center">
-                <div class="category">
-                    <div class="category-item">
-                        <img src="../FE/image/transport.png" alt="Giao thông">
+                <div class="col-6 col-md-4 col-lg-3 d-flex flex-column align-items-center">
+                    <div class="category">
+                        <div class="category-item" data-url="education.html">
+                            <img src="../FE/css/image/icon1.png" alt="Học tập">
+                        </div>
+                        <p class="category-text">Học tập</p>
                     </div>
-                    <p class="category-text">Giao thông</p>
                 </div>
-            </div>
-            <div class="col-6 col-md-4 col-lg-2 d-flex flex-column align-items-center">
-                <div class="category">
-                    <div class="category-item">
-                        <img src="../FE/image/food.png" alt="Đồ ăn">
+                <div class="col-6 col-md-4 col-lg-3 d-flex flex-column align-items-center">
+                    <div class="category">
+                        <div class="category-item">
+                            <img src="../FE/image/entertainment.png" alt="Giải trí">
+                        </div>
+                        <p class="category-text">Giải trí</p>
                     </div>
-                    <p class="category-text">Đồ ăn</p>
+                </div>
+                <div class="col-6 col-md-4 col-lg-3 d-flex flex-column align-items-center">
+                    <div class="category">
+                        <div class="category-item">
+                            <img src="../FE/image/transport.png" alt="Giao thông">
+                        </div>
+                        <p class="category-text">Giao thông</p>
+                    </div>
+                </div>
+                <div class="col-6 col-md-4 col-lg-3 d-flex flex-column align-items-center">
+                    <div class="category">
+                        <div class="category-item">
+                            <img src="../FE/image/transport.png" alt="Giao thông">
+                        </div>
+                        <p class="category-text">Giao thông</p>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
-<div id="footer"></div>
-<script src="../FE/js/main.js"></script>
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-    let isDeleteMode = false; // Trạng thái xóa
-
-    document.getElementById("deleteButton").addEventListener("click", function () {
-        isDeleteMode = !isDeleteMode; // Bật/tắt chế độ xóa
-        let categories = document.querySelectorAll(".category");
-
-        categories.forEach(category => {
-            let deleteIcon = category.querySelector(".delete-icon");
-
-            if (!deleteIcon) {
-                deleteIcon = document.createElement("div");
-                deleteIcon.className = "delete-icon";
-                deleteIcon.innerHTML = "&#8722;"; // Dấu "−" Unicode (dấu trừ)
-
-                deleteIcon.onclick = function (event) {
-                    event.stopPropagation(); // Ngăn chặn sự kiện click lan ra ngoài
-                    category.parentElement.remove(); // Xóa danh mục
-                };
-
-                category.appendChild(deleteIcon);
-            }
-
-            deleteIcon.style.display = isDeleteMode ? "flex" : "none";
-        });
-    });
-});
-
-</script>        
+<div id="footer"></div> 
+    <script src="../FE/js/main.js"></script>
 </body>
 </html>

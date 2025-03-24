@@ -121,78 +121,68 @@
         </div>
     </div>
 </div>
-
-    </main>
-    <div id="footer"></div>
-    <script src="../FE/js/main.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-        function drawChart() {
-    let categoryMap = {}; // Đối tượng để lưu tổng số tiền theo danh mục
-
-    // Mảng màu sắc khác nhau
-    const colorPalette = [
-        "rgba(255, 99, 132, 0.8)", "rgba(54, 162, 235, 0.8)", 
-        "rgba(255, 206, 86, 0.8)", "rgba(75, 192, 192, 0.8)", 
-        "rgba(153, 102, 255, 0.8)", "rgba(255, 159, 64, 0.8)",
-        "rgba(0, 128, 128, 0.8)", "rgba(128, 0, 128, 0.8)"
-    ];
-
-    // Lấy dữ liệu từ bảng HTML
-    document.querySelectorAll("#budget-list tr").forEach((row) => {
-        const category = row.children[1].textContent.trim(); // Cột "Danh mục chi tiêu"
-        const amount = parseInt(row.children[2].textContent.replace(/\./g, '').trim()); // Cột "Số tiền"
-
-        if (!isNaN(amount)) {
-            if (categoryMap[category]) {
-                categoryMap[category] += amount;
-            } else {
-                categoryMap[category] = amount;
+</main>
+<div id="footer"></div>
+<script src="../FE/js/main.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    function drawChart() {
+        let categoryMap = {};
+    
+        const colorPalette = [
+            "rgba(255, 99, 132, 0.8)", "rgba(54, 162, 235, 0.8)", 
+            "rgba(255, 206, 86, 0.8)", "rgba(75, 192, 192, 0.8)", 
+            "rgba(153, 102, 255, 0.8)", "rgba(255, 159, 64, 0.8)",
+            "rgba(0, 128, 128, 0.8)", "rgba(128, 0, 128, 0.8)"
+        ];
+    
+        document.querySelectorAll("#budget-list tr").forEach((row) => {
+            const category = row.children[0].textContent.trim(); // Lấy tên ngân sách đúng cột
+            const amountText = row.children[1].textContent.replace(/\./g, '').trim(); // Lấy số tiền đúng cột
+            const amount = parseInt(amountText);
+    
+            if (!isNaN(amount)) {
+                categoryMap[category] = (categoryMap[category] || 0) + amount;
             }
-        }
-    });
-
-    // Chuyển đổi dữ liệu thành mảng cho Chart.js
-    const labels = Object.keys(categoryMap);
-    const data = Object.values(categoryMap);
-    const colors = labels.map((_, index) => colorPalette[index % colorPalette.length]); // Gán màu sắc khác nhau
-
-    // Vẽ biểu đồ bằng Chart.js
-    const ctx = document.getElementById("budgetChart").getContext("2d");
-    new Chart(ctx, {
-        type: "bar",
-        data: {
-            labels: labels,
-            datasets: [{
-                label: "Ngân sách theo danh mục (VNĐ)",
-                data: data,
-                backgroundColor: colors,
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: { display: false }, // Ẩn chú thích màu cột
-                tooltip: {
-                    callbacks: {
-                        label: function (tooltipItem) {
-                            return `Số tiền: ${data[tooltipItem.dataIndex].toLocaleString()} VNĐ`;
+        });
+    
+        const labels = Object.keys(categoryMap);
+        const data = Object.values(categoryMap);
+        const colors = labels.map((_, index) => colorPalette[index % colorPalette.length]);
+    
+        const ctx = document.getElementById("budgetChart").getContext("2d");
+        new Chart(ctx, {
+            type: "bar",
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: "Ngân sách theo danh mục (VNĐ)",
+                    data: data,
+                    backgroundColor: colors,
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: function (tooltipItem) {
+                                return `Số tiền: ${data[tooltipItem.dataIndex].toLocaleString()} VNĐ`;
+                            }
                         }
                     }
+                },
+                scales: {
+                    y: { beginAtZero: true }
                 }
-            },
-            scales: {
-                y: { beginAtZero: true }
             }
-        }
-    });
-}
-
-// Gọi hàm vẽ biểu đồ khi trang tải xong
-document.addEventListener("DOMContentLoaded", drawChart);
-
-    </script>
+        });
+    }
+    
+    document.addEventListener("DOMContentLoaded", drawChart);
+</script>
 </body>
 </html>
