@@ -99,23 +99,40 @@ a:hover{
     font-weight: bold;
     border-radius: 5px;
 }
-
-.category-text {
-    width: 100%;
-    text-align: center; 
-    padding-bottom: 30px;             
-    font-size: 18px;
-    font-weight: bold;
+/* Tùy chỉnh thanh cuộn */
+.category-container::-webkit-scrollbar {
+    width: 10px;
 }
 
+/* Màu nền của thanh cuộn */
+.category-container::-webkit-scrollbar-track {
+    background: #ffe6ec;
+    border-radius: 10px;
+}
+
+/* Màu của nút cuộn (phần di chuyển) */
+.category-container::-webkit-scrollbar-thumb {
+    background: #ffb0d8;
+    border-radius: 10px;
+}
+
+/* Hiệu ứng khi rê chuột vào nút cuộn */
+.category-container::-webkit-scrollbar-thumb:hover {
+    background: #ff80b0;
+}
+
+/* Giới hạn chiều cao danh mục */
 .category-container {
-    max-height: 550px;
-    padding: 10px;
+    max-height: 800px; /* Giới hạn chiều cao */
+    overflow-y: auto;  /* Thanh cuộn dọc */
+    padding: 30px;
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
+    border-radius: 10px;
 }
 
+/* Các phần còn lại giữ nguyên */
 .category {
     position: relative;
     display: flex;
@@ -123,11 +140,12 @@ a:hover{
     align-items: center;
     justify-content: center;
     text-align: center;
+    margin: 30px;
 }
 
 .category-item {
-    width: 100px;
-    height: 100px;
+    width: 170px;
+    height: 170px;
     border-radius: 50%;
     background: #ffccdd;
     display: flex;
@@ -144,11 +162,13 @@ a:hover{
     object-fit: contain;
 }
 
+/* Hiệu ứng hover */
 .category-item:hover {
     cursor: pointer;
     background: #ffb0d8;
     transform: scale(1.1);
 }
+
 .btn-primary.dropdown-toggle {
     background-color: #ffccdd!important;  
     border: none;

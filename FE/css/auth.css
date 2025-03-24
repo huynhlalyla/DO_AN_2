@@ -9,7 +9,7 @@ body {
     position: absolute;
     top: 10px;  /* Điều chỉnh khoảng cách với mép trên */
     left: 20px; /* Đưa logo về góc trái */
-    width: 70px; /* Tăng kích thước logo */
+    width: 90px; /* Tăng kích thước logo */
     height: auto; /* Giữ tỷ lệ ảnh */
 }
 
