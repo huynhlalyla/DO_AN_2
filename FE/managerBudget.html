@@ -76,6 +76,9 @@
                     </td>
                 </tr>
             </tbody>
+            <tr id="no-data" style="display: none;">
+                <td colspan="5" class="text-center text-muted">Chưa có ngân sách nào</td>
+            </tr>
         </table>
     </div>
 <!-- Modal thêm ngân sách -->
@@ -127,6 +130,27 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
+    function checkEmptyBudget() {
+        const budgetList = document.getElementById("budget-list");
+        const noDataRow = document.getElementById("no-data");
+
+        if (budgetList.children.length === 0) {
+            noDataRow.style.display = "table-row";
+        } else {
+            noDataRow.style.display = "none";
+        }
+    }
+
+    // Gọi hàm kiểm tra ngay khi trang tải
+    checkEmptyBudget();
+
+    // Giả lập khi xóa ngân sách (bạn cần thêm sự kiện này vào nút "Xóa")
+    document.querySelectorAll(".btn-danger").forEach(button => {
+        button.addEventListener("click", function() {
+            this.closest("tr").remove();
+            checkEmptyBudget();
+        });
+    });
     function drawChart() {
         let categoryMap = {};
     
