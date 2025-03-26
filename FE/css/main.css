@@ -25,6 +25,7 @@ body {
     height: auto;
 }
 footer {
+    position: relative;
     background: #ffb4cd !important; /* Hồng */
     color: black !important; /* Chữ đen */
     padding: 20px 0 !important;

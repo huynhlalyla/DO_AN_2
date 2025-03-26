@@ -31,19 +31,19 @@
             <div class="col-md-4">
                 <div class="card bg-danger text-white">
                     <h4>Tổng Chi Phí</h4>
-                    <h6 id="total-expense">500,000 đ</h6>
+                    <h6 id="total-expense"></h6>
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="card bg-success text-white">
                     <h4>Tổng Thu Nhập</h4>
-                    <h6 id="total-income">1,200,000 đ</h6>
+                    <h6 id="total-income"></h6>
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="card bg-primary text-white">
                     <h4>Số Dư</h4>
-                    <h6 id="balance">700,000 đ</h6>
+                    <h6 id="balance"></h6>
                 </div>
             </div>
         </div>
@@ -80,11 +80,59 @@
     </div>
 <div id="footer"></div>
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
+    document.addEventListener("DOMContentLoaded", async function () {
+        //khởi tạo 2 biến để lưu thu nhập và chi tiêu
+        let INCOME = [];
+        let EXPENSE = [];
+
+
+        //call API để lấy dữ liệu giao dịch của người dùng bằng đối tương report
+        //call API dựa trên user_id(lúc đăng nhập có)
+        const response = await fetch('http://localhost:3000/report/create', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                //nhet user_id vào đây
+                user_id: "67d908ef4abdd3937e27b62f",
+            })
+        });
+        //đợi dữ liệu phản hồi (nếu mà dữ liệu lớn có thể phản hồi châmh)
+        const data = await response.json();
+        //cập nhật dữ liệu thu nhập và chi tiêu của người dùng từ server
+        TOTAL_INCOME = data.total_income;
+        TOTAL_EXPENSE = data.total_expense;
+        console.log(data);
+
+        let totalIncome = 0;
+        //dùng 2 dòng for để truy cập vào từng giao dịch của thu nhập và chi tiêu
+        TOTAL_INCOME.forEach(income => {
+            income.transactions.forEach(transaction => {
+                totalIncome += parseFloat(transaction.amount);
+            })
+        })
+        let totalExpense = 0;
+        //dùng 2 dòng for để truy cập vào từng giao dịch của thu nhập và chi tiêu
+        TOTAL_EXPENSE.forEach(expense => {
+            expense.transactions.forEach(transaction => {
+                totalExpense += parseFloat(transaction.amount);
+            })
+        })
+        //tính số dư
+        let balance = totalIncome - totalExpense;
+
+        //cập nhật giao diện
         const ctx = document.getElementById('financeChart').getContext('2d');
-        const totalIncome = 1200000;
-        const totalExpense = 500000;
-        const balance = 700000;
+        const totalIncomeElement = document.getElementById('total-income');
+        const totalExpenseElement = document.getElementById('total-expense');
+        const balanceElement = document.getElementById('balance');
+        totalIncomeElement.innerText = totalIncome.toLocaleString() + ' đ';
+        totalExpenseElement.innerText = totalExpense.toLocaleString() + ' đ';
+        balanceElement.innerText = balance.toLocaleString() + ' đ';
+
+        console.log(totalIncome, totalExpense, balance);
+        //! coi lại phần này
         let total = totalIncome + totalExpense + balance;
     
         new Chart(ctx, {

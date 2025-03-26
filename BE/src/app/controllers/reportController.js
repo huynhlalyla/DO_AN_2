@@ -8,7 +8,7 @@ const Budgets = require('../models/Budgets');
 
 // GET /api/reports
 async function createReport(req, res) {
-    const user_id = "67d908ef4abdd3937e27b62f";
+    const user_id = req.body.user_id;
     const user = await Users.findById(user_id);
     const categories = await Categories.find({user_id: user_id});
 
@@ -42,9 +42,29 @@ async function createReport(req, res) {
         }
     }
     const report = new Reports(data);
-    await report.save();
-    res.json(report);
+    await report.save()
+    .then(report => {
+        Reports.findById(report._id)
+        .populate({
+            path: 'total_income',
+            populate: {
+                path: 'transactions'
+            }
+        })
+        .populate({
+            path: 'total_expense',
+            populate: {
+                path: 'transactions'
+            }
+        })
+        .then(report => {
+            res.json(report)
+        })
+    })
+    // res.json(data);
 }
+
+
 
 // GET /api/reports
 async function viewAllReports(req, res) {
