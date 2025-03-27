@@ -131,19 +131,18 @@
 
         console.log(totalIncome, totalExpense, balance);
         //! coi lại phần này
-        let total = totalIncome + totalExpense;
-        let balancePercentage = 100 - ((totalIncome / total) * 100 + (totalExpense / total) * 100);
+        let total = totalIncome + totalExpense + Math.abs(balance);
     
+        let incomePercentage = (totalIncome / total) * 100;
+        let expensePercentage = (totalExpense / total) * 100;
+        let balancePercentage = (Math.abs(balance) / total) * 100;
+
         new Chart(ctx, {
             type: 'doughnut',
             data: {
                 labels: ['Thu Nhập', 'Chi Tiêu', 'Số Dư'],
                 datasets: [{
-                    data: [
-                        (totalIncome / total) * 100, 
-                        (totalExpense / total) * 100, 
-                        balancePercentage
-                    ],
+                    data: [incomePercentage, expensePercentage, balancePercentage],
                     backgroundColor: ['green', 'red', 'blue'],
                 }]
             },
@@ -174,6 +173,7 @@
             plugins: [ChartDataLabels]
         });
     });
+
 </script>
 <script src="../FE/js/main.js"></script>
 </body>
