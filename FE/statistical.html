@@ -133,20 +133,25 @@
 
         console.log(totalIncome, totalExpense, balance);
         //! coi lại phần này
-        let total = totalIncome + totalExpense + balance;
+        let total = totalIncome + totalExpense;
+        let balancePercentage = 100 - ((totalIncome / total) * 100 + (totalExpense / total) * 100);
     
         new Chart(ctx, {
             type: 'doughnut',
             data: {
                 labels: ['Thu Nhập', 'Chi Tiêu', 'Số Dư'],
                 datasets: [{
-                    data: [totalIncome, totalExpense, balance],
+                    data: [
+                        (totalIncome / total) * 100, 
+                        (totalExpense / total) * 100, 
+                        balancePercentage
+                    ],
                     backgroundColor: ['green', 'red', 'blue'],
                 }]
             },
             options: {
                 responsive: true,
-                maintainAspectRatio: false, 
+                maintainAspectRatio: false,
                 layout: {
                     padding: 20
                 },
@@ -155,17 +160,15 @@
                     tooltip: {
                         callbacks: {
                             label: function (context) {
-                                let percentage = (context.raw / total * 100).toFixed(2);
-                                return context.label + ': ' + percentage + '%';
+                                return context.label + ': ' + context.raw.toFixed(2) + '%';
                             }
                         }
                     },
                     datalabels: {
                         color: 'white',
                         font: { weight: 'bold', size: 14 },
-                        formatter: (value, context) => {
-                            let percentage = (value / total * 100).toFixed(2);
-                            return percentage + '%';
+                        formatter: (value) => {
+                            return value.toFixed(2) + '%';
                         }
                     }
                 }
@@ -173,7 +176,6 @@
             plugins: [ChartDataLabels]
         });
     });
-    
 </script>
 <script src="../FE/js/main.js"></script>
 </body>
