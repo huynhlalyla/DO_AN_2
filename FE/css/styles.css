@@ -23,12 +23,8 @@
 
 .user-avatar {
     position: relative;
-    margin-right: 20px;
+    margin-right: 15px;
     top: 16px;
-    width: 30px;
-    height: 30px;
-    border: 2px solid #ff66b2;
-    border-radius: 50%;
     cursor: pointer;
     object-fit: cover;
 }
