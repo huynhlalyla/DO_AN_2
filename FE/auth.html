@@ -17,7 +17,7 @@
     
                     <div class="form-wrapper">
                         <!-- Form Đăng nhập -->
-                        <form id="loginForm" action="/auth/login" method="POST" class="form-container login-form active">
+                        <form id="loginForm" method="POST" class="form-container login-form active">
                             <h2 class="text-center">Đăng nhập</h2>
                             <div class="mb-3">
                                 <label class="form-label">Số điện thoại</label>
@@ -42,7 +42,7 @@
                         </form>                        
                         
                         <!-- Form Đăng ký -->
-                        <form id="registerForm" action="/auth/register" method="POST" class="form-container register-form hidden">
+                        <form id="registerForm" method="POST" class="form-container register-form hidden">
                             <h2 class="text-center">Đăng ký</h2>
                             <div class="mb-3">
                                 <label class="form-label">Họ và tên</label>
@@ -160,28 +160,25 @@
             e.preventDefault();
             const formData = new FormData(registerForm);
             const data = Object.fromEntries(formData.entries());
-        
+    
             const response = await fetch('http://localhost:3000/user/register', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data)
             });
-        
+    
             const result = await response.json();
-        
+    
             if (result.success) {
                 alert('Đăng ký thành công! Nhấn OK để chuyển đến trang đăng nhập.');
                 registerForm.reset();
-        
+    
                 // Chuyển đổi giữa form đăng ký và form đăng nhập
-                const loginForm = document.getElementById('loginForm');
-                const registerForm = document.getElementById('registerForm');
-                
                 registerForm.classList.remove('active');
                 registerForm.classList.add('hidden');
                 loginForm.classList.add('active');
                 loginForm.classList.remove('hidden');
-                
+    
             } else {
                 // Hiển thị lỗi nếu có
                 Object.keys(errorMessages).forEach(key => hideError(registerForm.querySelector(`[name="${key}"]`)));
@@ -195,30 +192,29 @@
                 }
             }
         });
-        
-        
+    
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const formData = new FormData(loginForm);
             const data = Object.fromEntries(formData.entries());
-
+    
             const response = await fetch('http://localhost:3000/user/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data)
             });
-
+    
             const result = await response.json();
-
+    
             if (result.success && result.redirectUrl) {
                 localStorage.setItem('user', JSON.stringify(result.user));
-                window.location.href = result.redirectUrl; // Điều hướng đến trang statistical.html
-            }else {
+                window.location.href = result.redirectUrl; // Điều hướng đến trang chính
+            } else {
                 alert(result.message);  // Nếu có lỗi, hiển thị thông báo
             }
-            
         });    
     });
+    
 </script>
 </body>
 </html>
