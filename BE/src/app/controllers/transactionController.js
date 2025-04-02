@@ -7,10 +7,10 @@ const Budgets = require('../models/Budgets');
 // GET /transactions/add
 async function addTransaction(req, res) {
     const data = {
-        name: 'Quà sinh nhật',
-        amount: '15000',
+        name: '5 phân vàng',
+        amount: '4000000',
         type: 'expense',
-        category_id: '67d9408bea0c5bb824ed4e4a',
+        category_id: '67d98e61a56b08c003098b83',
         date: Date.now(),
         user_id: '67d908ef4abdd3937e27b62f'
     }

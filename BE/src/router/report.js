@@ -9,6 +9,7 @@ const reportController = require('../app/controllers/reportController');
 
 // Tạo báo cáo
 route.post('/create', reportController.createReport);
+route.get('/create', reportController.createReport);
 
 // Lấy tất cả báo cáo hiện có ra xem
 route.get('/view-all', reportController.viewAllReports);

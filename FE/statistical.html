@@ -79,101 +79,116 @@
 <div id="footer"></div>
 <script>
     document.addEventListener("DOMContentLoaded", async function () {
-        //khởi tạo 2 biến để lưu thu nhập và chi tiêu
-        let INCOME = [];
-        let EXPENSE = [];
+        
+        async function chartRendering(week, month) {
+            //khởi tạo 2 biến để lưu thu nhập và chi tiêu
+            let count;
+            if(week) count = week;
+            else if(month) count = month;
+            else count = 0;
+            
+            let INCOME = [];
+            let EXPENSE = [];
 
 
-        //call API để lấy dữ liệu giao dịch của người dùng bằng đối tương report
-        //call API dựa trên user_id(lúc đăng nhập có)
-        const response = await fetch('http://localhost:3000/report/create', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                //nhet user_id vào đây
-                user_id: "67d908ef4abdd3937e27b62f",
-            })
-        });
-        //đợi dữ liệu phản hồi (nếu mà dữ liệu lớn có thể phản hồi châmh)
-        const data = await response.json();
-        //cập nhật dữ liệu thu nhập và chi tiêu của người dùng từ server
-        TOTAL_INCOME = data.total_income;
-        TOTAL_EXPENSE = data.total_expense;
-        console.log(data);
-
-        let totalIncome = 0;
-        //dùng 2 dòng for để truy cập vào từng giao dịch của thu nhập và chi tiêu
-        TOTAL_INCOME.forEach(income => {
-            income.transactions.forEach(transaction => {
-                totalIncome += parseFloat(transaction.amount);
-            })
-        })
-        let totalExpense = 0;
-        //dùng 2 dòng for để truy cập vào từng giao dịch của thu nhập và chi tiêu
-        TOTAL_EXPENSE.forEach(expense => {
-            expense.transactions.forEach(transaction => {
-                totalExpense += parseFloat(transaction.amount);
-            })
-        })
-        //tính số dư
-        let balance = totalIncome - totalExpense;
-
-        //cập nhật giao diện
-        const ctx = document.getElementById('financeChart').getContext('2d');
-        const totalIncomeElement = document.getElementById('total-income');
-        const totalExpenseElement = document.getElementById('total-expense');
-        const balanceElement = document.getElementById('balance');
-        totalIncomeElement.innerText = totalIncome.toLocaleString() + ' đ';
-        totalExpenseElement.innerText = totalExpense.toLocaleString() + ' đ';
-        balanceElement.innerText = balance.toLocaleString() + ' đ';
-
-        console.log(totalIncome, totalExpense, balance);
-        //! coi lại phần này
-        let total = totalIncome + totalExpense + Math.abs(balance);
-    
-        let incomePercentage = (totalIncome / total) * 100;
-        let expensePercentage = (totalExpense / total) * 100;
-        let balancePercentage = (Math.abs(balance) / total) * 100;
-
-        new Chart(ctx, {
-            type: 'doughnut',
-            data: {
-                labels: ['Thu Nhập', 'Chi Tiêu', 'Số Dư'],
-                datasets: [{
-                    data: [incomePercentage, expensePercentage, balancePercentage],
-                    backgroundColor: ['green', 'red', 'blue'],
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                layout: {
-                    padding: 20
+            //call API để lấy dữ liệu giao dịch của người dùng bằng đối tương report
+            //call API dựa trên user_id(lúc đăng nhập có)
+            const response = await fetch('http://localhost:3000/report/create', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
                 },
-                plugins: {
-                    legend: { position: 'top' },
-                    tooltip: {
-                        callbacks: {
-                            label: function (context) {
-                                return context.label + ': ' + context.raw.toFixed(2) + '%';
+                body: JSON.stringify({
+                    //nhet user_id vào đây
+                    user_id: "67d908ef4abdd3937e27b62f",
+                    count: count,
+                })
+            });
+            //đợi dữ liệu phản hồi (nếu mà dữ liệu lớn có thể phản hồi châmh)
+            const data = await response.json();
+            //cập nhật dữ liệu thu nhập và chi tiêu của người dùng từ server
+            TOTAL_INCOME = data.total_income;
+            TOTAL_EXPENSE = data.total_expense;
+            console.log(data);
+
+            let totalIncome = 0;
+            //dùng 2 dòng for để truy cập vào từng giao dịch của thu nhập và chi tiêu
+            TOTAL_INCOME.forEach(income => {
+                income.transactions.forEach(transaction => {
+                    totalIncome += parseFloat(transaction.amount);
+                })
+            })
+            let totalExpense = 0;
+            //dùng 2 dòng for để truy cập vào từng giao dịch của thu nhập và chi tiêu
+            TOTAL_EXPENSE.forEach(expense => {
+                expense.transactions.forEach(transaction => {
+                    totalExpense += parseFloat(transaction.amount);
+                })
+            })
+            //tính số dư
+            let balance = totalIncome - totalExpense;
+
+            //cập nhật giao diện
+            const ctx = document.getElementById('financeChart').getContext('2d');
+            const totalIncomeElement = document.getElementById('total-income');
+            const totalExpenseElement = document.getElementById('total-expense');
+            const balanceElement = document.getElementById('balance');
+            totalIncomeElement.innerText = totalIncome.toLocaleString() + ' đ';
+            totalExpenseElement.innerText = totalExpense.toLocaleString() + ' đ';
+            balanceElement.innerText = balance.toLocaleString() + ' đ';
+            
+
+            console.log(totalIncome, totalExpense, balance);
+            //! coi lại phần này
+            let total = totalIncome + totalExpense + Math.abs(balance);
+        
+            let incomePercentage = (totalIncome / total) * 100;
+            let expensePercentage = (totalExpense / total) * 100;
+            let balancePercentage = (Math.abs(balance) / total) * 100;
+
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Thu Nhập', 'Chi Tiêu', 'Số Dư'],
+                    datasets: [{
+                        data: [incomePercentage, expensePercentage, balancePercentage],
+                        backgroundColor: ['green', 'red', 'blue'],
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    layout: {
+                        padding: 20
+                    },
+                    plugins: {
+                        legend: { position: 'top' },
+                        tooltip: {
+                            callbacks: {
+                                label: function (context) {
+                                    return context.label + ': ' + context.raw.toFixed(2) + '%';
+                                }
+                            }
+                        },
+                        datalabels: {
+                            color: 'white',
+                            font: { weight: 'bold', size: 14 },
+                            formatter: (value) => {
+                                return value.toFixed(2) + '%';
                             }
                         }
-                    },
-                    datalabels: {
-                        color: 'white',
-                        font: { weight: 'bold', size: 14 },
-                        formatter: (value) => {
-                            return value.toFixed(2) + '%';
-                        }
                     }
-                }
-            },
-            plugins: [ChartDataLabels]
-        });
-    });
+                },
+                plugins: [ChartDataLabels]
+            });
+        }
 
+    const date = new Date();
+    const options = { year: 'numeric', month: 'numeric', day: 'numeric' };
+    const formattedDate = date.toLocaleDateString('vi-VN', options);
+    const month = date.toLocaleString('default', { month: 'long' });
+    console.log(formattedDate.split('/')[1]);
+});
 </script>
 <script src="../FE/js/main.js"></script>
 </body>
