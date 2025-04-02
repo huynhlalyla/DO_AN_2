@@ -35,43 +35,58 @@ const authenticateUser = async (req, res) => {
     }
 };
 
-// Đăng ký người dùng (Không mã hóa)
+// Đăng ký người dùng
 const registerUser = async (req, res) => {
+    console.log(req.body);
     try {
         const { name, phone, email, password } = req.body;
 
-        // Kiểm tra xem số điện thoại đã tồn tại chưa
-        const existingUser = await Users.findOne({ phone });
-        if (existingUser) return res.status(400).json({ message: 'Số điện thoại đã được sử dụng' });
+        // Kiểm tra số điện thoại đã tồn tại chưa
+        const existingPhone = await Users.findOne({ phone });
+        if (existingPhone) return res.status(400).json({ message: 'Số điện thoại đã được sử dụng' });
 
-        // Lưu mật khẩu trực tiếp (không mã hóa)
+        // Kiểm tra email đã tồn tại chưa
+        const existingEmail = await Users.findOne({ email });
+        if (existingEmail) return res.status(400).json({ message: 'Email đã được sử dụng' });
+
+        // Lưu người dùng mới mà không mã hóa mật khẩu
         const newUser = new Users({ name, phone, email, password });
 
         await newUser.save();
-        res.status(201).json({ message: 'Đăng ký thành công' });
+        res.status(201).json({ message: 'Đăng ký thành công', success: true });
     } catch (error) {
+        console.error(error);
         res.status(500).json({ message: 'Lỗi server', error });
     }
 };
 
-// Đăng nhập người dùng (Không mã hóa)
+
 const loginUser = async (req, res) => {
     try {
         const { phone, password } = req.body;
 
+        // Tìm người dùng theo số điện thoại
         const user = await Users.findOne({ phone });
-        if (!user) return res.status(400).json({ message: 'Số điện thoại không tồn tại' });
+        if (!user) return res.status(400).json({ success: false, message: 'Số điện thoại không tồn tại' });
 
-        // So sánh mật khẩu trực tiếp (không giải mã)
+        // So sánh mật khẩu trực tiếp (không mã hóa)
         if (password !== user.password) {
-            return res.status(400).json({ message: 'Mật khẩu không chính xác' });
+            return res.status(400).json({ success: false, message: 'Mật khẩu không chính xác' });
         }
 
-        res.status(200).json({ message: 'Đăng nhập thành công', user });
+        // Trả về JSON chứa URL để FE tự động điều hướng
+        res.status(200).json({
+            success: true,
+            message: 'Đăng nhập thành công',
+            user: { id: user._id, phone: user.phone, name: user.name },
+            redirectUrl: '/DO_AN_2/FE/statistical.html' // FE sẽ dùng URL này để chuyển hướng
+        });
+
     } catch (error) {
-        res.status(500).json({ message: 'Lỗi server', error });
+        res.status(500).json({ success: false, message: 'Lỗi server', error });
     }
 };
+
 
 module.exports = {
     addUser,
