@@ -410,25 +410,33 @@ a:hover{
 
 .delete-icon {
     position: absolute;
-    top: 5px;
+    top: 10px;
     right: 5px;
-    background: #d82424;
+    background: #ff1e1e;
     color: white;
-    width: 22px;
-    height: 22px;
+    width: 30px;
+    height: 30px;
     border-radius: 50%;
     display: flex;
     align-items: center;  /* Căn giữa theo chiều dọc */
     justify-content: center; /* Căn giữa theo chiều ngang */
-    font-size: 16px; /* Điều chỉnh kích thước chữ */
+    font-size: 20px; /* Điều chỉnh kích thước chữ */
     font-weight: bold;
     cursor: pointer;
     display: none;
+    z-index: 100;
 }
 
 .delete-icon:hover{
-    background-color: #ff0000;
+    background-color: #cf0000;
 }
+
+/* Khi đang ở chế độ xóa, loại bỏ hover */
+.delete-mode .category-item:hover {
+    transform: none !important;
+    cursor: default; /* Tránh hiệu ứng con trỏ */
+}
+
 #login-success-msg {
     position: fixed;
     top: 20px;

@@ -124,12 +124,81 @@
         </div>
     </div>
 </div>
+
+<!-- Modal sửa ngân sách -->
+<div class="modal fade" id="editBudgetModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header text-center w-100">
+                <h5 class="modal-title w-100">Sửa ngân sách</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4">
+                <form>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Tên ngân sách</label>
+                        <select class="form-select" id="edit-budget-name">
+                            <option>Ăn uống</option>
+                            <option>Mua sắm</option>
+                            <option>Giải trí</option>
+                            <option>Học tập</option>
+                            <option>Khác</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Số tiền</label>
+                        <input type="number" class="form-control" id="edit-budget-amount" placeholder="Nhập số tiền">
+                    </div>
+                    <div class="row">
+                        <div class="col mb-3">
+                            <label class="form-label fw-bold">Ngày bắt đầu</label>
+                            <input type="date" class="form-control" id="edit-start-date">
+                        </div>
+                        <div class="col mb-3">
+                            <label class="form-label fw-bold">Ngày kết thúc</label>
+                            <input type="date" class="form-control" id="edit-end-date">
+                        </div>
+                    </div>
+                    <div class="text-center mt-3">
+                        <button type="submit" class="btn btn-success px-4 py-2">Lưu thay đổi</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 </main>
 <div id="footer"></div>
 <script src="../FE/js/main.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const editButtons = document.querySelectorAll('.btn-warning');
+        
+        editButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                // Mở modal sửa ngân sách
+                const budgetRow = button.closest('tr'); // Lấy dòng ngân sách tương ứng
+                const budgetName = budgetRow.querySelector('td:nth-child(1)').textContent;
+                const budgetAmount = budgetRow.querySelector('td:nth-child(2)').textContent.replace(/\./g, ''); // Xóa dấu phân cách nghìn
+                const startDate = budgetRow.querySelector('td:nth-child(3)').textContent;
+                const endDate = budgetRow.querySelector('td:nth-child(4)').textContent;
+                
+                // Điền thông tin vào các trường trong modal sửa
+                document.getElementById('edit-budget-name').value = budgetName;
+                document.getElementById('edit-budget-amount').value = budgetAmount;
+                document.getElementById('edit-start-date').value = startDate;
+                document.getElementById('edit-end-date').value = endDate;
+                
+                // Hiển thị modal sửa
+                const editModal = new bootstrap.Modal(document.getElementById('editBudgetModal'));
+                editModal.show();
+            });
+        });
+    });
+    
     function checkEmptyBudget() {
         const budgetList = document.getElementById("budget-list");
         const noDataRow = document.getElementById("no-data");
