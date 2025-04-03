@@ -79,7 +79,7 @@
             </div>
         </div>
     </div>
-
+    
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         const switchLinks = document.querySelectorAll(".switch-form");
@@ -197,22 +197,27 @@
             e.preventDefault();
             const formData = new FormData(loginForm);
             const data = Object.fromEntries(formData.entries());
-    
+        
             const response = await fetch('http://localhost:3000/user/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data)
             });
-    
+        
             const result = await response.json();
-    
+        
             if (result.success && result.redirectUrl) {
+                // Lưu trạng thái đăng nhập vào localStorage
                 localStorage.setItem('user', JSON.stringify(result.user));
-                window.location.href = result.redirectUrl; // Điều hướng đến trang chính
+                localStorage.setItem('loginSuccess', 'true'); // Đánh dấu là đăng nhập thành công
+                
+                // Chuyển hướng ngay lập tức
+                window.location.href = result.redirectUrl;
             } else {
-                alert(result.message);  // Nếu có lỗi, hiển thị thông báo
+                alert(result.message);
             }
-        });    
+        });
+        
     });
     
 </script>

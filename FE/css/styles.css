@@ -429,3 +429,24 @@ a:hover{
 .delete-icon:hover{
     background-color: #ff0000;
 }
+#login-success-msg {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgb(0, 128, 0);
+    color: white;
+    padding: 15px 20px;
+    border-radius: 5px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.5s ease-in-out, visibility 0.5s;
+    z-index: 100;
+}
+
+#login-success-msg.show {
+    opacity: 1;
+    visibility: visible;
+    z-index: 100;
+}

@@ -76,8 +76,23 @@
             </li>
         </ul>
     </div>
+    <div id="login-success-msg" class="hidden">Đăng nhập thành công!</div>
 <div id="footer"></div>
 <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const successMsg = document.getElementById('login-success-msg');
+
+        // Kiểm tra trạng thái đăng nhập từ localStorage
+        if (localStorage.getItem('loginSuccess') === 'true') {
+            successMsg.classList.add('show'); // Hiển thị thông báo
+
+            // Ẩn thông báo sau 3s
+            setTimeout(() => {
+                successMsg.classList.remove('show');
+                localStorage.removeItem('loginSuccess'); // Xóa trạng thái sau khi hiển thị
+            }, 3000);
+        }
+    });
     document.addEventListener("DOMContentLoaded", async function () {
         
         async function chartRendering(week, month) {
@@ -99,13 +114,13 @@
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    //nhet user_id vào đây
                     user_id: "67d908ef4abdd3937e27b62f",
                     count: count,
                 })
             });
-            //đợi dữ liệu phản hồi (nếu mà dữ liệu lớn có thể phản hồi châmh)
+            
             const data = await response.json();
+            console.log(data);
             //cập nhật dữ liệu thu nhập và chi tiêu của người dùng từ server
             TOTAL_INCOME = data.total_income;
             TOTAL_EXPENSE = data.total_expense;
@@ -189,6 +204,7 @@
     const month = date.toLocaleString('default', { month: 'long' });
     console.log(formattedDate.split('/')[1]);
 });
+
 </script>
 <script src="../FE/js/main.js"></script>
 </body>
