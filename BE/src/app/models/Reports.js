@@ -24,10 +24,20 @@ const Report = new Schema({
             default: []
         }
     ],
-    balance: {
-        type: Number,
-        required: true,
-        default: 0
+    transactions: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: 'Transactions',
+            default: []
+        }
+    ],
+    startDate: {
+        type: Date,
+        required: true
+    },
+    endDate: {
+        type: Date,
+        required: true
     },
 
 }, {

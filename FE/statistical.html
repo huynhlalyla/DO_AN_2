@@ -48,6 +48,15 @@
             </div>
         </div>
 
+        <!-- test cái options -->
+         <select name="" id="choice-option" class="form-select mb-4">
+            <option value="7">Thống kê 1 tuần</option>
+            <option value="14">Thống kê 2 tuần</option>
+            <option value="30" selected>Thống kê 1 tháng</option>
+            <option value="60">Thống kê 2 tháng</option>
+            <option value="90">Thống kê 3 tháng</option>
+         </select>
+
         <div class="d-flex justify-content-center">
             <div class="financeChartContainer">
                 <canvas id="financeChart"></canvas>
@@ -94,13 +103,14 @@
         }
     });
     document.addEventListener("DOMContentLoaded", async function () {
+        let currentChart = null;
         
-        async function chartRendering(week, month) {
-            //khởi tạo 2 biến để lưu thu nhập và chi tiêu
-            let count;
-            if(week) count = week;
-            else if(month) count = month;
-            else count = 0;
+        const selectOption = document.getElementById('choice-option');
+        selectOption.addEventListener('change', function () {
+            const selectedValue = this.value;
+            chartRendering(parseInt(selectedValue));
+        });
+        async function chartRendering(day) {
             
             let INCOME = [];
             let EXPENSE = [];
@@ -115,7 +125,7 @@
                 },
                 body: JSON.stringify({
                     user_id: "67d908ef4abdd3937e27b62f",
-                    count: count,
+                    day: day
                 })
             });
             
@@ -129,16 +139,12 @@
             let totalIncome = 0;
             //dùng 2 dòng for để truy cập vào từng giao dịch của thu nhập và chi tiêu
             TOTAL_INCOME.forEach(income => {
-                income.transactions.forEach(transaction => {
-                    totalIncome += parseFloat(transaction.amount);
-                })
+                totalIncome += parseFloat(income.amount);
             })
             let totalExpense = 0;
             //dùng 2 dòng for để truy cập vào từng giao dịch của thu nhập và chi tiêu
             TOTAL_EXPENSE.forEach(expense => {
-                expense.transactions.forEach(transaction => {
-                    totalExpense += parseFloat(transaction.amount);
-                })
+                totalExpense += parseFloat(expense.amount);
             })
             //tính số dư
             let balance = totalIncome - totalExpense;
@@ -161,7 +167,12 @@
             let expensePercentage = (totalExpense / total) * 100;
             let balancePercentage = (Math.abs(balance) / total) * 100;
 
-            new Chart(ctx, {
+            // Hủy biểu đồ cũ nếu tồn tại
+            if (currentChart) {
+                currentChart.destroy();
+            }
+
+            currentChart = new Chart(ctx, {
                 type: 'doughnut',
                 data: {
                     labels: ['Thu Nhập', 'Chi Tiêu', 'Số Dư'],
@@ -197,12 +208,7 @@
                 plugins: [ChartDataLabels]
             });
         }
-
-    const date = new Date();
-    const options = { year: 'numeric', month: 'numeric', day: 'numeric' };
-    const formattedDate = date.toLocaleDateString('vi-VN', options);
-    const month = date.toLocaleString('default', { month: 'long' });
-    console.log(formattedDate.split('/')[1]);
+    chartRendering(30); // Gọi hàm với giá trị mặc định là 30 ngày
 });
 
 </script>

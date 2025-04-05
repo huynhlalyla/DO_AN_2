@@ -8,7 +8,13 @@ const Transactions = require('../models/Transactions');
 async function addBudget(req, res) {
     try {
         // Lấy dữ liệu từ người dùng gửi lên
-        const data = req.body;
+        // const data = req.body;
+        const data = {
+            name: 'Ngân sách tháng 3',
+            limit_amount: 10000000,
+            user_id: '67d908ef4abdd3937e27b62f',
+            category_id: '67f1474fdba3c439a4519995'
+        }
         // Kiểm tra xem budget đã tồn tại chưa
         const allBudgets = await Budgets.find({user_id: data.user_id});
         const budget = allBudgets.find(budget => budget.name === data.name);

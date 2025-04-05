@@ -8,68 +8,61 @@ const Budgets = require('../models/Budgets');
 
 // GET /api/reports
 async function createReport(req, res) {
-    // const {user_id, count} = req.body;
-    const user_id = "67d908ef4abdd3937e27b62f";
-    const user = await Users.findById(user_id);
-    const categories = await Categories.find({user_id: user_id});
+    const {user_id, day} = req.body;
+    // const user_id = "67d908ef4abdd3937e27b62f";
+    // const day = 90;
+    // const user = await Users.findById(user_id);
+    let startDate;
+    let endDate;
+    if(day <= 14) {
+        const currentDate = new Date();
+        const currentDay = currentDate.getDay();
+        const countDay = day;
+        const lastSunday = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() - (currentDay === 0 ? 7 : currentDay-1));
+        startDate = new Date(Date.UTC(lastSunday.getFullYear(), lastSunday.getMonth(), lastSunday.getDate() - countDay));
+        endDate = new Date(lastSunday);
+    } else {
+        const currentDate = new Date();
+        const countMonth = day / 30;
+        startDate = new Date(Date.UTC(currentDate.getFullYear(), currentDate.getMonth() - countMonth, 1));
+        endDate = new Date(Date.UTC(currentDate.getFullYear(), currentDate.getMonth(), 0));
+    }
+    console.log(startDate);
+    console.log(endDate);
 
     const data = {
         user_id: user_id,
         total_income: [],
         total_expense: [],
-        balance: 0
+        transactions: [],
+        startDate: startDate,
+        endDate: endDate,
     }
-
-    //lap qua tung category, neu category.type === 'income' thi them vao data.total_income
-    categories.forEach(category => {
-        if(category.type == 'income') {
-            data.total_income.push(category);
-        } else {
-            data.total_expense.push(category);
-        }
-    })
-
-    const currentDate = new Date();
-    let test = new Date();
-    test.setMonth(currentDate.getMonth() - 4);
-    console.log(currentDate);
-    console.log(test);
+    
 
     //lap qua het cac giao dich
     //tinh tong so tien cua giao dich
-    const transactions = await Transactions.find({user_id: user_id});
+    const transactions = await Transactions.find({
+        user_id: user_id,
+        date: {
+            $gte: startDate,
+            $lt: endDate
+        }
+    });
     for(let i = 0; i < transactions.length; i++) {
         const transaction = transactions[i];
         if(transaction.type === 'income') {
-            data.balance += parseFloat(transaction.amount);
+            data.total_income.push(transaction);
+            data.transactions.push(transaction);
             // console.log(transaction.date);
         } else {
-            data.balance -= parseFloat(transaction.amount);
-            // console.log(transaction.date);
+            data.total_expense.push(transaction);
+            data.transactions.push(transaction);
         }
     }
     const report = new Reports(data);
-    res.json(report);
-    // await report.save()
-    // .then(report => {
-    //     Reports.findById(report._id)
-    //     .populate({
-    //         path: 'total_income',
-    //         populate: {
-    //             path: 'transactions'
-    //         }
-    //     })
-    //     .populate({
-    //         path: 'total_expense',
-    //         populate: {
-    //             path: 'transactions'
-    //         }
-    //     })
-    //     .then(report => {
-    //         res.json(report)
-    //     })
-    // })
-    // res.json(data);
+    await report.save()
+    res.json(data);
 }
 
 

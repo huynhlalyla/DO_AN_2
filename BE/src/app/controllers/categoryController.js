@@ -6,8 +6,14 @@ const Users = require('../models/Users');
 async function addCategory(req, res) {
     try {
         //lấy dữ liệu từ người dùng gửi lên
-        const data = req.body;
+        // const data = req.body;
+        const data = {
+            name: 'Bán vàng',
+            type: 'income',
+            user_id: '67d908ef4abdd3937e27b62f'
+        }
         //kiểm tra xem category đã tồn tại chưa
+        
         const allCategories = await Categories.find({user_id: data.user_id});
         const category = allCategories.find(category => category.name === data.name);
         //nếu đã tồn tại thì trả về thông báo lỗi

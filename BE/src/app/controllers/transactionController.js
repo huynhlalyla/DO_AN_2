@@ -7,11 +7,11 @@ const Budgets = require('../models/Budgets');
 // GET /transactions/add
 async function addTransaction(req, res) {
     const data = {
-        name: '5 phân vàng',
-        amount: '4000000',
-        type: 'expense',
-        category_id: '67d98e61a56b08c003098b83',
-        date: Date.now(),
+        name: 'Bán 5 phân vàng',
+        amount: '5500000', 
+        type: 'income',
+        category_id: '67f14cad568caacd62bb369a',
+        date: '2025-03-20',
         user_id: '67d908ef4abdd3937e27b62f'
     }
     const transaction = new Transactions(data);
@@ -23,11 +23,14 @@ async function addTransaction(req, res) {
         await Categories.findByIdAndUpdate(transaction.category_id, {
             $push: {transactions: transaction._id}
         })
-        await Budgets.findOne({category_id: transaction.category_id})
-        .then(async budget => {
-            budget.transactions.push(transaction._id);
-            await budget.save();
-        })
+        if(transaction.type === 'expense') {
+            await Budgets.findOne({category_id: transaction.category_id})
+            .then(async budget => {
+                budget.transactions.push(transaction._id);
+                await budget.save();
+            })
+        }
+        
     })
             res.redirect('/');
 }
