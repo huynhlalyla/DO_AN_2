@@ -79,7 +79,7 @@ const loginUser = async (req, res) => {
             success: true,
             message: 'Đăng nhập thành công',
             user: { id: user._id, phone: user.phone, name: user.name },
-            redirectUrl: '/DO_AN_2/FE/statistical.html' // FE sẽ dùng URL này để chuyển hướng
+            redirectUrl: '/FE/statistical.html' // FE sẽ dùng URL này để chuyển hướng
         });
 
     } catch (error) {

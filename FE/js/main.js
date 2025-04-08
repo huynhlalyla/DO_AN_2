@@ -7,6 +7,27 @@ function loadPartials() {
             // Gán sự kiện dropdown và sidebar sau khi header đã được load
             attachDropdownEvents();
             attachSidebarEvents();
+
+            // Sau khi header được chèn, thực thi script
+            const user = JSON.parse(localStorage.getItem("user"));
+            console.log(user);
+            if (user && user.name) {
+                const userNameElement = document.getElementById("userName");
+                userNameElement.innerText = user.name;
+            } else {
+                console.warn("Không tìm thấy thông tin người dùng trong localStorage.");
+            }
+
+            //đăng xuất
+            const logoutBtn = document.getElementById("logoutBtn");
+            if (logoutBtn) {
+                logoutBtn.addEventListener("click", function () {
+                    localStorage.removeItem("user");
+                    window.location.href = "/FE/auth.html";
+                });
+            } else {
+                console.warn("Không tìm thấy nút đăng xuất.");
+            }
         });
 
     fetch('partials/footer.html')
@@ -18,6 +39,35 @@ function loadPartials() {
 
 // Gọi khi trang đã tải xong
 document.addEventListener("DOMContentLoaded", loadPartials);
+document.addEventListener("DOMContentLoaded", function () {
+    // Kiểm tra xem người dùng đã đăng nhập hay chưa
+    checkLogin();
+    // Đăng xuất khi đóng trang
+    logoutOnClose();
+});
+
+//kiểm tra đăng nhập chưa hay là tuồng
+function checkLogin() {
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (!user) {
+        // Nếu chưa đăng nhập, chuyển hướng đến trang đăng nhập
+        window.location.href = "/FE/auth.html";
+    } else {
+        // Nếu đã đăng nhập, có thể thực hiện các hành động khác nếu cần
+        console.log("Người dùng đã đăng nhập:", user);
+    }
+}
+
+//logout when close
+function logoutOnClose() {
+    window.addEventListener("close", function (event) {
+        const user = JSON.parse(localStorage.getItem("user"));
+        if (user) {
+            localStorage.removeItem("user");
+            console.log("Người dùng đã đăng xuất khi đóng trang.");
+        }
+    });
+}
 
 function attachDropdownEvents() {
     const userMenu = document.querySelector(".user-menu");

@@ -63,26 +63,11 @@
             </div>
         </div>
         
-        <h4 class="mt-4">Lịch sử Giao dịch</h4>
+        <h4 class="mt-4">Lịch sử Giao dịch
+            <span id="history-total" style="font-size: 14px; color: orangered;"></span>
+        </h4>
         <ul class="list-group" id="transaction-list">
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-                <div class="d-flex align-items-center">
-                    <div class="ms-2">
-                        <small>20/03/2025</small><br>
-                        <strong>Mua sắm</strong>
-                    </div>
-                </div>
-                <span class="text-danger"><i class="fa fa-arrow-down"></i> -500,000 đ</span>
-            </li>
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-                <div class="d-flex align-items-center">
-                    <div class="ms-2">
-                        <small>19/03/2025</small><br>
-                        <strong>Lương</strong>
-                    </div>
-                </div>
-                <span class="text-success"><i class="fa fa-arrow-up"></i> +1,200,000 đ</span>
-            </li>
+            
         </ul>
     </div>
     <div id="login-success-msg" class="hidden">Đăng nhập thành công!</div>
@@ -111,9 +96,10 @@
             chartRendering(parseInt(selectedValue));
         });
         async function chartRendering(day) {
-            
             let INCOME = [];
             let EXPENSE = [];
+            const userId = JSON.parse(localStorage.getItem('user')).id; // Lấy user_id từ localStorage
+            console.log(userId);
 
 
             //call API để lấy dữ liệu giao dịch của người dùng bằng đối tương report
@@ -124,7 +110,7 @@
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    user_id: "67d908ef4abdd3937e27b62f",
+                    user_id: userId,
                     day: day
                 })
             });
@@ -132,8 +118,9 @@
             const data = await response.json();
             console.log(data);
             //cập nhật dữ liệu thu nhập và chi tiêu của người dùng từ server
-            TOTAL_INCOME = data.total_income;
-            TOTAL_EXPENSE = data.total_expense;
+            let TOTAL_INCOME = data.total_income;
+            let TOTAL_EXPENSE = data.total_expense;
+            let TRANSACTIONS = data.transactions;
             console.log(data);
 
             let totalIncome = 0;
@@ -157,7 +144,38 @@
             totalIncomeElement.innerText = totalIncome.toLocaleString() + ' đ';
             totalExpenseElement.innerText = totalExpense.toLocaleString() + ' đ';
             balanceElement.innerText = balance.toLocaleString() + ' đ';
-            
+
+            // Render danh sách giao dịch
+            const transactionList = document.getElementById('transaction-list');
+            const historyTotal = document.getElementById('history-total').innerText = `(${TRANSACTIONS.length} giao dịch)`;
+            TRANSACTIONS.forEach(transaction => {
+                const transactionItem = document.createElement('li');
+                transactionItem.className = 'list-group-item d-flex justify-content-between align-items-center';
+
+                // Tạo nội dung giao dịch
+                const transactionDate = new Date(transaction.date).toLocaleDateString('vi-VN'); // Định dạng ngày
+                const transactionName = transaction.name;
+                const transactionAmount = parseFloat(transaction.amount).toLocaleString() + ' đ';
+                const transactionTypeClass = transaction.type === 'income' ? 'text-success' : 'text-danger';
+                const transactionIcon = transaction.type === 'income' ? 'fa-arrow-up' : 'fa-arrow-down';
+
+                transactionItem.innerHTML = `
+                    <div class="d-flex align-items-center">
+                        <div class="ms-2">
+                            <small>${transactionDate}</small><br>
+                            <strong>${transactionName}</strong>
+                        </div>
+                    </div>
+                    <span class="${transactionTypeClass}"><i class="fa ${transactionIcon}"></i> ${transaction.type === 'income' ? '+' : '-'}${transactionAmount}</span>
+                `;
+
+                // Thêm giao dịch vào danh sách
+                transactionList.appendChild(transactionItem);
+            });
+            //nếu chưa có giao dịch
+            if(TRANSACTIONS.length === 0) {
+                transactionList.innerHTML = '<h6 style="color: red;">Bạn chưa có giao dịch nào!</h6>'; // Xóa nội dung cũ
+            }            
 
             console.log(totalIncome, totalExpense, balance);
             //! coi lại phần này
