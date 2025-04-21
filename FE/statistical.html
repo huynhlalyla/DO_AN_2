@@ -56,7 +56,11 @@
             <option value="60">Thống kê 2 tháng</option>
             <option value="90">Thống kê 3 tháng</option>
          </select>
-
+         <div>
+            <span style="font-size: 16px; color: orangered;" id="start-date"></span>
+            <span style="font-size: 16px; color: orangered;"> - </span>
+            <span style="font-size: 16px; color: orangered;" id="end-date"></span>
+         </div>
         <div class="d-flex justify-content-center">
             <div class="financeChartContainer">
                 <canvas id="financeChart"></canvas>
@@ -145,8 +149,15 @@
             totalExpenseElement.innerText = totalExpense.toLocaleString() + ' đ';
             balanceElement.innerText = balance.toLocaleString() + ' đ';
 
+            //date
+            const startDate = document.getElementById('start-date');
+            const endDate = document.getElementById('end-date');
+            startDate.innerText = new Date(data.startDate).toLocaleDateString('vi-VN');;
+            endDate.innerText = new Date(data.endDate).toLocaleDateString('vi-VN');;
+
             // Render danh sách giao dịch
             const transactionList = document.getElementById('transaction-list');
+            transactionList.innerHTML = ''; // Xóa nội dung cũ
             const historyTotal = document.getElementById('history-total').innerText = `(${TRANSACTIONS.length} giao dịch)`;
             TRANSACTIONS.forEach(transaction => {
                 const transactionItem = document.createElement('li');

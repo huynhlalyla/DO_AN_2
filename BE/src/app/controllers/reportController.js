@@ -48,7 +48,7 @@ async function createReport(req, res) {
             $gte: startDate,
             $lt: endDate
         }
-    });
+    }).populate('category_id', "name");
     for(let i = 0; i < transactions.length; i++) {
         const transaction = transactions[i];
         if(transaction.type === 'income') {

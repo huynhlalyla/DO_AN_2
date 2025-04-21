@@ -37,6 +37,19 @@
         </div>
     </div>
     <div class="container mt-4">
+        <!-- test cái options -->
+        <select name="" id="choice-option" class="form-select mb-4">
+            <option value="7">Thống kê 1 tuần</option>
+            <option value="14">Thống kê 2 tuần</option>
+            <option value="30" selected>Thống kê 1 tháng</option>
+            <option value="60">Thống kê 2 tháng</option>
+            <option value="90">Thống kê 3 tháng</option>
+         </select>
+         <div>
+            <span style="font-size: 16px; color: orangered;" id="start-date"></span>
+            <span style="font-size: 16px; color: orangered;"> - </span>
+            <span style="font-size: 16px; color: orangered;" id="end-date"></span>
+         </div>
         <h2 class="mb-3 text-center">Danh sách chi tiêu & thu nhập</h2>
         <div class="table-container">
             <table class="table table-bordered table-striped text-center">
@@ -50,55 +63,8 @@
                         <th>Chức năng</th>
                     </tr>
                 </thead>
-                <tbody id="expenseTableBody">
-                    <tr>
-                        <td>Ăn trưa</td>
-                        <td>Ăn uống</td>
-                        <td>Chi tiêu</td>
-                        <td>50,000 VND</td>
-                        <td>2023/10/11</td>
-                        <td>
-                            <button class="btn btn-warning btn-sm me-1 edit-btn" data-bs-toggle="modal" data-bs-target="#editTransactionModal">
-                                <i class="bi bi-pencil-square"></i>
-                            </button>                            
-                            <button class="btn btn-danger btn-sm"><i class="bi bi-trash"></i></button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Mua sắm</td>
-                        <td>Giải trí</td>
-                        <td>Chi tiêu</td>
-                        <td>200,000 VND</td>
-                        <td>2024/01/22</td>
-                        <td>
-                            <button class="btn btn-warning btn-sm me-1"><i class="bi bi-pencil-square"></i></button>
-                            <button class="btn btn-danger btn-sm"><i class="bi bi-trash"></i></button>
-                        </td>
-                    </tr>
-                    <tbody id="incomeTableBody">
-                        <tr>
-                            <td>Lương tháng</td>
-                            <td>Lương</td>
-                            <td>Thu nhập</td>
-                            <td>10,000 VND</td>
-                            <td>2011/12/03</td>
-                            <td>
-                                <button class="btn btn-warning btn-sm me-1"><i class="bi bi-pencil-square"></i></button>
-                                <button class="btn btn-danger btn-sm"><i class="bi bi-trash"></i></button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Thưởng Tết</td>
-                            <td>Thưởng</td>
-                            <td>Thu nhập</td>
-                            <td>50,000 VND</td>
-                            <td>2022/01/20</td>
-                            <td>
-                                <button class="btn btn-warning btn-sm me-1"><i class="bi bi-pencil-square"></i></button>
-                                <button class="btn btn-danger btn-sm"><i class="bi bi-trash"></i></button>
-                            </td>
-                        </tr>
-                    </tbody>
+                <tbody id="transactionTableBody">
+                    
                 </tbody>
             </table>
         </div>
@@ -186,69 +152,120 @@
             });
         });
         
+        document.addEventListener("DOMContentLoaded", function () {
+            let currentChart = null;
         
-        document.addEventListener("DOMContentLoaded", function () {
-            var tableBody = document.getElementById("transactionTableBody");
-            var noDataMessage = document.getElementById("noDataMessage");
-            
-            if (tableBody.children.length > 0) {
-                noDataMessage.style.display = "none";
-            } else {
-                noDataMessage.style.display = "block";
-            }
-        });
-        document.addEventListener("DOMContentLoaded", function () {
-            function getDataFromTable(tbodyId, type) {
-                const rows = document.querySelectorAll(`#${tbodyId} tr`);
-                let data = [];
-    
-                rows.forEach(row => {
-                    const cells = row.getElementsByTagName("td");
-                    if (cells.length >= 5) {
-                        let date = cells[4].innerText.trim();
-                        let amount = parseFloat(cells[3].innerText.replace(/\D/g, "")) || 0; // Lấy số tiền
-                        data.push({ date, type, amount });
-                    }
-                });
-    
-                return data;
-            }
-    
-            // Lấy dữ liệu từ bảng
-            const expenseData = getDataFromTable("expenseTableBody", "Chi tiêu");
-            const incomeData = getDataFromTable("incomeTableBody", "Thu nhập");
-    
-            // Tổng hợp dữ liệu theo ngày
-            let allData = [...expenseData, ...incomeData];
-    
-            // Lấy danh sách ngày duy nhất và sắp xếp
-            const allDates = [...new Set(allData.map(t => t.date))].sort();
-    
-            // Tạo dữ liệu mặc định cho từng ngày
-            const expenseMap = {};
-            const incomeMap = {};
-            allDates.forEach(date => {
-                expenseMap[date] = 0;
-                incomeMap[date] = 0;
+            const selectOption = document.getElementById('choice-option');
+            selectOption.addEventListener('change', function () {
+                const selectedValue = this.value;
+                chartRendering(parseInt(selectedValue));
             });
-    
-            // Gán giá trị thực tế từ dữ liệu
-            allData.forEach(t => {
-                if (t.type === "Chi tiêu") {
-                    expenseMap[t.date] += t.amount;
-                } else if (t.type === "Thu nhập") {
-                    incomeMap[t.date] += t.amount;
+
+            function renderTable(data) {
+                const transactions = data.transactions; // Lấy danh sách giao dịch từ dữ liệu trả về
+                const transactionTableBody = document.getElementById("transactionTableBody");
+                transactionTableBody.innerHTML = ""; // Xóa nội dung cũ
+
+                //thời gian bắt đầu và kết thúc
+                const startDate = document.getElementById('start-date');
+                const endDate = document.getElementById('end-date');
+                startDate.innerText = new Date(data.startDate).toLocaleDateString('vi-VN');;
+                endDate.innerText = new Date(data.endDate).toLocaleDateString('vi-VN');;
+
+                //kiểm tra xem có giao dịch nào không
+                if (transactions.length === 0) {
+                    const row = document.createElement("tr");
+                    row.innerHTML = `<td colspan="6" style="color: red;">Bạn chưa có giao dịch nào!</td>`;
+                    transactionTableBody.appendChild(row);
+                    return;
+                }
+                transactions.forEach(transaction => {
+                    const row = document.createElement("tr");
+                    row.innerHTML = `
+                        <td>${transaction.name}</td>
+                        <td>${transaction.category_id.name}</td>
+                        <td>${transaction.type === "expense" ? "Chi tiêu" : "Thu nhập"}</td>
+                        <td>${parseFloat(transaction.amount).toLocaleString()} đ</td>
+                        <td>${new Date(transaction.date).toLocaleDateString()}</td>
+                        <td>
+                            <button class="btn btn-warning btn-sm me-1 edit-btn" data-bs-toggle="modal" data-bs-target="#editTransactionModal">
+                                <i class="bi bi-pencil-square"></i>
+                            </button>                            
+                            <button class="btn btn-danger btn-sm"><i class="bi bi-trash"></i></button>
+                        </td>`;
+                    transactionTableBody.appendChild(row);
+                });
+            }
+            async function chartRendering(day) {
+            const userId = JSON.parse(localStorage.getItem('user')).id; // Lấy user_id từ localStorage
+            console.log(userId);
+
+
+            //call API để lấy dữ liệu giao dịch của người dùng bằng đối tương report
+            //call API dựa trên user_id(lúc đăng nhập có)
+            const response = await fetch('http://localhost:3000/report/create', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    user_id: userId,
+                    day: day
+                })
+            });
+            
+            const data = await response.json();
+            console.log(data);
+            //cập nhật dữ liệu thu nhập và chi tiêu của người dùng từ server
+            let TOTAL_INCOME = data.total_income;
+            let TOTAL_EXPENSE = data.total_expense;
+            let TRANSACTIONS = data.transactions;
+
+            let totalIncome = 0;
+            //dùng 2 dòng for để truy cập vào từng giao dịch của thu nhập và chi tiêu
+            TOTAL_INCOME.forEach(income => {
+                totalIncome += parseFloat(income.amount);
+            })
+            let totalExpense = 0;
+            //dùng 2 dòng for để truy cập vào từng giao dịch của thu nhập và chi tiêu
+            TOTAL_EXPENSE.forEach(expense => {
+                totalExpense += parseFloat(expense.amount);
+            })
+            //tính số dư
+            let balance = totalIncome - totalExpense;
+            
+            //sắp xếp ngày tăng dần trước khi vẽ biểu đồ
+            TRANSACTIONS.sort((a, b) => new Date(a.date) - new Date(b.date)); // Sắp xếp theo ngày giảm dần
+            renderTable(data); // Gọi hàm renderTable để hiển thị dữ liệu trên bảng
+
+            let labels = [];
+            let expenseValues = [];
+            let incomeValues = [];
+
+            // Chuyển đổi dữ liệu thành mảng và nạp vào vị trí hợp lí 
+            TRANSACTIONS.forEach(transaction => {
+                const date = new Date(transaction.date).toLocaleDateString("vi-VN", {
+                    year: "numeric",
+                    month: "2-digit",
+                    day: "2-digit"
+                });
+                labels.push(date);
+                if(transaction.type === "expense") {
+                    expenseValues.push(transaction.amount);
+                    incomeValues.push(0); // Đặt giá trị thu nhập là 0 cho ngày này
+                } else if(transaction.type === "income") {
+                    incomeValues.push(transaction.amount);
+                    expenseValues.push(0); // Đặt giá trị chi tiêu là 0 cho ngày này
                 }
             });
-    
-            // Chuyển đổi dữ liệu thành mảng
-            const labels = allDates;
-            const expenseValues = labels.map(date => expenseMap[date]);
-            const incomeValues = labels.map(date => incomeMap[date]);
-    
+            console.log(labels, expenseValues, incomeValues);
             // Vẽ biểu đồ
+            // Xóa biểu đồ cũ nếu có
+            if (currentChart) {
+                currentChart.destroy();
+            }
             const ctx = document.getElementById("lineChart").getContext("2d");
-            new Chart(ctx, {
+            currentChart = new Chart(ctx, {
                 type: "line",
                 data: {
                     labels: labels,
@@ -289,6 +306,8 @@
                     }
                 }
             });
+        }
+        chartRendering(30); // Gọi hàm với số ngày bạn muốn lấy dữ liệu
         });
     </script>
 </body>
