@@ -52,9 +52,10 @@
          <select name="" id="choice-option" class="form-select mb-4">
             <option value="7">Thống kê 1 tuần</option>
             <option value="14">Thống kê 2 tuần</option>
-            <option value="30" selected>Thống kê 1 tháng</option>
+            <option value="30">Thống kê 1 tháng</option>
             <option value="60">Thống kê 2 tháng</option>
             <option value="90">Thống kê 3 tháng</option>
+            <option value="0" selected>Thống kê tất cả</option>
          </select>
          <div>
             <span style="font-size: 16px; color: orangered;" id="start-date"></span>
@@ -152,8 +153,15 @@
             //date
             const startDate = document.getElementById('start-date');
             const endDate = document.getElementById('end-date');
-            startDate.innerText = new Date(data.startDate).toLocaleDateString('vi-VN');;
-            endDate.innerText = new Date(data.endDate).toLocaleDateString('vi-VN');;
+            console.log(data.startDate, data.endDate);
+            if(data.startDate && data.endDate) {
+                startDate.innerText = new Date(data.startDate).toLocaleDateString('vi-VN');
+                endDate.innerText = new Date(data.endDate).toLocaleDateString('vi-VN');
+            } else {
+                startDate.innerText = "Từ trước";
+                endDate.innerText = new Date().toLocaleDateString('vi-VN');
+            }
+            
 
             // Render danh sách giao dịch
             const transactionList = document.getElementById('transaction-list');
@@ -237,7 +245,7 @@
                 plugins: [ChartDataLabels]
             });
         }
-    chartRendering(30); // Gọi hàm với giá trị mặc định là 30 ngày
+    chartRendering(0); // Gọi hàm với giá trị mặc định là 30 ngày
 });
 
 </script>

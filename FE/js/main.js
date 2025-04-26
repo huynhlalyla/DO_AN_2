@@ -28,6 +28,33 @@ function loadPartials() {
             } else {
                 console.warn("Không tìm thấy nút đăng xuất.");
             }
+
+
+            const notificationBtn = document.getElementById("notificationBtn");
+        notificationBtn.addEventListener("click", function () {
+            console.log("haha");
+            renderNotifications();
+        });
+
+        async function renderNotifications() {
+            const data = await loadNotification();
+            console.log(data);
+
+            const notificationList = document.querySelector(".notification-list");
+            notificationList.innerHTML = ""; // Xóa nội dung cũ trong danh sách thông báo
+            // render thông báo
+            data.forEach((item) => {
+                const listItem = document.createElement("li");
+                listItem.classList.add("notification-item");
+                listItem.innerHTML = `
+                    <i class="bi bi-${item.type === "warning" ? "exclamation-triangle" : "info-circle"} text-${item.type === "warning" ? "danger" : "primary"}"></i>
+                    <a href="#" class="dropdown-item">${item.message}</a>
+                `;
+                notificationList.appendChild(listItem);
+            });
+            
+
+        }
         });
 
     fetch('partials/footer.html')
@@ -40,6 +67,7 @@ function loadPartials() {
 // Gọi khi trang đã tải xong
 document.addEventListener("DOMContentLoaded", loadPartials);
 document.addEventListener("DOMContentLoaded", function () {
+    // loadNotification();
     // Kiểm tra xem người dùng đã đăng nhập hay chưa
     checkLogin();
     // Đăng xuất khi đóng trang
@@ -68,6 +96,23 @@ function logoutOnClose() {
         }
     });
 }
+
+async function loadNotification() {
+    const user = JSON.parse(localStorage.getItem("user"));
+    // console.log(user);
+    const response = await fetch("http://localhost:3000/notify/getall", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            user_id: JSON.parse(localStorage.getItem("user")).id,
+        }),
+    });
+    const data = await response.json();
+    return data.notifies;
+}
+
 
 function attachDropdownEvents() {
     const userMenu = document.querySelector(".user-menu");

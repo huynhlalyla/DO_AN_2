@@ -70,17 +70,3 @@
         </ul>
     </div>
 </header>
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        // Lấy dữ liệu từ localStorage
-        const user = JSON.parse(localStorage.getItem("user"));
-        console.log(user);
-        // Kiểm tra nếu user tồn tại
-        if (user && user.name) {
-            const userNameElement = document.getElementById("userName");
-            userNameElement.innerText = user.name; // Hiển thị tên người dùng
-        } else {
-            console.warn("Không tìm thấy thông tin người dùng trong localStorage.");
-        }
-    });
-</script>

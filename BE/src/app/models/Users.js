@@ -27,6 +27,13 @@ const User = new Schema({
             default: []
         }
     ],
+    notifies: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: 'Notify',
+            default: []
+        }
+    ],
 }, {
     timestamps: true
 });

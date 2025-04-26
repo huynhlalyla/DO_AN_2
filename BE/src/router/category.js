@@ -7,9 +7,13 @@ const Transactions = require('../app/models/Transactions');
 
 const categoryController = require('../app/controllers/categoryController');
 // Thêm danh mục
-route.get('/add', categoryController.addCategory);
-
+route.post('/add', categoryController.addCategory);
 // Lấy tất cả danh mục hiện có ra xem
 route.get('/view-all', categoryController.viewAllCategories);
+//get all categories
+route.post('/getall', categoryController.getAll);
+route.get('/:id', categoryController.getCategoryById);
+route.put('/update/:id', categoryController.updateCategory);
+route.delete('/delete/:id', categoryController.deleteCategory);
 
 module.exports = route;

@@ -9,10 +9,13 @@ const transactionController = require('../app/controllers/transactionController'
 
 
 // Thêm giao dịch
-route.get('/add', transactionController.addTransaction)
-
+route.post('/add', transactionController.addTransaction)
 // Lấy tất cả giao dịch hiện có ra xem
 route.get('/view-all', transactionController.viewAllTransactions)
+//chinh sua giao dich
+route.put('/edit/:transaction_id', transactionController.editTransaction)
+//xoa giao dich
+route.delete('/delete/:transaction_id', transactionController.deleteTransaction)
 
 
 module.exports = route;

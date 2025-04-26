@@ -17,7 +17,7 @@ const Transaction = new Schema({
         ref: 'Category',
         required: true
     },
-    date: {type: Date, required: true},
+    date: {type: Date, default: new Date()},
     user_id: {
         type: Schema.Types.ObjectId,
         ref: 'User',

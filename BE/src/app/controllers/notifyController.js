@@ -1,0 +1,29 @@
+const Notify = require('../models/Notifies');
+const Users = require('../models/Users');
+
+async function create (req, res) {
+    try {
+        const { message, type, user_id } = req.body;
+        const notify = new Notify({ message, type, user_id });
+        await notify.save();
+        res.status(201).json({ message: 'success', notify });
+    } catch (error) {
+        res.status(500).json({ message: 'failed', error });
+    }
+}
+async function getAll (req, res){
+    try {
+        const user_id = req.body.user_id;
+        const notifies = await Notify.find({ user_id }).populate('user_id');
+        res.status(200).json({notifies, message: 'success'});
+    } catch (error) {
+        res.status(500).json({ message: 'failed', error });
+    }
+}
+
+module.exports = {
+    create,
+    getAll
+
+
+}

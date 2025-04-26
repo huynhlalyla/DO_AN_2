@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Giao Dịch</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
     <link rel="stylesheet" href="../FE/css/main.css">
 </head>
 <body>
@@ -15,44 +16,47 @@
                 <div class="card shadow-lg">
                     <div class="card-body">
                         <h4 class="card-title text-center mb-4">Nhập Giao Dịch</h4>
-                        <form>
+                        <form id="transactionForm" >
                             <!-- Tên Giao Dịch -->
                             <div class="mb-3">
                                 <label for="tenGiaoDich" class="form-label">Tên Giao Dịch</label>
-                                <input type="text" class="form-control" id="tenGiaoDich" placeholder="Nhập tên giao dịch" required>
+                                <input name="name" type="text" class="form-control" id="tenGiaoDich" placeholder="Nhập tên giao dịch" required>
                             </div>
 
                             <!-- Danh Mục -->
                             <div class="mb-3">
                                 <label for="danhMuc" class="form-label">Danh Mục</label>
-                                <select class="form-select" id="danhMuc" required>
+                                <select name="category" class="form-select" id="danhMuc" required>
                                     <option value="" selected disabled>Chọn danh mục</option>
-                                    <option value="An uống">Ăn uống</option>
-                                    <option value="Di chuyển">Di chuyển</option>
                                 </select>
+                                
+                                <div style="margin-top: 4px; border: 1px solid #ccc; display: inline-block; padding: 0 4px; cursor: pointer;" onclick="addCatrgoryModal()">
+                                    <i class="bi bi-plus-circle"></i>
+                                    Thêm danh mục
+                                </div>
                             </div>
 
                             <!-- Loại Giao Dịch -->
                             <div class="mb-3">
                                 <label for="loaiGiaoDich" class="form-label">Loại Giao Dịch</label>
-                                <select class="form-select" id="loaiGiaoDich" required>
+                                <select disabled name="type" class="form-select" id="loaiGiaoDich" required>
                                     <option value="" selected disabled>Chọn loại giao dịch</option>
-                                    <option value="Thu nhập">Thu nhập</option>
-                                    <option value="Chi tiêu">Chi tiêu</option>
+                                    <option value="income">Thu nhập</option>
+                                    <option value="expense">Chi tiêu</option>
                                 </select>
                             </div>
 
                             <div class="mb-3">
                                 <label for="soTien" class="form-label">Số Tiền</label>
                                 <div class="input-group">
-                                    <input type="text" class="form-control" id="soTien" placeholder="Nhập số tiền" required oninput="formatCurrency(this)">
+                                    <input name="amount" type="text" class="form-control" id="soTien" placeholder="Nhập số tiền" required oninput="formatCurrency(this)">
                                     <span class="input-group-text">VNĐ</span>
                                 </div>
                             </div>
                             <!-- Ngày Giao Dịch -->
                             <div class="mb-3">
                                 <label for="ngayGiaoDich" class="form-label">Ngày Giao Dịch</label>
-                                <input type="date" class="form-control" id="ngayGiaoDich" required>
+                                <input name="date" type="date" class="form-control" id="ngayGiaoDich" required>
                             </div>
 
                             <!-- Nút Lưu -->
@@ -66,21 +70,216 @@
         </div>
     </div>
     <div id="footer"></div>
-<script src="../FE/js/main.js"></script>
+    
+    <script src="../FE/js/main.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
 <script>
-    function formatCurrency(input) {
-        // Loại bỏ tất cả ký tự không phải số
-        let value = input.value.replace(/\D/g, "");
-    
-        // Nếu giá trị rỗng thì không cần định dạng
-        if (value === "") {
-            input.value = "";
-            return;
+
+    document.addEventListener("DOMContentLoaded", function() {
+        //load header
+        window.addCatrgoryModal = function() {
+            const modal = document.createElement("div");
+            modal.classList.add("modal", "fade");
+            modal.setAttribute("id", "addCategoryModal");
+            modal.setAttribute("tabindex", "-1");
+            modal.innerHTML = `
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Thêm Danh Mục</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="addCategoryForm" action="">
+                                <div class="mb-3">
+                                    <label for="categoryType" class="form-label">Loại Danh Mục</label>
+                                    <select name="type" class="form-select" id="categoryType" required>
+                                        <option value="income">Thu nhập</option>
+                                        <option selected value="expense">Chi tiêu</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="categoryName" class="form-label">Tên Danh Mục</label>
+                                    <input name="name" type="text" class="form-control" id="categoryName" required>
+                                </div>
+                                
+                                <div id="modal-budget" class="mb-3">
+                                    <label for="categoryBudget" class="form-label">Ngân sách (không bắt buộc)</label>
+                                    <input name="limit_amount" type="text" class="form-control" id="categoryBudget">
+                                </div>
+
+                                <div class="row">
+                                    <div class="col mb-3">
+                                        <label class="form-label fw-bold">Ngày bắt đầu</label>
+                                        <input name="start_date" id="startDate" type="date" class="form-control">
+                                    </div>
+                                    <div class="col mb-3">
+                                        <label class="form-label fw-bold">Ngày kết thúc</label>
+                                        <input name="end_date" id="endDate" type="date" class="form-control">
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                            <button type="button" class="btn btn-primary" id="saveCategoryButton">Lưu</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            const bootstrapModal = new bootstrap.Modal(modal);
+            bootstrapModal.show();
+            const saveButton = modal.querySelector("#saveCategoryButton");
+            const categoryType = document.querySelector("#categoryType");
+            const categoryName = document.querySelector("#categoryName")
+            const categoryBudget = document.querySelector("#categoryBudget");
+            const startDate = document.querySelector("#startDate");
+            const endDate = document.querySelector("#endDate");
+            categoryType.addEventListener("change", async () => {
+                if(categoryType.value === "income") {
+                    document.querySelector("#modal-budget").classList.add('d-none');
+                } else {
+                    document.querySelector("#modal-budget").classList.remove('d-none');
+                }
+            })
+
+            saveButton.addEventListener("click", async () => {
+                event.preventDefault();
+                const name = categoryName.value;
+                const type = categoryType.value;
+                const limit_amount = categoryBudget.value;
+                const start_date = startDate.value;
+                const end_date = endDate.value;
+                if(name && type) {
+                    const response = await fetch("http://localhost:3000/category/add", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            name: name,
+                            type: type,
+                            limit_amount: limit_amount, // Gửi giá trị ngân sách nếu có
+                            start_date: start_date, // Gửi ngày bắt đầu
+                            end_date: end_date, // Gửi ngày kết thúc
+                            user_id: JSON.parse(localStorage.getItem('user')).id // Lấy user_id từ localStorage
+                        })
+                    });
+                    const data = await response.json();
+                    console.log(data); // Kiểm tra phản hồi từ server
+                    if(data.message === "success") alert("Thêm danh mục thành công!");
+                    else alert("Thêm danh mục thất bại!");
+                }
+            })
+
+            const closeButton = modal.querySelector(".btn-close");
+            closeButton.addEventListener("click", function() {
+                modal.remove();
+            });
         }
-    
-        // Định dạng số có dấu chấm phân cách hàng nghìn
-        input.value = new Intl.NumberFormat("vi-VN").format(value);
-    }
+    });
+
+    document.addEventListener("DOMContentLoaded", async function() {
+        window.formatCurrency = function(input) {
+            // Loại bỏ tất cả ký tự không phải số
+            let value = input.value.replace(/\D/g, "");
+        
+            // Nếu giá trị rỗng thì không cần định dạng
+            if (value === "") {
+                input.value = "";
+                return;
+            }
+        
+            // Định dạng số có dấu chấm phân cách hàng nghìn
+            input.value = new Intl.NumberFormat("vi-VN").format(value);
+        }
+
+
+        //lấy form dữ liệu
+        const form = document.getElementById("transactionForm");
+        const name = form.querySelector("#tenGiaoDich");
+        const amount = form.querySelector("#soTien");
+        const date = form.querySelector("#ngayGiaoDich");
+        const type = form.querySelector("#loaiGiaoDich");
+        const categorySelect = document.getElementById("danhMuc");
+        const submitButton = form.querySelector(".btn btn-primary");
+        categorySelect.addEventListener("focus", async function() {
+            const response = await fetch("http://localhost:3000/category/getall", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    user_id: JSON.parse(localStorage.getItem("user")).id,
+                }),
+            });
+            const categories = await response.json();
+            //gắn danh sách danh mục vào select
+            categorySelect.innerHTML = '<option value="" selected disabled>Chọn danh mục</option>';
+            categories.forEach(category => {
+                const option = document.createElement("option");
+                option.value = category._id;
+                option.setAttribute("data-type", category.type); // Lưu loại giao dịch vào thuộc tính data-type
+                option.textContent = category.name;
+                categorySelect.appendChild(option);
+            });
+            //cập nhật type đúng với danh mục
+            const typeSelect = document.getElementById("loaiGiaoDich");
+            categorySelect.addEventListener("change", () => {
+                const selectedOption = categorySelect.options[categorySelect.selectedIndex];
+                if (selectedOption.getAttribute("data-type") === "income") {
+                    typeSelect.querySelector("option[value='expense']").selected = false;
+                    typeSelect.querySelector("option[value='income']").selected = true;
+                } else {
+                    typeSelect.querySelector("option[value='expense']").selected = true;
+                    typeSelect.querySelector("option[value='income']").selected = false;
+                }
+            });
+
+        });
+
+
+        form.addEventListener("submit", async function(event) {
+            event.preventDefault();
+            const userId = JSON.parse(localStorage.getItem("user")).id;
+            const categoryId = categorySelect.value;
+            const transactionType = type.value;
+            const transactionName = name.value;
+            const transactionAmount = amount.value.replace(/\D/g, ""); // Chỉ lấy số
+            const transactionDate = date.value;
+
+            console.log(userId, categoryId, transactionType, transactionName, transactionAmount, transactionDate);
+            //
+            if(userId && categoryId && transactionType && transactionName && transactionAmount) {
+                const response = await fetch("http://localhost:3000/transaction/add", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        user_id: userId,
+                        category_id: categoryId,
+                        type: transactionType,
+                        name: transactionName,
+                        amount: transactionAmount,
+                        date: transactionDate,
+                    }),
+                });
+                const result = await response.json();
+                if (result.message === "success") {
+                    alert("Giao dịch đã được lưu thành công!");
+                    window.location.href = "transaction.html";
+                } else {
+                    alert("Đã xảy ra lỗi khi lưu giao dịch. Vui lòng thử lại.");
+                }
+            } else {
+                alert("Vui lòng điền đầy đủ thông tin.");
+            }
+        });
+        
+    });
     
 </script>
 </body>

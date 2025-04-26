@@ -23,11 +23,7 @@ const Category = new Schema({
             default: []
         }
     ],
-    budget_id: {
-        type: Schema.Types.ObjectId,
-            ref: 'Budget',
-            default: null
-    }
+    budget_id: {type: Schema.Types.ObjectId, ref: 'Budget'},
 }, {
     timestamps: true
 });

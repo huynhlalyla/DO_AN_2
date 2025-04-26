@@ -2,6 +2,7 @@ const userRouter = require('./user');
 const categoryRouter = require('./category');
 const transactionRouter = require('./transaction');
 const budgetRouter = require('./budget');
+const notifyRouter = require('./notify');
 const reportRouter = require('./report');
 const Users = require('../app/models/Users');
 function Router(app) {
@@ -23,6 +24,7 @@ function Router(app) {
     app.use('/category', categoryRouter);
     app.use('/budget', budgetRouter);
     app.use('/report', reportRouter);
+    app.use('/notify', notifyRouter);
     
     
     

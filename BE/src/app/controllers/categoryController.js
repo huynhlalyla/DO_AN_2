@@ -1,44 +1,55 @@
 const Categories = require('../models/Categories');
 const Users = require('../models/Users');
+const Budgets = require('../models/Budgets');
 
 
 //GET: /category/add
 async function addCategory(req, res) {
     try {
-        //lấy dữ liệu từ người dùng gửi lên
-        // const data = req.body;
-        const data = {
-            name: 'Bán vàng',
-            type: 'income',
-            user_id: '67d908ef4abdd3937e27b62f'
+        const { name, type, limit_amount, start_date, end_date, user_id } = req.body;
+        // Kiểm tra xem category đã tồn tại chưa
+        const allCategories = await Categories.find({ user_id: user_id });
+        const existingCategory = allCategories.find(category => category.name === name);
+        if (existingCategory) {
+            return res.status(400).json({ message: "Danh mục đã tồn tại" });
         }
-        //kiểm tra xem category đã tồn tại chưa
-        
-        const allCategories = await Categories.find({user_id: data.user_id});
-        const category = allCategories.find(category => category.name === data.name);
-        //nếu đã tồn tại thì trả về thông báo lỗi
-        if(category) {
-            return res.status(400).json({message: "Category already exists"});
-        } else {
-            //nếu chưa tồn tại thì tạo mới
-            const category = new Categories(data);
-            category.save()
-            .then(category => {
-                Users.findById(category.user_id)
-                .then(user => {
-                    user.created_categories.push(category._id);
-                    user.save();
-                })
-            })    
-            res.redirect('/');
-        }
-    } catch (error) {
-        //nếu việc đó lỗi chạy ở đây
-        res.status(500).json({message: 'Lỗi server:', error});
-    }
 
-    
-    
+        //tạo một budget mới với thông tin từ request body
+        const budgetData = {
+            user_id: user_id,// Lấy ID từ category vừa tạo
+            start_date: new Date(start_date),
+            end_date: new Date(end_date),
+            limit_amount: limit_amount,
+        };
+        const newBudget = new Budgets(budgetData);
+        await newBudget.save(); // Lưu budget
+
+
+        // Tạo mới category
+        const categoryData = {
+            name: name,
+            type: type,
+            user_id: user_id,
+            budget_id: newBudget._id, // Lấy ID từ budget vừa tạo
+        };
+        const newCategory = new Categories(categoryData);
+        const savedCategory = await newCategory.save(); // Lưu category trước
+
+
+
+        // Cập nhật user với category mới
+        const user = await Users.findById(user_id);
+        if (user) {
+            user.created_categories.push(savedCategory._id);
+            await user.save();
+        }
+
+        return res.status(200).json({ message: "success", category: savedCategory });
+    } catch (error) {
+        // Xử lý lỗi
+        console.error(error);
+        return res.status(500).json({ message: "Lỗi server", error });
+    }
 }
 
 
@@ -51,7 +62,66 @@ async function viewAllCategories(req, res) {
     })
 }
 
+//POST: /category/getall
+async function getAll(req, res) {
+    const user_id = req.body.user_id;
+    try {
+        const categories = await Categories.find({user_id: user_id}).populate('budget_id');
+        return res.status(200).json(categories);
+    } catch (error) {
+        return res.status(500).json({ message: 'Error retrieving categories', error });
+    }
+}
+
+//cái này dời qua Budget có vẻ hợp lý hơn - làm biến dời rồi
+//GET: /category/:id
+async function getCategoryById(req, res) {
+    const categoryId = req.params.id;
+    try {
+        // const category = await Categories.findById(categoryId);
+        const budget = await Categories.findById(categoryId).populate('budget_id');
+        return res.status(200).json(budget);
+    } catch (error) {
+        return res.status(500).json({ message: 'Error retrieving category', error });
+    }
+}
+
+async function updateCategory(req, res) {
+    const categoryId = req.params.id;
+    const { name, type, limit_amount, start_date, end_date } = req.body;
+    try {
+        const updatedCategory = await Categories.findByIdAndUpdate(categoryId, { name, type }, { new: true });
+        await Budgets.findByIdAndUpdate(updatedCategory.budget_id, { limit_amount, start_date: new Date(start_date), end_date: new Date(end_date) }, { new: true });
+        return res.status(200).json({ message: 'success', category: updatedCategory });
+    } catch (error) {
+        return res.status(500).json({ message: 'Error updating category', error });
+    }
+}
+
+async function deleteCategory(req, res) {
+    const categoryId = req.params.id;
+    try {
+        // Xóa category
+        const deletedCategory = await Categories.findByIdAndDelete(categoryId);
+        if (!deletedCategory) {
+            return res.status(404).json({ message: 'Category not found' });
+        }
+        await Users.findByIdAndUpdate(deletedCategory.user_id, {
+            $pull: { created_categories: deletedCategory._id }
+        });
+        // Xóa budget liên quan
+        await Budgets.findByIdAndDelete(deletedCategory.budget_id);
+        return res.status(200).json({ message: 'success' });
+    } catch (error) {
+        return res.status(500).json({ message: 'Error deleting category', error });
+    }
+}
+
 module.exports = {
     addCategory,
-    viewAllCategories
+    viewAllCategories,
+    getAll,
+    getCategoryById,
+    updateCategory,
+    deleteCategory
 }

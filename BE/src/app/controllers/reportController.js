@@ -14,18 +14,37 @@ async function createReport(req, res) {
     // const user = await Users.findById(user_id);
     let startDate;
     let endDate;
-    if(day <= 14) {
+    let transactions;
+    if(day == 0) {
+        transactions = await Transactions.find({
+            user_id: user_id,
+        }).populate('category_id', "name type");
+    } else if(day > 0 && day <= 14) {
         const currentDate = new Date();
         const currentDay = currentDate.getDay();
         const countDay = day;
         const lastSunday = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() - (currentDay === 0 ? 7 : currentDay-1));
         startDate = new Date(Date.UTC(lastSunday.getFullYear(), lastSunday.getMonth(), lastSunday.getDate() - countDay));
         endDate = new Date(lastSunday);
+        transactions = await Transactions.find({
+            user_id: user_id,
+            date: {
+                $gte: startDate,
+                $lt: endDate
+            }
+        }).populate('category_id', "name type");
     } else {
         const currentDate = new Date();
         const countMonth = day / 30;
         startDate = new Date(Date.UTC(currentDate.getFullYear(), currentDate.getMonth() - countMonth, 1));
         endDate = new Date(Date.UTC(currentDate.getFullYear(), currentDate.getMonth(), 0));
+        transactions = await Transactions.find({
+            user_id: user_id,
+            date: {
+                $gte: startDate,
+                $lt: endDate
+            }
+        }).populate('category_id', "name type");
     }
     console.log(startDate);
     console.log(endDate);
@@ -42,13 +61,6 @@ async function createReport(req, res) {
 
     //lap qua het cac giao dich
     //tinh tong so tien cua giao dich
-    const transactions = await Transactions.find({
-        user_id: user_id,
-        date: {
-            $gte: startDate,
-            $lt: endDate
-        }
-    }).populate('category_id', "name");
     for(let i = 0; i < transactions.length; i++) {
         const transaction = transactions[i];
         if(transaction.type === 'income') {

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Quản lý Thu nhập</title>
+    <title>Quản lý Chi tiêu</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
     <link rel="stylesheet" href="../FE/css/main.css">
@@ -12,6 +12,17 @@
     .disable-hover {
         pointer-events: none; /* Vô hiệu hóa tất cả sự kiện hover và click */
         opacity: 0.8; /* Tạo hiệu ứng mờ cho các phần tử bị vô hiệu hóa */
+    }
+    /* Ẩn các nút mặc định */
+    .category-item .category-actions {
+        display: none;
+    }
+
+    /* Hiển thị các nút khi hover vào danh mục */
+    .category-item:hover .category-actions {
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }
     
 </style>
@@ -27,12 +38,6 @@
                     <div class="col-4">
                         <button class="btn btn-success w-100" data-bs-toggle="modal" data-bs-target="#addCategoryModal"><i class="bi bi-plus-circle"></i> Thêm</button>
                     </div>
-                    <div class="col-4">
-                        <button class="btn btn-warning w-100" data-bs-toggle="modal" data-bs-target="#editCategoryModal"><i class="bi bi-pencil-square"></i> Sửa</button>
-                    </div>
-                    <div class="col-4">
-                        <button class="btn btn-danger w-100"><i class="bi bi-trash"></i> Xóa</button>
-                    </div>
                 </div>
             </div>
         </div>
@@ -47,14 +52,20 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form>
+                    <form id="addCategoryForm">
                         <div class="mb-3">
                             <label for="categoryName" class="form-label">Tên danh mục</label>
                             <input type="text" class="form-control" id="categoryName" placeholder="Nhập tên danh mục">
                         </div>
-                        <div class="mb-3">
-                            <label for="categoryImage" class="form-label">Chọn hình ảnh</label>
-                            <input type="file" class="form-control" id="categoryImage">
+                        <div class="row">
+                            <div class="col mb-3">
+                                <label class="form-label fw-bold">Ngày bắt đầu</label>
+                                <input id="startDate" type="date" class="form-control">
+                            </div>
+                            <div class="col mb-3">
+                                <label class="form-label fw-bold">Ngày kết thúc</label>
+                                <input id="endDate" type="date" class="form-control">
+                            </div>
                         </div>
                     </form>
                 </div>
@@ -75,14 +86,20 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form>
+                    <form id="editCategoryForm">
                         <div class="mb-3">
                             <label for="editCategoryName" class="form-label">Tên danh mục</label>
                             <input type="text" class="form-control" id="editCategoryName" value="Giải trí">
                         </div>
-                        <div class="mb-3">
-                            <label for="editCategoryImage" class="form-label">Chọn hình ảnh mới</label>
-                            <input type="file" class="form-control" id="editCategoryImage">
+                        <div class="row">
+                            <div class="col mb-3">
+                                <label class="form-label fw-bold">Ngày bắt đầu</label>
+                                <input id="startDate" type="date" class="form-control">
+                            </div>
+                            <div class="col mb-3">
+                                <label class="form-label fw-bold">Ngày kết thúc</label>
+                                <input id="endDate" type="date" class="form-control">
+                            </div>
                         </div>
                     </form>
                 </div>
@@ -97,47 +114,8 @@
     <div class="container mt-3">
         <div class="category-container">
             <div class="row justify-content-center">
-                <div class="col-6 col-md-4 col-lg-3 d-flex flex-column align-items-center">
-                    <div class="category">
-                        <span class="delete-icon">&minus;</span> <!-- Dấu "-" -->
-                        <div class="category-item">
-                            <img src="../FE/image/entertainment.png" alt="Giải trí">
-                        </div>
-                        <p class="category-text">Giải trí</p>
-                    </div>                    
-                </div>
-                <div class="col-6 col-md-4 col-lg-3 d-flex flex-column align-items-center">
-                    <div class="category">
-                        <div class="category-item" data-url="education.html">
-                            <img src="../FE/css/image/icon1.png" alt="Học tập">
-                        </div>
-                        <p class="category-text">Học tập</p>
-                    </div>
-                </div>
-                <div class="col-6 col-md-4 col-lg-3 d-flex flex-column align-items-center">
-                    <div class="category">
-                        <div class="category-item">
-                            <img src="../FE/image/entertainment.png" alt="Giải trí">
-                        </div>
-                        <p class="category-text">Giải trí</p>
-                    </div>
-                </div>
-                <div class="col-6 col-md-4 col-lg-3 d-flex flex-column align-items-center">
-                    <div class="category">
-                        <div class="category-item">
-                            <img src="../FE/image/transport.png" alt="Giao thông">
-                        </div>
-                        <p class="category-text">Giao thông</p>
-                    </div>
-                </div>
-                <div class="col-6 col-md-4 col-lg-3 d-flex flex-column align-items-center">
-                    <div class="category">
-                        <div class="category-item">
-                            <img src="../FE/image/transport.png" alt="Giao thông">
-                        </div>
-                        <p class="category-text">Giao thông</p>
-                    </div>
-                </div>
+                <!-- render từ DB -->
+                 
             </div>
         </div>
     </div>
@@ -146,61 +124,198 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
     <script>
+        
+        
+        //xóa danh mục
         document.addEventListener("DOMContentLoaded", function () {
-            let isDeleteMode = false;
-            const deleteButton = document.querySelector(".btn-danger");
-            const deleteIcons = document.querySelectorAll(".delete-icon");
-            const categoryItems = document.querySelectorAll(".category-item");
-            const categoryContainer = document.querySelector(".category-container"); // Container của các category
-            
-            // Khi nhấn vào nút "Xóa"
-            deleteButton.addEventListener("click", function () {
-                isDeleteMode = !isDeleteMode;
-                deleteIcons.forEach(icon => {
-                    icon.style.display = isDeleteMode ? "block" : "none"; // Hiển thị/ẩn dấu "-"
-                });
-        
-                // Thêm/xóa lớp disable-hover trên category-item
-                categoryItems.forEach(item => {
-                    if (isDeleteMode) {
-                        item.classList.add("disable-hover"); // Vô hiệu hóa hover và click cho category-item
+            window.loadModalDelete = async function(category_id) {
+                //hiện confirm xác định xóa
+                //lấy dữ liệu từ server
+                if(window.confirm("Bạn có chắc muốn xóa không?")) {
+                    const response = await fetch(`http://localhost:3000/category/delete/${category_id}`, {
+                        method: "DELETE",
+                        headers: {
+                            "Content-Type": "application/json"
+                        }
+                    });
+                    const data = await response.json();
+                    console.log(data); // Kiểm tra phản hồi từ server
+
+                    if(data.message === "success") {
+                        alert("Xóa danh mục thành công!");
+                        // Xóa danh mục khỏi giao diện
+                        const categoryElement = document.querySelector(`.category[data-category-id="${category_id}"]`);
+                        if (categoryElement) {
+                            categoryElement.remove();
+                        }
+                        window.location.reload(); // Tải lại trang để cập nhật danh sách danh mục
                     } else {
-                        item.classList.remove("disable-hover"); // Bỏ vô hiệu hóa hover khi chế độ xóa tắt
-                    }
-                });
-            });
-        
-            // Khi nhấn vào dấu "-"
-            deleteIcons.forEach(icon => {
-                icon.addEventListener("click", function (event) {
-                    event.stopPropagation(); // Ngăn chặn sự kiện click lan ra ngoài
-                    this.closest(".col-6").remove(); // Xóa phần tử chứa category
-                });
-            });
-        
-            // Ngăn chặn các hành động khác trên category-item khi chế độ xóa bật
-            categoryItems.forEach(item => {
-                item.addEventListener("click", function (event) {
-                    if (isDeleteMode) {
-                        event.stopPropagation(); // Ngăn các sự kiện click khác khi xóa
-                    }
-                });
-            });
-    
-            // Thoát chế độ xóa khi click vào bất kỳ chỗ nào ngoài category
-            document.addEventListener("click", function(event) {
-                // Kiểm tra nếu click vào một khu vực ngoài container category hoặc nút xóa
-                if (!categoryContainer.contains(event.target) && !deleteButton.contains(event.target)) {
-                    if (isDeleteMode) {
-                        isDeleteMode = false;
-                        deleteIcons.forEach(icon => {
-                            icon.style.display = "none"; // Ẩn dấu "-" khi tắt chế độ xóa
-                        });
-                        categoryItems.forEach(item => {
-                            item.classList.remove("disable-hover"); // Bỏ vô hiệu hóa hover khi tắt chế độ xóa
-                        });
+                        alert("Xóa danh mục thất bại!");
                     }
                 }
+            }
+        });
+
+        //sửa danh mục
+        document.addEventListener("DOMContentLoaded", function () {
+            //sử lí load dữ liệu khi sửa danh mục
+            window.loadModalEdit = async function(category_id) {
+                //lấy modal chỉnh sửa
+                const editCategoryModal = document.getElementById("editCategoryModal");
+                const editCategoryNameInput = editCategoryModal.querySelector("#editCategoryName");
+                const editStartDateInput = editCategoryModal.querySelector("#startDate"); // Ngày bắt đầu
+                const editEndDateInput = editCategoryModal.querySelector("#endDate"); // Ngày kết thúc
+                //lấy dữ liệu từ server
+                const response = await fetch(`http://localhost:3000/category/${category_id}`, {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json"
+                    }
+                });
+                const data = await response.json();
+                console.log(data);
+                //gắn dữ liệu vào modal
+                editCategoryNameInput.value = data.name;
+                editStartDateInput.value = new Date(data.budget_id.start_date).toLocaleDateString("en-CA"); // Gán giá trị ngày bắt đầu
+                editEndDateInput.value = new Date(data.budget_id.end_date).toLocaleDateString("en-CA"); // Gán giá trị ngày kết thúc
+
+                const submitEditBtn = editCategoryModal.querySelector(".btn-primary"); // Nút Lưu trong modal sửa danh mục
+                submitEditBtn.addEventListener("click", async function () {
+                    const updatedCategoryName = editCategoryNameInput.value;
+                    const updatedStartDate = editStartDateInput.value; // Lấy giá trị ngày bắt đầu
+                    const updatedEndDate = editEndDateInput.value; // Lấy giá trị ngày kết thúc
+
+                    // Gửi yêu cầu cập nhật danh mục đến server
+                    const response = await fetch(`http://localhost:3000/category/update/${category_id}`, {
+                            method: "PUT",
+                            headers: {
+                                "Content-Type": "application/json"
+                            },
+                            body: JSON.stringify({
+                                name: updatedCategoryName,
+                                type: "income",
+                                start_date: updatedStartDate, // Gửi ngày bắt đầu
+                                end_date: updatedEndDate, // Gửi ngày kết thúc
+                            })
+                        });
+                        const data = await response.json();
+                        console.log(data); // Kiểm tra phản hồi từ server
+
+                        // Đóng modal sau khi sửa
+                        const editCategoryModalInstance = bootstrap.Modal.getInstance(editCategoryModal);
+                        editCategoryModalInstance.hide();
+
+                        if(data.message === "success") {
+                            alert("Cập nhật danh mục thành công!");
+                            window.location.reload(); // Tải lại trang để cập nhật danh sách danh mục
+                        } else {
+                            alert("Cập nhật danh mục thất bại!");
+                        }
+                });
+            }
+            //
+            
+
+        });
+        
+        //thêm danh mục
+        document.addEventListener("DOMContentLoaded", async function () {
+            const addCategoryForm = document.getElementById("addCategoryForm");
+            const addCategoryButton = document.querySelector(".btn-primary"); // Nút Lưu trong modal thêm danh mục
+            const categoryNameInput = document.getElementById("categoryName");
+            const startDateInput = addCategoryForm.querySelector("#startDate"); // Ngày bắt đầu
+            const endDateInput = addCategoryForm.querySelector("#endDate"); // Ngày kết thúc
+            //load dữ liệu cho ngân sách
+            const userId = JSON.parse(localStorage.getItem('user')).id; // Lấy user_id từ localStorage
+            const response = await fetch(`http://localhost:3000/category/getall`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    user_id: userId // Gửi user_id để lấy danh sách danh mục của người dùng
+                })
+            });
+            const data = await response.json();
+
+            data.forEach(category => {
+                if(category.type === "income") {
+                    const newCategory = document.createElement("div");
+                    newCategory.classList.add("col-6", "col-md-4", "col-lg-3", "d-flex", "flex-column", "align-items-center");
+
+                    newCategory.innerHTML = `
+                        <!-- Thay đổi phần render danh mục -->
+                        <div class="category">
+                            <div class="category-item position-relative">
+                                <p class="category-text">${category.name}</p>
+                                <!-- Nút Sửa và Xóa -->
+                                <div class="category-actions position-absolute top-0 start-50 translate-middle">
+                                    <button onclick="loadModalEdit('${category._id}')" id="editCategoryBtn" data-bs-toggle="modal" data-bs-target="#editCategoryModal" class="btn btn-warning btn-sm me-1"><i class="bi bi-pencil-square"></i></button>
+                                    <button onclick="loadModalDelete('${category._id}')" id="deleteCategoryBtn" class="btn btn-danger btn-sm"><i class="bi bi-trash"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    // Thêm danh mục mới vào container
+                    document.querySelector(".category-container .row").appendChild(newCategory);
+                } // Chỉ hiển thị danh mục có type là "income"
+                
+            });
+            console.log(data); // Kiểm tra phản hồi từ server
+
+            addCategoryButton.addEventListener("click", async function () {
+                const categoryName = categoryNameInput.value;
+                const startDate = startDateInput.value; // Lấy giá trị ngày bắt đầu
+                const endDate = endDateInput.value; // Lấy giá trị ngày kết thúc
+
+                // Tạo phần tử mới cho danh mục
+                const newCategory = document.createElement("div");
+                    newCategory.classList.add("col-6", "col-md-4", "col-lg-3", "d-flex", "flex-column", "align-items-center");
+
+                    newCategory.innerHTML = `
+                        <!-- Thay đổi phần render danh mục -->
+                        <div class="category">
+                            <div class="category-item position-relative">
+                                <p class="category-text">${categoryName}</p>
+                                <!-- Nút Sửa và Xóa -->
+                                <div class="category-actions position-absolute top-50 start-50 translate-middle">
+                                    <button class="btn btn-warning btn-sm me-1"><i class="bi bi-pencil-square"></i></button>
+                                    <button class="btn btn-danger btn-sm"><i class="bi bi-trash"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+
+                    // Thêm danh mục mới vào container
+                    document.querySelector(".category-container .row").appendChild(newCategory);
+                    
+                    const response = await fetch("http://localhost:3000/category/add", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            name: categoryName,
+                            type: "income",
+                            start_date: startDate, // Gửi ngày bắt đầu
+                            end_date: endDate, // Gửi ngày kết thúc
+                            user_id: JSON.parse(localStorage.getItem('user')).id // Lấy user_id từ localStorage
+                        })
+                    });
+                    const data = await response.json();
+                    console.log(data); // Kiểm tra phản hồi từ server
+                    // Đóng modal sau khi thêm
+                    const addCategoryModal = bootstrap.Modal.getInstance(document.getElementById("addCategoryModal"));
+                    addCategoryModal.hide();
+                    // Reset form
+                    addCategoryForm.reset();
+
+                    if(data.message === "success") {
+                        alert("Thêm danh mục thành công!");
+                        window.location.reload(); // Tải lại trang để cập nhật danh sách danh mục
+                    } else {
+                        alert("Thêm danh mục thất bại!");
+                    }
             });
         });
     </script>

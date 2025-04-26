@@ -41,9 +41,10 @@
         <select name="" id="choice-option" class="form-select mb-4">
             <option value="7">Thống kê 1 tuần</option>
             <option value="14">Thống kê 2 tuần</option>
-            <option value="30" selected>Thống kê 1 tháng</option>
+            <option value="30">Thống kê 1 tháng</option>
             <option value="60">Thống kê 2 tháng</option>
             <option value="90">Thống kê 3 tháng</option>
+            <option value="0" selected >Thống kê tất cả</option>
          </select>
          <div>
             <span style="font-size: 16px; color: orangered;" id="start-date"></span>
@@ -84,11 +85,13 @@
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Danh mục</label>
-                                <input type="text" class="form-control" id="editCategory" required>
+                                <select class="form-control" id="editCategory" required>
+                                    <option value=""></option>
+                                </select>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Loại danh mục</label>
-                                <select class="form-control" id="editCategoryType">
+                                <select disabled class="form-control" id="editCategoryType">
                                     <option value="Chi tiêu">Chi tiêu</option>
                                     <option value="Thu nhập">Thu nhập</option>
                                 </select>
@@ -101,7 +104,7 @@
                                 <label class="form-label">Ngày</label>
                                 <input type="date" class="form-control" id="editDate" required>
                             </div>
-                            <button type="submit" class="btn btn-primary text-center w-100">Lưu thay đổi</button>
+                            <button data-id="" type="submit" class="btn btn-primary text-center w-100">Lưu thay đổi</button>
                         </form>
                     </div>
                 </div>
@@ -114,63 +117,129 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            let currentRow = null;
-        
-            document.querySelectorAll(".edit-btn").forEach((button) => {
-                button.addEventListener("click", function () {
-                    currentRow = this.closest("tr");
-                    let transactionName = currentRow.cells[0].textContent;
-                    let category = currentRow.cells[1].textContent;
-                    let categoryType = currentRow.cells[2].textContent;
-                    let amount = currentRow.cells[3].textContent.replace(" VND", "").trim();
-                    
-                    let dateParts = currentRow.cells[4].textContent.split("/");
-                    let date = `${dateParts[2]}-${dateParts[1].padStart(2, '0')}-${dateParts[0].padStart(2, '0')}`;
-            
-                    document.getElementById("editTransactionName").value = transactionName;
-                    document.getElementById("editCategory").value = category;
-                    document.getElementById("editCategoryType").value = categoryType;
-                    document.getElementById("editAmount").value = amount;
-                    document.getElementById("editDate").value = date;
-                });
-            });            
-            document.getElementById("editTransactionForm").addEventListener("submit", function (event) {
-                event.preventDefault();
-        
-                if (currentRow) {
-                    currentRow.cells[0].textContent = document.getElementById("editTransactionName").value;
-                    currentRow.cells[1].textContent = document.getElementById("editCategory").value;
-                    currentRow.cells[2].textContent = document.getElementById("editCategoryType").value;
-                    currentRow.cells[3].textContent = document.getElementById("editAmount").value + " VND";
-                    currentRow.cells[4].textContent = document.getElementById("editDate").value.split("-").reverse().join("/");
-                }
-        
-                // Đóng modal
-                let editModal = bootstrap.Modal.getInstance(document.getElementById("editTransactionModal"));
-                editModal.hide();
-            });
-        });
-        
+        //tạo bảng và biểu đồ
         document.addEventListener("DOMContentLoaded", function () {
             let currentChart = null;
-        
+            let TOTAL_INCOME = []; // Biến toàn cục để lưu trữ danh sách thu nhập
+            let TOTAL_EXPENSE = []; // Biến toàn cục để lưu trữ danh sách chi tiêu
+            let TRANSACTIONS = []; // Biến toàn cục để lưu trữ danh sách giao dịch
             const selectOption = document.getElementById('choice-option');
             selectOption.addEventListener('change', function () {
                 const selectedValue = this.value;
                 chartRendering(parseInt(selectedValue));
             });
+            
+            //sửa giao dịch
+            window.editSetup = async function (transaction_id) {
+                const editTransactionForm = document.getElementById("editTransactionForm");
+                const editTransactionName = document.getElementById("editTransactionName");
+                const editCategory = document.getElementById("editCategory");
+                const editCategoryType = document.getElementById("editCategoryType");
+                const editAmount = document.getElementById("editAmount");
+                const editDate = document.getElementById("editDate");
+                const submitEditBtn = document.querySelector("#editTransactionForm button[type='submit']");
+                
 
+                //khi focus vào category thi hien cac danh muc hien co ra
+                editCategory.addEventListener("focus", async function () {
+                    const response = await fetch("http://localhost:3000/category/getAll", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({
+                            user_id: JSON.parse(localStorage.getItem('user')).id,
+                        }),
+                    });
+                    const data = await response.json();
+                    console.log(data);
+                    let options = ""
+                    data.forEach(category => {
+                        options += `<option data-type="${category.type == "income" ? "Thu nhập" : "Chi tiêu"}" value="${category._id}">${category.name}</option>`;
+                    });
+                    editCategory.innerHTML = options;
+
+                    editCategory.addEventListener("change", () => {
+                        const selectedOption = editCategory.options[editCategory.selectedIndex];
+                        if (selectedOption.getAttribute("data-type") === "Thu nhập") {
+                            editCategoryType.querySelector("option[value='Chi tiêu']").selected = false;
+                            editCategoryType.querySelector("option[value='Thu nhập']").selected = true;
+                        } else {
+                            editCategoryType.querySelector("option[value='Chi tiêu']").selected = true;
+                            editCategoryType.querySelector("option[value='Thu nhập']").selected = false;
+                        }
+                    });
+                });
+
+                
+
+                //gắn dữ liệu cũ vào form chỉnh sửa
+                const currentRow = document.querySelector(`tr[data-id="${transaction_id}"]`);
+                editTransactionName.value = currentRow.querySelector("#transaction-name").innerText;
+                editCategory.querySelector("option").innerText = currentRow.querySelector("#transaction-category").innerText;
+                editCategory.querySelector("option").value = currentRow.querySelector("#transaction-category").getAttribute("data-id");
+                const allOptionType = editCategoryType.querySelectorAll("option");
+                allOptionType.forEach(option => {
+                    if (option.value === currentRow.querySelector("#transaction-type").innerText) {
+                        option.selected = true;
+                    }
+                });
+                editAmount.value = currentRow.querySelector("#transaction-amount").innerText.replace(/[^0-9]/g, "");
+                editDate.value = new Date(currentRow.querySelector("#transaction-date").innerText).toLocaleDateString('en-CA'); // Định dạng YYYY-MM-DD
+
+                submitEditBtn.setAttribute("data-id", transaction_id);
+                submitEditBtn.addEventListener("click", async function (event) {
+                    event.preventDefault(); // Ngăn chặn hành vi mặc định của nút submit
+                    const response = await fetch(`http://localhost:3000/transaction/edit/${transaction_id}`, {
+                        method: "PUT",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({
+                            name: editTransactionName.value,
+                            category_id: editCategory.value,
+                            type: editCategoryType.value,
+                            amount: editAmount.value,
+                            date: editDate.value,
+                        }),
+                    });
+                    const data = await response.json();
+                    console.log(data);
+                    window.location.reload(); // Tải lại trang sau khi chỉnh sửa thành công
+                });
+            }
+            window.deleteTransaction = async function(transaction_id) {
+                window.confirm("Bạn có chắc chắn muốn xóa giao dịch này không?");
+                if (confirm) {
+                    const response = await fetch(`http://localhost:3000/transaction/delete/${transaction_id}`, {
+                        method: "DELETE",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                    });
+                    const data = await response.json();
+                    console.log(data);
+                    window.location.reload(); // Tải lại trang sau khi xóa thành công
+                }
+                
+            }
             function renderTable(data) {
                 const transactions = data.transactions; // Lấy danh sách giao dịch từ dữ liệu trả về
                 const transactionTableBody = document.getElementById("transactionTableBody");
                 transactionTableBody.innerHTML = ""; // Xóa nội dung cũ
 
                 //thời gian bắt đầu và kết thúc
-                const startDate = document.getElementById('start-date');
-                const endDate = document.getElementById('end-date');
-                startDate.innerText = new Date(data.startDate).toLocaleDateString('vi-VN');;
-                endDate.innerText = new Date(data.endDate).toLocaleDateString('vi-VN');;
+                //date
+            const startDate = document.getElementById('start-date');
+            const endDate = document.getElementById('end-date');
+            console.log(data.startDate, data.endDate);
+            if(data.startDate && data.endDate) {
+                startDate.innerText = new Date(data.startDate).toLocaleDateString('vi-VN');
+                endDate.innerText = new Date(data.endDate).toLocaleDateString('vi-VN');
+            } else {
+                startDate.innerText = new Date(TRANSACTIONS[0].date).toLocaleDateString('vi-VN');
+                endDate.innerText = new Date().toLocaleDateString('vi-VN');
+            }
 
                 //kiểm tra xem có giao dịch nào không
                 if (transactions.length === 0) {
@@ -181,133 +250,135 @@
                 }
                 transactions.forEach(transaction => {
                     const row = document.createElement("tr");
+                    row.setAttribute("data-id", transaction._id); // Thêm thuộc tính data-id vào hàng
                     row.innerHTML = `
-                        <td>${transaction.name}</td>
-                        <td>${transaction.category_id.name}</td>
-                        <td>${transaction.type === "expense" ? "Chi tiêu" : "Thu nhập"}</td>
-                        <td>${parseFloat(transaction.amount).toLocaleString()} đ</td>
-                        <td>${new Date(transaction.date).toLocaleDateString()}</td>
+                        <td id="transaction-name">${transaction.name}</td>
+                        <td id="transaction-category" data-id="${transaction.category_id._id}">${transaction.category_id.name}</td>
+                        <td id="transaction-type">${transaction.type === "expense" ? "Chi tiêu" : "Thu nhập"}</td>
+                        <td id="transaction-amount">${parseFloat(transaction.amount).toLocaleString()} đ</td>
+                        <td id="transaction-date">${new Date(transaction.date).toLocaleDateString()}</td>
                         <td>
-                            <button class="btn btn-warning btn-sm me-1 edit-btn" data-bs-toggle="modal" data-bs-target="#editTransactionModal">
+                            <button onclick="editSetup('${transaction._id}')" class="btn btn-warning btn-sm me-1 edit-btn" data-bs-toggle="modal" data-bs-target="#editTransactionModal">
                                 <i class="bi bi-pencil-square"></i>
                             </button>                            
-                            <button class="btn btn-danger btn-sm"><i class="bi bi-trash"></i></button>
+                            <button onclick="deleteTransaction('${transaction._id}')" class="btn btn-danger btn-sm"><i class="bi bi-trash"></i></button>
                         </td>`;
                     transactionTableBody.appendChild(row);
                 });
             }
             async function chartRendering(day) {
-            const userId = JSON.parse(localStorage.getItem('user')).id; // Lấy user_id từ localStorage
-            console.log(userId);
+                const userId = JSON.parse(localStorage.getItem('user')).id; // Lấy user_id từ localStorage
+                console.log(userId);
 
 
-            //call API để lấy dữ liệu giao dịch của người dùng bằng đối tương report
-            //call API dựa trên user_id(lúc đăng nhập có)
-            const response = await fetch('http://localhost:3000/report/create', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    user_id: userId,
-                    day: day
-                })
-            });
-            
-            const data = await response.json();
-            console.log(data);
-            //cập nhật dữ liệu thu nhập và chi tiêu của người dùng từ server
-            let TOTAL_INCOME = data.total_income;
-            let TOTAL_EXPENSE = data.total_expense;
-            let TRANSACTIONS = data.transactions;
-
-            let totalIncome = 0;
-            //dùng 2 dòng for để truy cập vào từng giao dịch của thu nhập và chi tiêu
-            TOTAL_INCOME.forEach(income => {
-                totalIncome += parseFloat(income.amount);
-            })
-            let totalExpense = 0;
-            //dùng 2 dòng for để truy cập vào từng giao dịch của thu nhập và chi tiêu
-            TOTAL_EXPENSE.forEach(expense => {
-                totalExpense += parseFloat(expense.amount);
-            })
-            //tính số dư
-            let balance = totalIncome - totalExpense;
-            
-            //sắp xếp ngày tăng dần trước khi vẽ biểu đồ
-            TRANSACTIONS.sort((a, b) => new Date(a.date) - new Date(b.date)); // Sắp xếp theo ngày giảm dần
-            renderTable(data); // Gọi hàm renderTable để hiển thị dữ liệu trên bảng
-
-            let labels = [];
-            let expenseValues = [];
-            let incomeValues = [];
-
-            // Chuyển đổi dữ liệu thành mảng và nạp vào vị trí hợp lí 
-            TRANSACTIONS.forEach(transaction => {
-                const date = new Date(transaction.date).toLocaleDateString("vi-VN", {
-                    year: "numeric",
-                    month: "2-digit",
-                    day: "2-digit"
-                });
-                labels.push(date);
-                if(transaction.type === "expense") {
-                    expenseValues.push(transaction.amount);
-                    incomeValues.push(0); // Đặt giá trị thu nhập là 0 cho ngày này
-                } else if(transaction.type === "income") {
-                    incomeValues.push(transaction.amount);
-                    expenseValues.push(0); // Đặt giá trị chi tiêu là 0 cho ngày này
-                }
-            });
-            console.log(labels, expenseValues, incomeValues);
-            // Vẽ biểu đồ
-            // Xóa biểu đồ cũ nếu có
-            if (currentChart) {
-                currentChart.destroy();
-            }
-            const ctx = document.getElementById("lineChart").getContext("2d");
-            currentChart = new Chart(ctx, {
-                type: "line",
-                data: {
-                    labels: labels,
-                    datasets: [
-                        {
-                            label: "Chi tiêu",
-                            data: expenseValues,
-                            borderColor: "red",
-                            backgroundColor: "rgba(255, 0, 0, 0.2)",
-                            borderWidth: 2,
-                            tension: 0.4,
-                        },
-                        {
-                            label: "Thu nhập",
-                            data: incomeValues,
-                            borderColor: "blue",
-                            backgroundColor: "rgba(0, 0, 255, 0.2)",
-                            borderWidth: 2,
-                            tension: 0.4,
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: {
-                            position: "top",
-                        }
+                //call API để lấy dữ liệu giao dịch của người dùng bằng đối tương report
+                //call API dựa trên user_id(lúc đăng nhập có)
+                const response = await fetch('http://localhost:3000/report/create', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
                     },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            title: {
-                                display: true,
-                                text: "Số tiền (VND)"
+                    body: JSON.stringify({
+                        user_id: userId,
+                        day: day
+                    })
+                });
+                
+                const data = await response.json();
+                console.log(data);
+                //cập nhật dữ liệu thu nhập và chi tiêu của người dùng từ server
+                TOTAL_INCOME = data.total_income;
+                TOTAL_EXPENSE = data.total_expense;
+                TRANSACTIONS = data.transactions;
+
+                let totalIncome = 0;
+                //dùng 2 dòng for để truy cập vào từng giao dịch của thu nhập và chi tiêu
+                TOTAL_INCOME.forEach(income => {
+                    totalIncome += parseFloat(income.amount);
+                })
+                let totalExpense = 0;
+                //dùng 2 dòng for để truy cập vào từng giao dịch của thu nhập và chi tiêu
+                TOTAL_EXPENSE.forEach(expense => {
+                    totalExpense += parseFloat(expense.amount);
+                })
+                //tính số dư
+                let balance = totalIncome - totalExpense;
+                
+                //sắp xếp ngày tăng dần trước khi vẽ biểu đồ
+                TRANSACTIONS.sort((a, b) => new Date(a.date) - new Date(b.date)); // Sắp xếp theo ngày giảm dần
+                renderTable(data); // Gọi hàm renderTable để hiển thị dữ liệu trên bảng
+
+                let labels = [];
+                let expenseValues = [];
+                let incomeValues = [];
+
+                // Chuyển đổi dữ liệu thành mảng và nạp vào vị trí hợp lí 
+                TRANSACTIONS.forEach(transaction => {
+                    const date = new Date(transaction.date).toLocaleDateString("vi-VN", {
+                        year: "numeric",
+                        month: "2-digit",
+                        day: "2-digit"
+                    });
+                    labels.push(date);
+                    if(transaction.type === "expense") {
+                        expenseValues.push(transaction.amount);
+                        incomeValues.push(0); // Đặt giá trị thu nhập là 0 cho ngày này
+                    } else if(transaction.type === "income") {
+                        incomeValues.push(transaction.amount);
+                        expenseValues.push(0); // Đặt giá trị chi tiêu là 0 cho ngày này
+                    }
+                });
+                console.log(labels, expenseValues, incomeValues);
+                // Vẽ biểu đồ
+                // Xóa biểu đồ cũ nếu có
+                if (currentChart) {
+                    currentChart.destroy();
+                }
+                const ctx = document.getElementById("lineChart").getContext("2d");
+                currentChart = new Chart(ctx, {
+                    type: "line",
+                    data: {
+                        labels: labels,
+                        datasets: [
+                            {
+                                label: "Chi tiêu",
+                                data: expenseValues,
+                                borderColor: "red",
+                                backgroundColor: "rgba(255, 0, 0, 0.2)",
+                                borderWidth: 2,
+                                tension: 0.4,
+                            },
+                            {
+                                label: "Thu nhập",
+                                data: incomeValues,
+                                borderColor: "blue",
+                                backgroundColor: "rgba(0, 0, 255, 0.2)",
+                                borderWidth: 2,
+                                tension: 0.4,
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                position: "top",
                             }
                         },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: "Số tiền (VND)"
+                                }
+                            },
+                        }
                     }
-                }
-            });
-        }
-        chartRendering(30); // Gọi hàm với số ngày bạn muốn lấy dữ liệu
+                });
+            }
+            chartRendering(0);
+            
         });
     </script>
 </body>

@@ -26,6 +26,17 @@
             width: 100% !important;
             height: auto !important;
         }
+        #budgets-title {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 20px 0;
+        }
+        #budgets-title span {
+            /* margin-right: -10px; */
+            font-size: 14px;
+            color: red;
+        }
     </style>
 </head>
 <body>
@@ -38,11 +49,9 @@
             </div>
         </div>
     <div class="container " style="padding-top: 20px;">
-        <h2 class="text-center">Danh sách ngân sách</h2>
-        <div class="d-flex align-items-center justify-content-between mb-3">
-            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addBudgetModal">
-                + Thêm
-            </button>
+        <div id="budgets-title">
+            <h2 class="text-center">Thống kê ngân sách</h2>
+            <span id="count-budgets"></span>
         </div>
         <table class="table table-bordered table-striped">
             <thead class="table-dark">
@@ -51,122 +60,17 @@
                     <th>Số tiền</th>
                     <th>Ngày bắt đầu</th>
                     <th>Ngày kết thúc</th>
-                    <th>Chức năng</th>
                 </tr>
             </thead>
             <tbody id="budget-list">
-                <tr>
-                    <td>Ăn uống</td>
-                    <td>2.000.000</td>
-                    <td>2025-03-01</td>
-                    <td>2025-03-31</td>
-                    <td class="actions">
-                        <button class="btn btn-warning btn-sm" >Sửa</button>
-                        <button class="btn btn-danger btn-sm" >Xóa</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>Mua sắm</td>
-                    <td>2.000.000</td>
-                    <td>2025-03-01</td>
-                    <td>2025-03-31</td>
-                    <td class="actions">
-                        <button class="btn btn-warning btn-sm" >Sửa</button>
-                        <button class="btn btn-danger btn-sm" >Xóa</button>
-                    </td>
-                </tr>
+                <!-- render từ db -->
             </tbody>
             <tr id="no-data" style="display: none;">
                 <td colspan="5" class="text-center text-muted">Chưa có ngân sách nào</td>
             </tr>
         </table>
     </div>
-<!-- Modal thêm ngân sách -->
-<div class="modal fade" id="addBudgetModal">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header text-center w-100">
-                <h5 class="modal-title w-100">Thêm ngân sách</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body p-4">
-                <form>
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">Tên ngân sách</label>
-                        <select class="form-select">
-                            <option selected disabled>Chọn ngân sách</option>
-                            <option>Ăn uống</option>
-                            <option>Mua sắm</option>
-                            <option>Giải trí</option>
-                            <option>Học tập</option>
-                            <option>Khác</option>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">Số tiền</label>
-                        <input type="number" class="form-control" placeholder="Nhập số tiền">
-                    </div>
-                    <div class="row">
-                        <div class="col mb-3">
-                            <label class="form-label fw-bold">Ngày bắt đầu</label>
-                            <input type="date" class="form-control">
-                        </div>
-                        <div class="col mb-3">
-                            <label class="form-label fw-bold">Ngày kết thúc</label>
-                            <input type="date" class="form-control">
-                        </div>
-                    </div>
-                    <div class="text-center mt-3">
-                        <button type="submit" class="btn btn-success px-4 py-2">Thêm</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
 
-<!-- Modal sửa ngân sách -->
-<div class="modal fade" id="editBudgetModal">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header text-center w-100">
-                <h5 class="modal-title w-100">Sửa ngân sách</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body p-4">
-                <form>
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">Tên ngân sách</label>
-                        <select class="form-select" id="edit-budget-name">
-                            <option>Ăn uống</option>
-                            <option>Mua sắm</option>
-                            <option>Giải trí</option>
-                            <option>Học tập</option>
-                            <option>Khác</option>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">Số tiền</label>
-                        <input type="number" class="form-control" id="edit-budget-amount" placeholder="Nhập số tiền">
-                    </div>
-                    <div class="row">
-                        <div class="col mb-3">
-                            <label class="form-label fw-bold">Ngày bắt đầu</label>
-                            <input type="date" class="form-control" id="edit-start-date">
-                        </div>
-                        <div class="col mb-3">
-                            <label class="form-label fw-bold">Ngày kết thúc</label>
-                            <input type="date" class="form-control" id="edit-end-date">
-                        </div>
-                    </div>
-                    <div class="text-center mt-3">
-                        <button type="submit" class="btn btn-success px-4 py-2">Lưu thay đổi</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
 
 </main>
 <div id="footer"></div>
@@ -174,108 +78,127 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const editButtons = document.querySelectorAll('.btn-warning');
-        
-        editButtons.forEach(button => {
-            button.addEventListener('click', function () {
-                // Mở modal sửa ngân sách
-                const budgetRow = button.closest('tr'); // Lấy dòng ngân sách tương ứng
-                const budgetName = budgetRow.querySelector('td:nth-child(1)').textContent;
-                const budgetAmount = budgetRow.querySelector('td:nth-child(2)').textContent.replace(/\./g, ''); // Xóa dấu phân cách nghìn
-                const startDate = budgetRow.querySelector('td:nth-child(3)').textContent;
-                const endDate = budgetRow.querySelector('td:nth-child(4)').textContent;
-                
-                // Điền thông tin vào các trường trong modal sửa
-                document.getElementById('edit-budget-name').value = budgetName;
-                document.getElementById('edit-budget-amount').value = budgetAmount;
-                document.getElementById('edit-start-date').value = startDate;
-                document.getElementById('edit-end-date').value = endDate;
-                
-                // Hiển thị modal sửa
-                const editModal = new bootstrap.Modal(document.getElementById('editBudgetModal'));
-                editModal.show();
-            });
-        });
-    });
-    
-    function checkEmptyBudget() {
-        const budgetList = document.getElementById("budget-list");
-        const noDataRow = document.getElementById("no-data");
+    document.addEventListener('DOMContentLoaded', async function () {
+        let currentChart = null;
+            let TOTAL_INCOME = []; // Biến toàn cục để lưu trữ danh sách thu nhập
+            let TOTAL_EXPENSE = []; // Biến toàn cục để lưu trữ danh sách chi tiêu
+            let TRANSACTIONS = []; // Biến toàn cục để lưu trữ danh sách giao dịch
 
-        if (budgetList.children.length === 0) {
-            noDataRow.style.display = "table-row";
-        } else {
-            noDataRow.style.display = "none";
-        }
-    }
-
-    // Gọi hàm kiểm tra ngay khi trang tải
-    checkEmptyBudget();
-
-    // Giả lập khi xóa ngân sách (bạn cần thêm sự kiện này vào nút "Xóa")
-    document.querySelectorAll(".btn-danger").forEach(button => {
-        button.addEventListener("click", function() {
-            this.closest("tr").remove();
-            checkEmptyBudget();
-        });
-    });
-    function drawChart() {
-        let categoryMap = {};
-    
-        const colorPalette = [
-            "rgba(255, 99, 132, 0.8)", "rgba(54, 162, 235, 0.8)", 
-            "rgba(255, 206, 86, 0.8)", "rgba(75, 192, 192, 0.8)", 
-            "rgba(153, 102, 255, 0.8)", "rgba(255, 159, 64, 0.8)",
-            "rgba(0, 128, 128, 0.8)", "rgba(128, 0, 128, 0.8)"
-        ];
-    
-        document.querySelectorAll("#budget-list tr").forEach((row) => {
-            const category = row.children[0].textContent.trim(); // Lấy tên ngân sách đúng cột
-            const amountText = row.children[1].textContent.replace(/\./g, '').trim(); // Lấy số tiền đúng cột
-            const amount = parseInt(amountText);
-    
-            if (!isNaN(amount)) {
-                categoryMap[category] = (categoryMap[category] || 0) + amount;
+            function generateRandomColors(count) {
+                const colors = [];
+                for (let i = 0; i < count; i++) {
+                    const r = Math.floor(Math.random() * 256);
+                    const g = Math.floor(Math.random() * 256);
+                    const b = Math.floor(Math.random() * 256);
+                    colors.push(`rgba(${r}, ${g}, ${b}, 0.8)`);
+                }
+                return colors;
             }
-        });
-    
-        const labels = Object.keys(categoryMap);
-        const data = Object.values(categoryMap);
-        const colors = labels.map((_, index) => colorPalette[index % colorPalette.length]);
-    
-        const ctx = document.getElementById("budgetChart").getContext("2d");
-        new Chart(ctx, {
-            type: "bar",
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: "Ngân sách theo danh mục (VNĐ)",
-                    data: data,
-                    backgroundColor: colors,
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: { display: false },
-                    tooltip: {
-                        callbacks: {
-                            label: function (tooltipItem) {
-                                return `Số tiền: ${data[tooltipItem.dataIndex].toLocaleString()} VNĐ`;
+
+            function renderBudgetList(data) {
+                const budgetList = document.getElementById("budget-list");
+                budgetList.innerHTML = ""; // Xóa nội dung cũ trong bảng
+
+                if (data.length === 0) {
+                    // Hiển thị thông báo "Chưa có ngân sách nào" nếu không có dữ liệu
+                    document.getElementById("no-data").style.display = "table-row";
+                    return;
+                }
+
+                document.getElementById("no-data").style.display = "none"; // Ẩn thông báo nếu có dữ liệu
+
+                data.forEach(item => {
+                    if(item.type == "expense") {
+                        const row = document.createElement("tr");
+
+                        row.innerHTML = `
+                            <td>${item.name}</td>
+                            <td>${parseInt(item.budget_id.limit_amount).toLocaleString()} VNĐ</td>
+                            <td>${new Date(item.budget_id.start_date).toLocaleDateString()}</td>
+                            <td>${new Date(item.budget_id.end_date).toLocaleDateString()}</td>
+                        `;
+
+                        budgetList.appendChild(row);
+                    }
+                });
+            }
+
+            async function chartRendering() {
+                const userId = JSON.parse(localStorage.getItem('user')).id; // Lấy user_id từ localStorage
+                console.log(userId);
+
+
+                //call API để lấy dữ liệu giao dịch của người dùng bằng đối tương report
+                //call API dựa trên user_id(lúc đăng nhập có)
+                const response = await fetch('http://localhost:3000/category/getall', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        user_id: userId,
+                    })
+                });
+
+                const data = await response.json();
+                console.log(data);
+                renderBudgetList(data); // Gọi hàm để hiển thị danh sách ngân sách
+                //render số lượng
+                document.getElementById("count-budgets").innerText = `(${data.length})`;
+                let labels = []; // Mảng để lưu trữ tên danh mục
+                let amounts = []; // Mảng để lưu trữ số tiền tương ứng với danh mục
+                data.forEach(item => {
+                    if(item.type == "expense"){
+                        labels.push(item.name); // Thêm tên danh mục vào mảng labels
+                        amounts.push(item.budget_id.limit_amount); // Thêm số tiền vào mảng amounts
+                    }
+                });
+                console.log(labels, amounts); // In ra mảng tên danh mục và số tiền tương ứng
+                const ctx = document.getElementById("budgetChart").getContext("2d");
+                if (currentChart) {
+                    currentChart.destroy(); // Hủy bỏ biểu đồ hiện tại nếu có
+                }
+                const backgroundColors = generateRandomColors(labels.length);
+                currentChart = new Chart(ctx, {
+                    type: "bar",
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: "Ngân sách theo danh mục (VNĐ)",
+                            data: amounts,
+                            backgroundColor: backgroundColors,
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                callbacks: {
+                                    label: function (tooltipItem) {
+                                        return `Số tiền: ${tooltipItem.raw.toLocaleString()} VNĐ`;
+                                    }
+                                }
                             }
+                        },
+                        scales: {
+                            y: { beginAtZero: true }
                         }
                     }
-                },
-                scales: {
-                    y: { beginAtZero: true }
+                });
+            }
+            function checkEmptyBudget() {
+                const budgetList = document.getElementById("budget-list");
+                const noDataRow = document.getElementById("no-data");
+                if (budgetList.rows.length === 0) {
+                    noDataRow.style.display = "table-row";
+                } else {
+                    noDataRow.style.display = "none";
                 }
             }
-        });
-    }
-    
-    document.addEventListener("DOMContentLoaded", drawChart);
+            chartRendering(0); // Gọi hàm để vẽ biểu đồ với giá trị mặc định là 0 (tất cả)
+    });
 </script>
 </body>
 </html>
