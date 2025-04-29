@@ -200,12 +200,20 @@
 
             console.log(totalIncome, totalExpense, balance);
             //! coi lại phần này
-            let total = totalIncome + totalExpense + Math.abs(balance);
-        
-            let incomePercentage = (totalIncome / total) * 100;
-            let expensePercentage = (totalExpense / total) * 100;
-            let balancePercentage = (Math.abs(balance) / total) * 100;
+            let total = totalIncome + totalExpense;
 
+            // Kiểm tra nếu chỉ có một loại dữ liệu hoặc tổng bằng 0
+            let incomePercentage = 0;
+            let expensePercentage = 0;
+
+            if (total > 0) {
+                incomePercentage = (totalIncome / total) * 100;
+                expensePercentage = (totalExpense / total) * 100;
+            } else if (totalIncome > 0) {
+                incomePercentage = 100; // Nếu chỉ có thu nhập
+            } else if (totalExpense > 0) {
+                expensePercentage = 100; // Nếu chỉ có chi tiêu
+            }
             // Hủy biểu đồ cũ nếu tồn tại
             if (currentChart) {
                 currentChart.destroy();
@@ -214,10 +222,10 @@
             currentChart = new Chart(ctx, {
                 type: 'doughnut',
                 data: {
-                    labels: ['Thu Nhập', 'Chi Tiêu', 'Số Dư'],
+                    labels: ['Thu Nhập', 'Chi Tiêu'],
                     datasets: [{
-                        data: [incomePercentage, expensePercentage, balancePercentage],
-                        backgroundColor: ['green', 'red', 'blue'],
+                        data: [incomePercentage, expensePercentage],
+                        backgroundColor: ['green', 'red'],
                     }]
                 },
                 options: {

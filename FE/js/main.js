@@ -29,28 +29,58 @@ function loadPartials() {
                 console.warn("Không tìm thấy nút đăng xuất.");
             }
 
-
-            const notificationBtn = document.getElementById("notificationBtn");
-        notificationBtn.addEventListener("click", function () {
-            console.log("haha");
             renderNotifications();
-        });
+            const notificationBtn = document.getElementById("notificationBtn");
+            notificationBtn.addEventListener("click", function () {
+                console.log("haha");
+                renderNotifications();
+            });
 
+
+        //load phần thông báo
         async function renderNotifications() {
             const data = await loadNotification();
             console.log(data);
 
             const notificationList = document.querySelector(".notification-list");
+            
             notificationList.innerHTML = ""; // Xóa nội dung cũ trong danh sách thông báo
-            // render thông báo
-            data.forEach((item) => {
+            let read_data = 0;
+            for(noti of data) {
+                if(noti.is_read == false) {
+                    read_data++;
+                }
+            }
+            const bell_count = document.querySelector('span.noti-count');
+            console.log(bell_count);
+            if(data.length == 0 || read_data == 0) {
+                bell_count.classList.add('d-none');
                 const listItem = document.createElement("li");
-                listItem.classList.add("notification-item");
                 listItem.innerHTML = `
-                    <i class="bi bi-${item.type === "warning" ? "exclamation-triangle" : "info-circle"} text-${item.type === "warning" ? "danger" : "primary"}"></i>
-                    <a href="#" class="dropdown-item">${item.message}</a>
+                <i class="bi bi-primary"></i>
+                <a href="#" class="dropdown-item">Không có thông báo nào!</a>
                 `;
                 notificationList.appendChild(listItem);
+                return;
+            }
+            // render thông báo
+            bell_count.innerText = read_data;
+            bell_count.classList.remove('d-none');
+            data.forEach((item) => {
+                if(!item.is_read) {
+                    const listItem = document.createElement("li");
+                    listItem.onclick = () => {
+                        console.log(item._id);
+                        updatenotify(item._id);
+                        renderNotifications();
+                    }
+                    listItem.classList.add("notification-item");
+                    listItem.innerHTML = `
+                        <i class="bi bi-${item.type === "warning" ? "exclamation-triangle" : "info-circle"} text-${item.type === "warning" ? "danger" : "primary"}"></i>
+                        <a href="#" class="dropdown-item">${item.message}</a>
+                    `;
+                    notificationList.appendChild(listItem);
+                }
             });
             
 
@@ -111,6 +141,20 @@ async function loadNotification() {
     });
     const data = await response.json();
     return data.notifies;
+}
+
+async function updatenotify(id) {
+    const response = await fetch("http://localhost:3000/notify/update", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            notify_id: id,
+        }),
+    });
+    const data = await response.json();
+    console.log(data);
 }
 
 

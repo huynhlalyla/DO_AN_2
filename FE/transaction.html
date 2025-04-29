@@ -150,8 +150,14 @@
                 const name = categoryName.value;
                 const type = categoryType.value;
                 const limit_amount = categoryBudget.value;
-                const start_date = startDate.value;
-                const end_date = endDate.value;
+                // Lấy ngày hiện tại
+                const today = new Date();
+                const start_date = startDate.value ? startDate.value : today.toISOString().split("T")[0];
+
+                // Lấy ngày của 5 năm sau
+                const fiveYearsLater = new Date();
+                fiveYearsLater.setFullYear(today.getFullYear() + 5);
+                const end_date = endDate.value ? endDate.value : fiveYearsLater.toISOString().split("T")[0];
                 if(name && type) {
                     const response = await fetch("http://localhost:3000/category/add", {
                         method: "POST",

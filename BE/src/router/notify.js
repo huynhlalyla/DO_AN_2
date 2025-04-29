@@ -9,7 +9,7 @@ const notifyController = require('../app/controllers/notifyController');
 
 // Tạo báo cáo
 route.post('/create', notifyController.create);
-
+route.post('/update', notifyController.updateRead);
 // Lấy tất cả báo cáo hiện có ra xem
 route.post('/getall', notifyController.getAll);
 

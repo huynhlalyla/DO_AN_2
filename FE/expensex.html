@@ -278,8 +278,13 @@
             addCategoryButton.addEventListener("click", async function () {
                 const categoryName = categoryNameInput.value;
                 const budgetValue = budgetValueInput.value; // Lấy giá trị ngân sách
-                const startDate = startDateInput.value; // Lấy giá trị ngày bắt đầu
-                const endDate = endDateInput.value; // Lấy giá trị ngày kết thúc
+                const today = new Date();
+                const start_date = startDate.value ? startDate.value : today.toISOString().split("T")[0];
+
+                // Lấy ngày của 5 năm sau
+                const fiveYearsLater = new Date();
+                fiveYearsLater.setFullYear(today.getFullYear() + 5);
+                const end_date = endDate.value ? endDate.value : fiveYearsLater.toISOString().split("T")[0];
                 console.log(categoryName, budgetValue, startDate, endDate); // Kiểm tra giá trị nhập vào
                 // Tạo phần tử mới cho danh mục
                 const newCategory = document.createElement("div");
@@ -311,8 +316,8 @@
                             name: categoryName,
                             type: "expense",
                             limit_amount: budgetValue, // Gửi giá trị ngân sách nếu có
-                            start_date: startDate, // Gửi ngày bắt đầu
-                            end_date: endDate, // Gửi ngày kết thúc
+                            start_date: start_date, // Gửi ngày bắt đầu
+                            end_date: end_date, // Gửi ngày kết thúc
                             user_id: JSON.parse(localStorage.getItem('user')).id // Lấy user_id từ localStorage
                         })
                     });

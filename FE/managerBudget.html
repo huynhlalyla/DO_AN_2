@@ -144,7 +144,13 @@
                 console.log(data);
                 renderBudgetList(data); // Gọi hàm để hiển thị danh sách ngân sách
                 //render số lượng
-                document.getElementById("count-budgets").innerText = `(${data.length})`;
+                const length = data.reduce((acc, item) => {
+                    if (item.type == "expense") {
+                        return acc + 1; // Tăng biến đếm nếu loại là "expense"
+                    }
+                    return acc;
+                }, 0);
+                document.getElementById("count-budgets").innerText = `(${length})`;
                 let labels = []; // Mảng để lưu trữ tên danh mục
                 let amounts = []; // Mảng để lưu trữ số tiền tương ứng với danh mục
                 data.forEach(item => {

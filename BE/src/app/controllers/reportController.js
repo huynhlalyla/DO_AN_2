@@ -3,6 +3,7 @@ const Categories = require('../models/Categories');
 const Reports = require('../models/Reports');
 const Transactions = require('../models/Transactions');
 const Budgets = require('../models/Budgets');
+const Notifies = require('../models/Notifies');
 
 
 
@@ -72,6 +73,25 @@ async function createReport(req, res) {
             data.transactions.push(transaction);
         }
     }
+    // Tính tổng thu nhập và chi tiêu
+    const totalIncome = data.total_income.reduce((sum, transaction) => sum + parseFloat(transaction.amount), 0);
+    const totalExpense = data.total_expense.reduce((sum, transaction) => sum + parseFloat(transaction.amount), 0);
+    const balance = totalIncome - totalExpense;
+
+    // Kiểm tra nếu số dư âm, tạo thông báo cảnh báo
+    if (balance < 0) {
+        const notify = new Notifies({
+            user_id: user_id,
+            message: `Số dư của bạn đang âm: ${new Intl.NumberFormat('vi-VN').format(balance)} VND. Vui lòng kiểm tra lại chi tiêu.`,
+            type: 'warning',
+            date: new Date()
+        });
+        await notify.save();
+        await Users.findByIdAndUpdate(user_id, {
+            $push: { notifies: notify._id }
+        });
+    }
+
     const report = new Reports(data);
     await report.save()
     res.json(data);

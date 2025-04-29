@@ -37,29 +37,31 @@ async function addTransaction(req, res) {
                     limit_amount: currentBudget.limit_amount,
                     category: category.name
                 });
-                if(total > parseFloat(currentBudget.limit_amount)) {
+                if (total > parseFloat(currentBudget.limit_amount)) {
+                    const formattedLimit = new Intl.NumberFormat('vi-VN').format(currentBudget.limit_amount); // Định dạng số tiền
                     const notify = new Notifies({
                         user_id: transaction.user_id,
-                        message: `Bạn đã vượt quá ngân sách ${currentBudget.limit_amount.toLocaleString()} của ${category.name}`,
+                        message: `Bạn đã vượt quá ngân sách ${formattedLimit} VND của ${category.name}`,
                         type: 'warning',
                         date: new Date()
-                    })
-                    await notify.save()
+                    });
+                    await notify.save();
                     await Users.findByIdAndUpdate(transaction.user_id, {
-                        $push: {notifies: notify._id}
-                    })
+                        $push: { notifies: notify._id }
+                    });
                 }
-                if(total > parseFloat(currentBudget.limit_amount) * 0.8) {
+                else if (total > parseFloat(currentBudget.limit_amount) * 0.8) {
+                    const formattedLimit = new Intl.NumberFormat('vi-VN').format(currentBudget.limit_amount); // Định dạng số tiền
                     const notify = new Notifies({
                         user_id: transaction.user_id,
-                        message: `Bạn đã vượt quá 80% ngân sách ${currentBudget.limit_amount.toLocaleString()} của ${category.name}`,
+                        message: `Bạn đã vượt quá 80% ngân sách ${formattedLimit} VND của ${category.name}`,
                         type: 'danger',
                         date: new Date()
-                    })
-                    await notify.save()
+                    });
+                    await notify.save();
                     await Users.findByIdAndUpdate(transaction.user_id, {
-                        $push: {notifies: notify._id}
-                    })
+                        $push: { notifies: notify._id }
+                    });
                 }
             })
         }

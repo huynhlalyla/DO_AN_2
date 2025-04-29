@@ -362,6 +362,21 @@ a:hover{
     border: none; /* Loại bỏ viền */
 }
 
+#notificationBtn {
+    position: relative;
+}
+#notificationBtn span {
+    position: absolute;
+    top: -10px;
+    right: 0;
+    background-color: red;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 #notificationBtn:hover {
     background-color: #f34a99 !important; /* Hồng nhạt hơn khi hover */
 }

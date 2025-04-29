@@ -11,6 +11,21 @@ async function create (req, res) {
         res.status(500).json({ message: 'failed', error });
     }
 }
+async function updateRead (req, res) {
+    try {
+        const notify_id = req.body.notify_id;
+        const notify = await Notify.findById(notify_id);
+        if (notify) {
+            notify.is_read = true;
+            await notify.save();
+            res.status(200).json({ message: 'success', notify });
+        } else {
+            res.status(404).json({ message: 'Notify not found' });
+        }
+    } catch (error) {
+        res.status(500).json({ message: 'failed', error });
+    }
+}
 async function getAll (req, res){
     try {
         const user_id = req.body.user_id;
@@ -23,7 +38,8 @@ async function getAll (req, res){
 
 module.exports = {
     create,
-    getAll
+    getAll,
+    updateRead
 
 
 }
