@@ -17,8 +17,8 @@ async function addCategory(req, res) {
         //tạo một budget mới với thông tin từ request body
         const budgetData = {
             user_id: user_id,// Lấy ID từ category vừa tạo
-            start_date: new Date(start_date),
-            end_date: new Date(end_date),
+            start_date: start_date,
+            end_date: end_date,
             limit_amount: limit_amount,
         };
         const newBudget = new Budgets(budgetData);

@@ -126,6 +126,8 @@
             let TOTAL_INCOME = data.total_income;
             let TOTAL_EXPENSE = data.total_expense;
             let TRANSACTIONS = data.transactions;
+            //sắp xếp tăng dần
+            TRANSACTIONS.sort((a, b) => new Date(a.date) - new Date(b.date));
             console.log(data);
 
             let totalIncome = 0;
@@ -158,7 +160,7 @@
                 startDate.innerText = new Date(data.startDate).toLocaleDateString('vi-VN');
                 endDate.innerText = new Date(data.endDate).toLocaleDateString('vi-VN');
             } else {
-                startDate.innerText = "Từ trước";
+                startDate.innerText = new Date(TRANSACTIONS[0].date).toLocaleDateString('vi-VN');
                 endDate.innerText = new Date().toLocaleDateString('vi-VN');
             }
             

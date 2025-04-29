@@ -8,7 +8,6 @@ const Notifies = require('../models/Notifies');
 // GET /transaction/add
 async function addTransaction(req, res) {
     const data = req.body;
-    console.log(data);
     const transaction = new Transactions(data);
     await transaction.save()
     .then(async transaction => {
@@ -29,15 +28,32 @@ async function addTransaction(req, res) {
                 const currentBudget = await Budgets.findOne({_id: category.budget_id});
 
                 const transactions = category.transactions;
-                let total;
+                let total = 0;
                 transactions.forEach(transaction => {
-                    total += transaction.amount;
+                    total += parseFloat(transaction.amount);
                 })
-                if(total > currentBudget.limit_amount) {
+                console.log({
+                    total: total,
+                    limit_amount: currentBudget.limit_amount,
+                    category: category.name
+                });
+                if(total > parseFloat(currentBudget.limit_amount)) {
                     const notify = new Notifies({
                         user_id: transaction.user_id,
-                        message: `Giao dịch ${transaction.name} đã vượt quá ngân sách ${currentBudget.limit_amount} của ${category.name}`,
+                        message: `Bạn đã vượt quá ngân sách ${currentBudget.limit_amount.toLocaleString()} của ${category.name}`,
                         type: 'warning',
+                        date: new Date()
+                    })
+                    await notify.save()
+                    await Users.findByIdAndUpdate(transaction.user_id, {
+                        $push: {notifies: notify._id}
+                    })
+                }
+                if(total > parseFloat(currentBudget.limit_amount) * 0.8) {
+                    const notify = new Notifies({
+                        user_id: transaction.user_id,
+                        message: `Bạn đã vượt quá 80% ngân sách ${currentBudget.limit_amount.toLocaleString()} của ${category.name}`,
+                        type: 'danger',
                         date: new Date()
                     })
                     await notify.save()
