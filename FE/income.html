@@ -226,7 +226,7 @@
             const startDateInput = addCategoryForm.querySelector("#startDate"); // Ngày bắt đầu
             const endDateInput = addCategoryForm.querySelector("#endDate"); // Ngày kết thúc
             //load dữ liệu cho ngân sách
-            const userId = JSON.parse(localStorage.getItem('user')).id; // Lấy user_id từ localStorage
+            const userId = JSON.parse(sessionStorage.getItem('user')).id; // Lấy user_id từ sessionStorage
             const response = await fetch(`http://localhost:3000/category/getall`, {
                 method: "POST",
                 headers: {
@@ -299,7 +299,7 @@
                             type: "income",
                             start_date: startDate, // Gửi ngày bắt đầu
                             end_date: endDate, // Gửi ngày kết thúc
-                            user_id: JSON.parse(localStorage.getItem('user')).id // Lấy user_id từ localStorage
+                            user_id: JSON.parse(sessionStorage.getItem('user')).id // Lấy user_id từ sessionStorage
                         })
                     });
                     const data = await response.json();

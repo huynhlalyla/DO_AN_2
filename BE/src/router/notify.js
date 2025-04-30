@@ -12,7 +12,8 @@ route.post('/create', notifyController.create);
 route.post('/update', notifyController.updateRead);
 // Lấy tất cả báo cáo hiện có ra xem
 route.post('/getall', notifyController.getAll);
-
+//đọc tất cả
+route.post('/readall', notifyController.readAll);
 
 
 module.exports = route;

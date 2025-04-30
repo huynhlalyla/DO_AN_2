@@ -239,7 +239,7 @@
             const startDateInput = addCategoryForm.querySelector("#startDate"); // Ngày bắt đầu
             const endDateInput = addCategoryForm.querySelector("#endDate"); // Ngày kết thúc
             //load dữ liệu cho ngân sách
-            const userId = JSON.parse(localStorage.getItem('user')).id; // Lấy user_id từ localStorage
+            const userId = JSON.parse(sessionStorage.getItem('user')).id; // Lấy user_id từ sessionStorage
             const response = await fetch(`http://localhost:3000/category/getall`, {
                 method: "POST",
                 headers: {
@@ -318,7 +318,7 @@
                             limit_amount: budgetValue, // Gửi giá trị ngân sách nếu có
                             start_date: start_date, // Gửi ngày bắt đầu
                             end_date: end_date, // Gửi ngày kết thúc
-                            user_id: JSON.parse(localStorage.getItem('user')).id // Lấy user_id từ localStorage
+                            user_id: JSON.parse(sessionStorage.getItem('user')).id // Lấy user_id từ sessionStorage
                         })
                     });
                     const data = await response.json();

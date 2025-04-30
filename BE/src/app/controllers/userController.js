@@ -1,5 +1,6 @@
 const Users = require('../models/Users');
-
+const crypto = require('crypto');
+const nodemailer = require('nodemailer');
 // Thêm người dùng (Test)
 const addUser = async (req, res) => {
     try {
@@ -88,9 +89,118 @@ const loginUser = async (req, res) => {
 };
 
 
+
+async function sendEmail(to, subject, htmlContent) {
+    try {
+        // Cấu hình SMTP
+        const transporter = nodemailer.createTransport({
+            service: 'Gmail', // Hoặc SMTP khác như Outlook, Yahoo
+            auth: {
+                user: 'jienrury007@gmail.com', // Email của bạn
+                pass: 'fkxf wpfv laiv ddca'  // Mật khẩu ứng dụng (App Password)
+            }
+        });
+
+        // Nội dung email
+        const mailOptions = {
+            from: 'jienrury007@gmail.com', // Email gửi
+            to, // Email nhận
+            subject,
+            html: htmlContent // Nội dung
+        };
+
+        // Gửi email
+        const info = await transporter.sendMail(mailOptions);
+        console.log('Email sent: ' + info.response);
+    } catch (error) {
+        console.error('Error sending email:', error);
+    }
+}
+
+async function createTokenResetpassword(req, res) {
+    try {
+        const { email } = req.body;
+        console.log(email);
+        const token = crypto.randomBytes(2).toString('hex').toUpperCase(); // Tạo mã OTP ngẫu nhiên 4 ký tự
+        const expires = Date.now() + 120000; // 2 phút
+        const user = await Users.findOne({ email });
+        if (!user) {
+            return res.status(404).json({ message: 'Email không tồn tại' });
+        }
+        const updatedUser = await Users.findOneAndUpdate({ email }, { resetPasswordToken: token, resetPasswordExpires: expires }, { new: true });
+        if (!updatedUser) {
+            return res.status(500).json({ message: 'Cập nhật mã OTP thất bại' });
+        }
+        // Gửi email chứa mã OTP
+        const htmlContent = `
+            <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+                <h2 style="color: #4CAF50;">Đặt lại mật khẩu</h2>
+                <p>Xin chào,</p>
+                <p>Bạn đã yêu cầu đặt lại mật khẩu cho tài khoản của mình. Dưới đây là mã OTP để xác nhận:</p>
+                <div style="font-size: 20px; font-weight: bold; color: #4CAF50; margin: 10px 0;">
+                    ${token}
+                </div>
+                <p><strong>Lưu ý:</strong> Mã OTP này sẽ hết hạn sau 2 phút.</p>
+                <p>Nếu bạn không yêu cầu đặt lại mật khẩu, vui lòng bỏ qua email này.</p>
+                <hr style="border: none; border-top: 1px solid #ddd; margin: 20px 0;">
+                <p style="font-size: 12px; color: #777;">Đây là email tự động, vui lòng không trả lời.</p>
+            </div>
+        `;
+        await sendEmail(email, 'Mã OTP Đặt lại mật khẩu', htmlContent);
+        return res.status(200).json({ message: 'success', expires });
+    }
+    catch (error) {
+        res.status(500).json({ message: 'Tạo OTP thất bại', error });
+    }
+}
+
+async function verifyToken(req, res) {
+    try {
+        const { email, token } = req.body;
+        console.log("haha");
+        // console.table(email, token);
+        const user = await Users.findOne({ email });
+        if (!user) {
+            return res.status(404).json({ message: 'Email không tồn tại' });
+        }
+        if (user.resetPasswordToken !== token) {
+            return res.status(400).json({ message: 'Mã OTP không chính xác' });
+        }
+        if (user.resetPasswordExpires < Date.now()) {
+            return res.status(400).json({ message: 'Mã OTP đã hết hạn' });
+        }
+        return res.status(200).json({ message: 'success' });
+    }
+    catch (error) {
+        res.status(500).json({ message: 'Xác thực mã OTP thất bại', error });
+    }
+}
+
+async function resetPassword(req, res) {
+    try {
+        const { email, newPassword } = req.body;
+        const user = await Users.findOne({ email });
+        if (!user) {
+            return res.status(404).json({ message: 'Email không tồn tại' });
+        }
+        if (user.resetPasswordExpires < Date.now()) {
+            return res.status(400).json({ message: 'Phiên làm mới đã hết hạn' });
+        }
+        await Users.findOneAndUpdate({ email }, { password: newPassword, resetPasswordToken: null, resetPasswordExpires: null }, { new: true })
+        return res.status(200).json({ message: 'success' });
+    }
+    catch (error) {
+        res.status(500).json({ message: 'Đặt lại mật khẩu thất bại', error });
+    }
+}
+
+
 module.exports = {
     addUser,
     authenticateUser, 
     registerUser, 
-    loginUser 
+    loginUser,
+    createTokenResetpassword,
+    verifyToken,
+    resetPassword
 };

@@ -9,20 +9,19 @@ function loadPartials() {
             attachSidebarEvents();
 
             // Sau khi header được chèn, thực thi script
-            const user = JSON.parse(localStorage.getItem("user"));
-            console.log(user);
+            const user = JSON.parse(sessionStorage.getItem("user"));
             if (user && user.name) {
                 const userNameElement = document.getElementById("userName");
                 userNameElement.innerText = user.name;
             } else {
-                console.warn("Không tìm thấy thông tin người dùng trong localStorage.");
+                console.warn("Không tìm thấy thông tin người dùng trong sessionStorage.");
             }
 
             //đăng xuất
             const logoutBtn = document.getElementById("logoutBtn");
             if (logoutBtn) {
                 logoutBtn.addEventListener("click", function () {
-                    localStorage.removeItem("user");
+                    sessionStorage.removeItem("user");
                     window.location.href = "/FE/auth.html";
                 });
             } else {
@@ -32,7 +31,6 @@ function loadPartials() {
             renderNotifications();
             const notificationBtn = document.getElementById("notificationBtn");
             notificationBtn.addEventListener("click", function () {
-                console.log("haha");
                 renderNotifications();
             });
 
@@ -40,7 +38,6 @@ function loadPartials() {
         //load phần thông báo
         async function renderNotifications() {
             const data = await loadNotification();
-            console.log(data);
 
             const notificationList = document.querySelector(".notification-list");
             
@@ -52,7 +49,6 @@ function loadPartials() {
                 }
             }
             const bell_count = document.querySelector('span.noti-count');
-            console.log(bell_count);
             if(data.length == 0 || read_data == 0) {
                 bell_count.classList.add('d-none');
                 const listItem = document.createElement("li");
@@ -70,7 +66,6 @@ function loadPartials() {
                 if(!item.is_read) {
                     const listItem = document.createElement("li");
                     listItem.onclick = () => {
-                        console.log(item._id);
                         updatenotify(item._id);
                         renderNotifications();
                     }
@@ -82,6 +77,25 @@ function loadPartials() {
                     notificationList.appendChild(listItem);
                 }
             });
+
+            const clearNotiBtn = document.getElementById("clearNotifications");
+            clearNotiBtn.addEventListener("click", async function () {
+                const user = JSON.parse(sessionStorage.getItem("user")).id;
+                const response = await fetch("http://localhost:3000/notify/readall", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        user_id: user,
+                    }),
+                });
+                const data = await response.json();
+                if(data.message == "success") {
+                    renderNotifications();
+                }
+            });
+
             
 
         }
@@ -106,37 +120,32 @@ document.addEventListener("DOMContentLoaded", function () {
 
 //kiểm tra đăng nhập chưa hay là tuồng
 function checkLogin() {
-    const user = JSON.parse(localStorage.getItem("user"));
+    const user = JSON.parse(sessionStorage.getItem("user"));
     if (!user) {
         // Nếu chưa đăng nhập, chuyển hướng đến trang đăng nhập
         window.location.href = "/FE/auth.html";
     } else {
-        // Nếu đã đăng nhập, có thể thực hiện các hành động khác nếu cần
-        console.log("Người dùng đã đăng nhập:", user);
     }
 }
 
 //logout when close
 function logoutOnClose() {
     window.addEventListener("close", function (event) {
-        const user = JSON.parse(localStorage.getItem("user"));
+        const user = JSON.parse(sessionStorage.getItem("user"));
         if (user) {
-            localStorage.removeItem("user");
-            console.log("Người dùng đã đăng xuất khi đóng trang.");
+            sessionStorage.removeItem("user");
         }
     });
 }
 
 async function loadNotification() {
-    const user = JSON.parse(localStorage.getItem("user"));
-    // console.log(user);
     const response = await fetch("http://localhost:3000/notify/getall", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
         },
         body: JSON.stringify({
-            user_id: JSON.parse(localStorage.getItem("user")).id,
+            user_id: JSON.parse(sessionStorage.getItem("user")).id,
         }),
     });
     const data = await response.json();
@@ -153,8 +162,6 @@ async function updatenotify(id) {
             notify_id: id,
         }),
     });
-    const data = await response.json();
-    console.log(data);
 }
 
 

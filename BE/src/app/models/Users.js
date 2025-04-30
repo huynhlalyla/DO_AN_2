@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+const crypto = require('crypto');
 
 const User = new Schema({
     name: {type: String, required: true},
@@ -34,6 +35,8 @@ const User = new Schema({
             default: []
         }
     ],
+    resetPasswordToken: {type: String, default: null},
+    resetPasswordExpires: {type: Date, default: null},
 }, {
     timestamps: true
 });

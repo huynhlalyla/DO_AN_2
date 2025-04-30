@@ -30,17 +30,75 @@
             <div class="col-md-6 col-lg-4">
                 <div class="card shadow p-4">
                     <h3 class="text-center mb-3">Xác Nhận OTP</h3>
-                    <form id="verifyOtpForm">
+                    <h4 id="email-target"></h4>
                         <div class="mb-3">
                             <label class="form-label">Nhập mã OTP:</label>
                             <input type="text" id="otp" class="form-control" required>
                         </div>
-                        <button type="submit" class="btn btn-primary w-100">Xác Nhận</button>
-                    </form>
+                        <button id="sendOTP" class="btn btn-primary w-100">Xác Nhận</button>
                     <p id="message" class="text-center mt-3 text-danger"></p>
                 </div>
             </div>
         </div>
     </div>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        
+        const email = sessionStorage.getItem('email-reset-password');
+        let otpDate = sessionStorage.getItem('date-reset-password');
+        let currentDate = new Date().getTime();
+        let valid_time = true;
+        document.getElementById('email-target').innerText = `Đã gừi OTP đến email: ${email}`;
+        let date = otpDate - currentDate;
+        const countDown = setInterval(() => {
+          const minutes = Math.floor((date % (1000 * 60 * 60)) / (1000 * 60));
+          const seconds = Math.floor((date % (1000 * 60)) / 1000);
+          console.log(minutes, seconds);
+          date -= 1000;
+          if(date <= 0) {
+            clearInterval(countDown);
+            valid_time = false;
+            sessionStorage.removeItem('email-reset-password');
+            sessionStorage.removeItem('date-reset-password');
+            document.getElementById('message').innerText = "Mã OTP đã hết hạn!";
+            return;
+          }
+          document.getElementById('message').innerText = `${minutes}:${seconds}`;
+        }, 1000);
+        if(!email) {
+          window.location.href = 'forgot-password.html';
+        }
+        const sendOTP = document.getElementById('sendOTP');
+        sendOTP.addEventListener('click', async function(event) {
+          if(!valid_time) {
+            alert("Mã OTP đã hết hạn!");
+            window.location.href = 'forgot-password.html';
+            return;
+          }
+          const otp = document.getElementById('otp').value;
+          console.log(otp);
+          if (!otp) {
+            alert("Vui lòng nhập mã OTP.");
+            return;
+          }
+          const response = await fetch('http://localhost:3000/user/verify-token', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ email, token: otp })
+          });
+          const data = await response.json();
+          console.log(data);
+          if(data.message == "success"){
+            window.location.href = "reset-password.html?";
+          } else {
+            document.getElementById('message').innerText = data.message;
+          }
+        });
+        
+      });
+    </script>
 </body>
 </html>

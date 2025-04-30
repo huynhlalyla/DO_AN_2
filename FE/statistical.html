@@ -81,14 +81,14 @@
     document.addEventListener('DOMContentLoaded', () => {
         const successMsg = document.getElementById('login-success-msg');
 
-        // Kiểm tra trạng thái đăng nhập từ localStorage
-        if (localStorage.getItem('loginSuccess') === 'true') {
+        // Kiểm tra trạng thái đăng nhập từ sessionStorage
+        if (sessionStorage.getItem('loginSuccess') === 'true') {
             successMsg.classList.add('show'); // Hiển thị thông báo
 
             // Ẩn thông báo sau 3s
             setTimeout(() => {
                 successMsg.classList.remove('show');
-                localStorage.removeItem('loginSuccess'); // Xóa trạng thái sau khi hiển thị
+                sessionStorage.removeItem('loginSuccess'); // Xóa trạng thái sau khi hiển thị
             }, 3000);
         }
     });
@@ -103,7 +103,7 @@
         async function chartRendering(day) {
             let INCOME = [];
             let EXPENSE = [];
-            const userId = JSON.parse(localStorage.getItem('user')).id; // Lấy user_id từ localStorage
+            const userId = JSON.parse(sessionStorage.getItem('user')).id; // Lấy user_id từ sessionStorage
             console.log(userId);
 
 

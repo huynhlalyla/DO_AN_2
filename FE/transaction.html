@@ -170,7 +170,7 @@
                             limit_amount: limit_amount, // Gửi giá trị ngân sách nếu có
                             start_date: start_date, // Gửi ngày bắt đầu
                             end_date: end_date, // Gửi ngày kết thúc
-                            user_id: JSON.parse(localStorage.getItem('user')).id // Lấy user_id từ localStorage
+                            user_id: JSON.parse(sessionStorage.getItem('user')).id // Lấy user_id từ sessionStorage
                         })
                     });
                     const data = await response.json();
@@ -218,7 +218,7 @@
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
-                    user_id: JSON.parse(localStorage.getItem("user")).id,
+                    user_id: JSON.parse(sessionStorage.getItem("user")).id,
                 }),
             });
             const categories = await response.json();
@@ -249,7 +249,7 @@
 
         form.addEventListener("submit", async function(event) {
             event.preventDefault();
-            const userId = JSON.parse(localStorage.getItem("user")).id;
+            const userId = JSON.parse(sessionStorage.getItem("user")).id;
             const categoryId = categorySelect.value;
             const transactionType = type.value;
             const transactionName = name.value;

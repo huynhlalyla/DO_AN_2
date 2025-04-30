@@ -36,10 +36,24 @@ async function getAll (req, res){
     }
 }
 
+async function readAll (req, res) {
+    try {
+        const user_id = req.body.user_id;
+        const notifies = await Notify.find({ user_id });
+        for (let i = 0; i < notifies.length; i++) {
+            notifies[i].is_read = true;
+            await notifies[i].save();
+        }
+        res.status(200).json({ message: 'success' });
+    } catch (error) {
+        res.status(500).json({ message: 'failed', error });
+    }
+}
+
 module.exports = {
     create,
     getAll,
-    updateRead
-
+    updateRead,
+    readAll
 
 }

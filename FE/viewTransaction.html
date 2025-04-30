@@ -148,7 +148,7 @@
                             "Content-Type": "application/json",
                         },
                         body: JSON.stringify({
-                            user_id: JSON.parse(localStorage.getItem('user')).id,
+                            user_id: JSON.parse(sessionStorage.getItem('user')).id,
                         }),
                     });
                     const data = await response.json();
@@ -267,7 +267,7 @@
                 });
             }
             async function chartRendering(day) {
-                const userId = JSON.parse(localStorage.getItem('user')).id; // Lấy user_id từ localStorage
+                const userId = JSON.parse(sessionStorage.getItem('user')).id; // Lấy user_id từ sessionStorage
                 console.log(userId);
 
 
