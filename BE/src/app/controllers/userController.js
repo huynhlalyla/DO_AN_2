@@ -17,10 +17,8 @@ const addUser = async (req, res) => {
         res.status(500).json({ message: 'Lỗi server', error });
     }
 };
-
 // Xác thực người dùng
 //POST /users/authenticate
-
 const authenticateUser = async (req, res) => {
     try {
         const data = req.body;
@@ -35,7 +33,6 @@ const authenticateUser = async (req, res) => {
         res.status(500).json({ message: 'Lỗi server', error });
     }
 };
-
 // Đăng ký người dùng
 const registerUser = async (req, res) => {
     console.log(req.body);
@@ -60,8 +57,6 @@ const registerUser = async (req, res) => {
         res.status(500).json({ message: 'Lỗi server', error });
     }
 };
-
-
 const loginUser = async (req, res) => {
     try {
         const { phone, password } = req.body;
@@ -87,9 +82,6 @@ const loginUser = async (req, res) => {
         res.status(500).json({ success: false, message: 'Lỗi server', error });
     }
 };
-
-
-
 async function sendEmail(to, subject, htmlContent) {
     try {
         // Cấu hình SMTP
@@ -116,7 +108,6 @@ async function sendEmail(to, subject, htmlContent) {
         console.error('Error sending email:', error);
     }
 }
-
 async function createTokenResetpassword(req, res) {
     try {
         const { email } = req.body;
@@ -153,7 +144,6 @@ async function createTokenResetpassword(req, res) {
         res.status(500).json({ message: 'Tạo OTP thất bại', error });
     }
 }
-
 async function verifyToken(req, res) {
     try {
         const { email, token } = req.body;
@@ -175,7 +165,6 @@ async function verifyToken(req, res) {
         res.status(500).json({ message: 'Xác thực mã OTP thất bại', error });
     }
 }
-
 async function resetPassword(req, res) {
     try {
         const { email, newPassword } = req.body;
@@ -193,6 +182,53 @@ async function resetPassword(req, res) {
         res.status(500).json({ message: 'Đặt lại mật khẩu thất bại', error });
     }
 }
+async function updateUser(req, res) {
+    try {
+        const {userId, newName, newEmail, newPhone} = req.body;
+        console.log(req.body);
+        console.log(userId, newName, newEmail, newPhone);
+        const user = await Users.findByIdAndUpdate(userId, {name: newName, email: newEmail, phone: newPhone}, {new: true});
+        if (!user) {
+            return res.status(404).json({ message: 'Có lỗi trong việc xác nhận người dùng!' });
+        }
+        return res.status(200).json({ message: 'Cập nhật thành công', user });
+    } catch (err) {
+        res.status(500).json({ message: 'Có lỗi trong việc cập nhật người dùng!', error: err });
+    }
+}
+
+async function getUser(req, res) {
+    try {
+        const { userId } = req.body;
+        const user = await Users.findById(userId).select('-password -resetPasswordToken -resetPasswordExpires');
+        if (!user) {
+            return res.status(404).json({ message: 'Không tìm thấy người dùng!' });
+        }
+        return res.status(200).json({ message: 'success', user });
+    } catch (err) {
+        res.status(500).json({ message: 'Có lỗi trong việc lấy thông tin người dùng!', error: err });
+    }
+}
+
+async function changePassword(req, res) {
+    try {
+        const { userId, currentPassword, newPassword } = req.body;
+        const user = await Users.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: 'Không tìm thấy người dùng!' });
+        }
+        if (user.password !== currentPassword) {
+            return res.status(400).json({ message: 'Mật khẩu cũ không chính xác!' });
+        }
+        const updatedUser = await Users.findByIdAndUpdate(userId, { password: newPassword }, { new: true });
+        if (!updatedUser) {
+            return res.status(500).json({ message: 'Có lỗi trong việc cập nhật mật khẩu!' });
+        }
+        return res.status(200).json({ message: 'Đổi mật khẩu thành công!' });
+    } catch (err) {
+        res.status(500).json({ message: 'Có lỗi trong việc đổi mật khẩu!', error: err });
+    }
+}
 
 
 module.exports = {
@@ -202,5 +238,8 @@ module.exports = {
     loginUser,
     createTokenResetpassword,
     verifyToken,
-    resetPassword
+    resetPassword,
+    updateUser,
+    getUser,
+    changePassword,
 };
