@@ -96,14 +96,14 @@ async function sendEmail(to, subject, htmlContent) {
         const transporter = nodemailer.createTransport({
             service: 'Gmail', // Hoặc SMTP khác như Outlook, Yahoo
             auth: {
-                user: 'jienrury007@gmail.com', // Email của bạn
-                pass: 'fkxf wpfv laiv ddca'  // Mật khẩu ứng dụng (App Password)
+                user: 'quanlychitieuqha20252025@gmail.com', // Email của bạn
+                pass: 'gqjn yexr hent qine'  // Mật khẩu ứng dụng (App Password)
             }
         });
 
         // Nội dung email
         const mailOptions = {
-            from: 'jienrury007@gmail.com', // Email gửi
+            from: 'quanlychitieuqha20252025@gmail.com', // Email gửi
             to, // Email nhận
             subject,
             html: htmlContent // Nội dung
