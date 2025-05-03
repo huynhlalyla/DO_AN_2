@@ -75,6 +75,8 @@
         </div>
     </div>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
 <script src="../FE/js/main.js"></script>
 <script>
     document.addEventListener("DOMContentLoaded", async function() {
@@ -117,11 +119,7 @@
                 })
             });
             const data = await respone.json();
-            if(data.message === "success") {
-                alert("Cập nhật thông tin thành công!");
-            } else {
-                alert("Cập nhật thông tin thất bại!");
-            }
+            alert(data.message);
         });
 
         //change password
@@ -167,19 +165,118 @@
 
     
 
-    document.getElementById("export-pdf").addEventListener("click", function() {
-        let docDefinition = {
+    document.getElementById("export-pdf").addEventListener("click", async function () {
+    const userId = JSON.parse(sessionStorage.getItem("user")).id;
+
+    // Lấy thông tin người dùng
+    const userResponse = await fetch("http://localhost:3000/user/get-user", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ userId: userId }),
+    });
+    const userData = await userResponse.json();
+    const user = userData.user;
+
+    // Lấy dữ liệu tài chính
+    const reportResponse = await fetch("http://localhost:3000/report/create", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ user_id: userId, day: 30 }),
+    });
+    const reportData = await reportResponse.json();
+    const totalIncome = parseFloat(reportData.total_income.reduce((sum, t) => sum + parseFloat(t.amount), 0));
+    const totalExpense = parseFloat(reportData.total_expense.reduce((sum, t) => sum + parseFloat(t.amount), 0));
+    const balance = totalIncome - totalExpense;
+    const transactions = reportData.transactions;
+
+     // Đường dẫn logo (cần đảm bảo đường dẫn này hợp lệ)
+     const logoUrl = "../FE/css/image/logo.png";
+
+    // Tải logo và chuyển đổi thành Base64
+    const logoResponse = await fetch(logoUrl);
+    const logoBlob = await logoResponse.blob();
+    const logoBase64 = await new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result);
+        reader.readAsDataURL(logoBlob);
+    });
+
+    // Kiểm tra nếu không có giao dịch
+    if (transactions.length === 0) {
+        const docDefinition = {
             content: [
-                { text: 'Báo Cáo Tài Chính', style: 'header' },
-                { text: 'Ngày: ' + new Date().toLocaleDateString(), margin: [0, 10] },
-                { text: 'Chi tiết tài chính sẽ hiển thị ở đây...', margin: [0, 10] }
+                { text: "Báo Cáo Tài Chính", style: "header" },
+                { text: "Ngày: " + new Date().toLocaleDateString(), margin: [0, 10] },
+                { text: "Thông Tin Người Dùng", style: "subheader", margin: [0, 10] },
+                { text: `Họ và tên: ${user.name}`, margin: [0, 5] },
+                { text: `Email: ${user.email}`, margin: [0, 5] },
+                { text: `Số điện thoại: ${user.phone}`, margin: [0, 5] },
+                { text: `Ngày tạo tài khoản: ${new Date(user.createdAt).toLocaleDateString("vi-VN")}`, margin: [0, 5] },
+                { text: `Cập nhật lần cuối: ${new Date(user.updatedAt).toLocaleDateString("vi-VN")}`, margin: [0, 5] },
+                { text: "Tài khoản chưa có giao dịch nào trong 30 ngày gần nhất.", margin: [0, 10], color: "red" },
             ],
             styles: {
-                header: { fontSize: 18, bold: true, alignment: 'center' }
-            }
+                header: { fontSize: 18, bold: true, alignment: "center" },
+                subheader: { fontSize: 14, bold: true },
+            },
         };
+
+        // Xuất file PDF
         pdfMake.createPdf(docDefinition).download("bao_cao_tai_chinh.pdf");
-    });
+        return;
+    }
+
+    // Tạo nội dung PDF khi có giao dịch
+    const docDefinition = {
+        content: [
+            {
+                image: logoBase64,
+                width: 50, // Kích thước logo
+                alignment: "left",
+                margin: [0, 0, 0, 10], // Căn lề
+            },
+            { text: "Báo Cáo Tài Chính", style: "header" },
+            { text: "Ngày: " + new Date().toLocaleDateString(), margin: [0, 10] },
+            { text: "Thông Tin Người Dùng", style: "subheader", margin: [0, 10] },
+            { text: `Họ và tên: ${user.name}`, margin: [0, 5] },
+            { text: `Email: ${user.email}`, margin: [0, 5] },
+            { text: `Số điện thoại: ${user.phone}`, margin: [0, 5] },
+            { text: `Ngày tạo tài khoản: ${new Date(user.createdAt).toLocaleDateString("vi-VN")}`, margin: [0, 5] },
+            { text: `Cập nhật lần cuối: ${new Date(user.updatedAt).toLocaleDateString("vi-VN")}`, margin: [0, 5] },
+            { text: "Tổng Quan Tài Chính", style: "subheader", margin: [0, 10] },
+            { text: `Tổng Thu Nhập: ${totalIncome.toLocaleString()} đ`, margin: [0, 5] },
+            { text: `Tổng Chi Tiêu: ${totalExpense.toLocaleString()} đ`, margin: [0, 5] },
+            { text: `Số dư: ${balance.toLocaleString()} đ`, margin: [0, 5] },
+            { text: "Danh Sách Giao Dịch", style: "subheader", margin: [0, 10] },
+            {
+                table: {
+                    headerRows: 1,
+                    widths: ["*", "*", "*", "*"],
+                    body: [
+                        ["Tên Giao Dịch", "Loại", "Số Tiền", "Ngày"],
+                        ...transactions.map((t) => [
+                            t.name,
+                            t.type === "income" ? "Thu nhập" : "Chi tiêu",
+                            `${parseInt(t.amount).toLocaleString()} đ`,
+                            new Date(t.date).toLocaleDateString("vi-VN"),
+                        ]),
+                    ],
+                },
+            },
+        ],
+        styles: {
+            header: { fontSize: 18, bold: true, alignment: "center" },
+            subheader: { fontSize: 14, bold: true },
+        },
+    };
+
+    // Xuất file PDF
+    pdfMake.createPdf(docDefinition).download("bao_cao_tai_chinh.pdf");
+});
     
     document.getElementById("export-csv").addEventListener("click", function() {
         let csvContent = "data:text/csv;charset=utf-8,Ngày,Thu nhập,Chi tiêu\n";
