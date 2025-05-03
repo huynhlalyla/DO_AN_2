@@ -6,10 +6,23 @@ function loadPartials() {
             document.getElementById('header').innerHTML = data;
             // Gán sự kiện cho các phần tử trong header sau khi đã được chèn vào DOM
             const navLinks = document.querySelectorAll("a.nav-link");
+            const dropdownBtn = document.querySelector("#categoryMenu");
+            // console.log(dropdownBtn);
             const currentPath = window.location.pathname.split("/").pop(); // Lấy tên file hiện tại
+            console.log(currentPath);
             navLinks.forEach(link => {
+                // console.log(link.getAttribute("href"));
                 if (link.getAttribute("href") === currentPath) {
                     link.classList.add("active"); // Thêm lớp 'active' vào liên kết hiện tại
+                }
+            });
+            const dropdownItems = document.querySelectorAll(".dropdown-item");
+            const categoryMenu = document.getElementById("categoryMenu");
+
+            dropdownItems.forEach(item => {
+                if (item.getAttribute("href") === currentPath) {
+                    item.classList.add("active"); // Tô đậm mục con
+                    categoryMenu.classList.add("active"); // Tô đỏ nút "Danh mục"
                 }
             });
             // Gán sự kiện dropdown và sidebar sau khi header đã được load
@@ -170,6 +183,19 @@ async function updatenotify(id) {
             notify_id: id,
         }),
     });
+}
+formatCurrency = function(input) {
+    // Loại bỏ tất cả ký tự không phải số
+    let value = input.value.replace(/\D/g, "");
+
+    // Nếu giá trị rỗng thì không cần định dạng
+    if (value === "") {
+        input.value = "";
+        return;
+    }
+
+    // Định dạng số có dấu chấm phân cách hàng nghìn
+    input.value = new Intl.NumberFormat("vi-VN").format(value);
 }
 
 

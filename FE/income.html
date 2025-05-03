@@ -27,6 +27,9 @@
     
 </style>
 <body>
+    <div id="loader-container" style="display: none;">
+        <span class="loader"></span>
+    </div>
 <div id="header"></div>
     <div class="container mt-4">
         <div class="card">
@@ -34,7 +37,7 @@
                 <h2 class="fw-bold mb-0" style="color: black;">Danh mục thu nhập</h2>
             </div>
             <div class="card-body">
-                <div class="row text-center">
+                <div class="row text- align-items-center justify-content-center mb-3">
                     <div class="col-4">
                         <button class="btn btn-success w-100" data-bs-toggle="modal" data-bs-target="#addCategoryModal"><i class="bi bi-plus-circle"></i> Thêm</button>
                     </div>
@@ -132,6 +135,7 @@
                 //hiện confirm xác định xóa
                 //lấy dữ liệu từ server
                 if(window.confirm("Bạn có chắc muốn xóa không?")) {
+                    showLoader(true); // Hiện loader
                     const response = await fetch(`http://localhost:3000/category/delete/${category_id}`, {
                         method: "DELETE",
                         headers: {
@@ -139,6 +143,7 @@
                         }
                     });
                     const data = await response.json();
+                    showLoader(false); // Ẩn loader
                     console.log(data); // Kiểm tra phản hồi từ server
 
                     if(data.message === "success") {
@@ -166,6 +171,7 @@
                 const editStartDateInput = editCategoryModal.querySelector("#startDate"); // Ngày bắt đầu
                 const editEndDateInput = editCategoryModal.querySelector("#endDate"); // Ngày kết thúc
                 //lấy dữ liệu từ server
+                showLoader(true); // Hiện loader
                 const response = await fetch(`http://localhost:3000/category/${category_id}`, {
                     method: "GET",
                     headers: {
@@ -173,6 +179,7 @@
                     }
                 });
                 const data = await response.json();
+                showLoader(false); // Ẩn loader
                 console.log(data);
                 //gắn dữ liệu vào modal
                 editCategoryNameInput.value = data.name;
@@ -186,6 +193,7 @@
                     const updatedEndDate = editEndDateInput.value; // Lấy giá trị ngày kết thúc
 
                     // Gửi yêu cầu cập nhật danh mục đến server
+                    showLoader(true); // Hiện loader
                     const response = await fetch(`http://localhost:3000/category/update/${category_id}`, {
                             method: "PUT",
                             headers: {
@@ -199,6 +207,7 @@
                             })
                         });
                         const data = await response.json();
+                        showLoader(false); // Ẩn loader
                         console.log(data); // Kiểm tra phản hồi từ server
 
                         // Đóng modal sau khi sửa
@@ -227,6 +236,7 @@
             const endDateInput = addCategoryForm.querySelector("#endDate"); // Ngày kết thúc
             //load dữ liệu cho ngân sách
             const userId = JSON.parse(sessionStorage.getItem('user')).id; // Lấy user_id từ sessionStorage
+            showLoader(true); // Hiện loader
             const response = await fetch(`http://localhost:3000/category/getall`, {
                 method: "POST",
                 headers: {
@@ -237,6 +247,7 @@
                 })
             });
             const data = await response.json();
+            showLoader(false); // Ẩn loader
 
             data.forEach(category => {
                 if(category.type === "income") {
@@ -288,7 +299,7 @@
 
                     // Thêm danh mục mới vào container
                     document.querySelector(".category-container .row").appendChild(newCategory);
-                    
+                    showLoader(true); // Hiện loader
                     const response = await fetch("http://localhost:3000/category/add", {
                         method: "POST",
                         headers: {
@@ -303,6 +314,7 @@
                         })
                     });
                     const data = await response.json();
+                    showLoader(false); // Ẩn loader
                     console.log(data); // Kiểm tra phản hồi từ server
                     // Đóng modal sau khi thêm
                     const addCategoryModal = bootstrap.Modal.getInstance(document.getElementById("addCategoryModal"));

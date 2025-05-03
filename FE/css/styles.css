@@ -164,9 +164,14 @@ a:hover{
     background: #ffb0d8;
     transform: scale(1.1);
 }
+.dropdown-item.active {
+    font-weight: bold;
+    color: #fff !important;
+    background-color: #dc3545 !important; /* Màu nền đỏ */
+}
 
 .btn-primary.dropdown-toggle {
-    background-color: #ffccdd!important;  
+    background-color: #ffccdd;  
     border: none;
     color: black;
     font-weight: bold;
@@ -175,6 +180,12 @@ a:hover{
     margin: 0 10px;
     position: relative;
     transition: all 0.3s ease-in-out;
+}
+.btn-primary.dropdown-toggle.active {
+    background-color: #dc3545 !important; /* Màu nền đỏ */
+    color: white;
+    font-weight: bold;
+    border-radius: 5px;
 }
  
 .btn-primary.dropdown-toggle:hover {

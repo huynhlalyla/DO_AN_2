@@ -193,19 +193,6 @@
     });
 
     document.addEventListener("DOMContentLoaded", async function() {
-        window.formatCurrency = function(input) {
-            // Loại bỏ tất cả ký tự không phải số
-            let value = input.value.replace(/\D/g, "");
-        
-            // Nếu giá trị rỗng thì không cần định dạng
-            if (value === "") {
-                input.value = "";
-                return;
-            }
-        
-            // Định dạng số có dấu chấm phân cách hàng nghìn
-            input.value = new Intl.NumberFormat("vi-VN").format(value);
-        }
 
 
         //lấy form dữ liệu

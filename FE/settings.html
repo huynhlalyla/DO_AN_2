@@ -15,6 +15,9 @@
     </style>
 </head>
 <body>
+    <div id="loader-container" style="display: none;">
+        <span class="loader"></span>
+    </div>
 <div id="header"></div>
 <div class="container mt-4">
     <div class="card p-4 mx-auto" style="max-width: 500px;"> <!-- Giới hạn chiều rộng -->
@@ -40,7 +43,6 @@
         <h4 class="text-center">Xuất dữ liệu tài chính</h4>
         <div class="d-flex justify-content-center gap-3">
             <button id="export-pdf" class="btn btn-danger">Xuất PDF</button>
-            <button id="export-csv" class="btn btn-primary">Xuất CSV</button>
         </div>
     </div>
 </div>
@@ -82,6 +84,7 @@
     document.addEventListener("DOMContentLoaded", async function() {
         //load data user
         const userId = JSON.parse(sessionStorage.getItem("user")).id;
+        showLoader(true);
         const respone = await fetch("http://localhost:3000/user/get-user", {
             method: "POST",
             headers: {
@@ -90,6 +93,7 @@
             body: JSON.stringify({ userId: userId })
         });
         const data = await respone.json();
+        showLoader(false);
         const user = data.user;
         document.getElementById("user-name").value = user.name;
         document.getElementById("user-email").value = user.email;
@@ -106,6 +110,7 @@
                 alert("Vui lòng nhập đầy đủ thông tin!");
                 return;
             }
+            showLoader(true);
             const respone = await fetch("http://localhost:3000/user/update", {
                 method: "put",
                 headers: {
@@ -119,6 +124,7 @@
                 })
             });
             const data = await respone.json();
+            showLoader(false);
             alert(data.message);
         });
 
@@ -139,6 +145,7 @@
             }
             
             const userId = JSON.parse(sessionStorage.getItem("user")).id;
+            showLoader(true);
             const respone = await fetch("http://localhost:3000/user/change-password", {
                 method: "put",
                 headers: {
@@ -151,6 +158,7 @@
                 })
             });
             const data = await respone.json();
+            showLoader(false);
             console.log(data);
             
             //tắt modal và clear input
@@ -169,6 +177,7 @@
     const userId = JSON.parse(sessionStorage.getItem("user")).id;
 
     // Lấy thông tin người dùng
+    showLoader(true);
     const userResponse = await fetch("http://localhost:3000/user/get-user", {
         method: "POST",
         headers: {
@@ -177,9 +186,11 @@
         body: JSON.stringify({ userId: userId }),
     });
     const userData = await userResponse.json();
+    showLoader(false);
     const user = userData.user;
 
     // Lấy dữ liệu tài chính
+    showLoader(true);
     const reportResponse = await fetch("http://localhost:3000/report/create", {
         method: "POST",
         headers: {
@@ -188,6 +199,7 @@
         body: JSON.stringify({ user_id: userId, day: 30 }),
     });
     const reportData = await reportResponse.json();
+    showLoader(false);
     const totalIncome = parseFloat(reportData.total_income.reduce((sum, t) => sum + parseFloat(t.amount), 0));
     const totalExpense = parseFloat(reportData.total_expense.reduce((sum, t) => sum + parseFloat(t.amount), 0));
     const balance = totalIncome - totalExpense;
@@ -197,6 +209,7 @@
      const logoUrl = "../FE/css/image/logo.png";
 
     // Tải logo và chuyển đổi thành Base64
+    showLoader(true);
     const logoResponse = await fetch(logoUrl);
     const logoBlob = await logoResponse.blob();
     const logoBase64 = await new Promise((resolve) => {
@@ -204,11 +217,17 @@
         reader.onloadend = () => resolve(reader.result);
         reader.readAsDataURL(logoBlob);
     });
-
+    showLoader(false);
     // Kiểm tra nếu không có giao dịch
     if (transactions.length === 0) {
         const docDefinition = {
             content: [
+                {
+                    image: logoBase64,
+                    width: 50, // Kích thước logo
+                    alignment: "left",
+                    margin: [0, 0, 0, 10], // Căn lề
+                },
                 { text: "Báo Cáo Tài Chính", style: "header" },
                 { text: "Ngày: " + new Date().toLocaleDateString(), margin: [0, 10] },
                 { text: "Thông Tin Người Dùng", style: "subheader", margin: [0, 10] },
@@ -278,17 +297,6 @@
     pdfMake.createPdf(docDefinition).download("bao_cao_tai_chinh.pdf");
 });
     
-    document.getElementById("export-csv").addEventListener("click", function() {
-        let csvContent = "data:text/csv;charset=utf-8,Ngày,Thu nhập,Chi tiêu\n";
-        csvContent += "01/03/2025,5000000,2000000\n";
-        csvContent += "02/03/2025,4000000,1500000\n";
-        let encodedUri = encodeURI(csvContent);
-        let link = document.createElement("a");
-        link.setAttribute("href", encodedUri);
-        link.setAttribute("download", "bao_cao_tai_chinh.csv");
-        document.body.appendChild(link);
-        link.click();
-    });
 
     
 </script>
