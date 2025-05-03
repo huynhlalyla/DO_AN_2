@@ -40,6 +40,9 @@
     </style>
 </head>
 <body>
+    <div id="loader-container" style="display: none;">
+        <div class="loader"></div>
+    </div>
     <div id="header"></div>
     <main>
         <div class="container">
@@ -96,12 +99,15 @@
             }
 
             function renderBudgetList(data) {
+                console.log(data);
                 const budgetList = document.getElementById("budget-list");
                 budgetList.innerHTML = ""; // Xóa nội dung cũ trong bảng
 
                 if (data.length === 0) {
-                    // Hiển thị thông báo "Chưa có ngân sách nào" nếu không có dữ liệu
-                    document.getElementById("no-data").style.display = "table-row";
+                    //tạo một hàng mới nếu không có dữ liệu
+                    const noDataRow = document.createElement("tr");
+                    noDataRow.innerHTML = `<td colspan="4" class="text-center text-muted">Chưa có ngân sách nào</td>`;
+                    budgetList.appendChild(noDataRow);
                     return;
                 }
 
@@ -130,6 +136,7 @@
 
                 //call API để lấy dữ liệu giao dịch của người dùng bằng đối tương report
                 //call API dựa trên user_id(lúc đăng nhập có)
+                showLoader(true); // Hiện loader khi bắt đầu gửi yêu cầu
                 const response = await fetch('http://localhost:3000/category/getall', {
                     method: 'POST',
                     headers: {
@@ -141,8 +148,8 @@
                 });
 
                 const data = await response.json();
+                showLoader(false); // Ẩn loader khi nhận được phản hồi từ server
                 console.log(data);
-                renderBudgetList(data); // Gọi hàm để hiển thị danh sách ngân sách
                 //render số lượng
                 const length = data.reduce((acc, item) => {
                     if (item.type == "expense") {
@@ -150,6 +157,8 @@
                     }
                     return acc;
                 }, 0);
+                if(length > 0) renderBudgetList(data); // Gọi hàm để hiển thị danh sách ngân sách
+                else renderBudgetList([]); // Gọi hàm để hiển thị danh sách ngân sách rỗng
                 document.getElementById("count-budgets").innerText = `(${length})`;
                 let labels = []; // Mảng để lưu trữ tên danh mục
                 let amounts = []; // Mảng để lưu trữ số tiền tương ứng với danh mục

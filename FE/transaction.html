@@ -9,6 +9,9 @@
     <link rel="stylesheet" href="../FE/css/main.css">
 </head>
 <body>
+    <div id="loader-container" style="display: none;">
+        <span class="loader"></span>
+    </div>
     <div id="header"></div>
     <div class="container mt-4">
         <div class="row justify-content-center">
@@ -159,6 +162,7 @@
                 fiveYearsLater.setFullYear(today.getFullYear() + 5);
                 const end_date = endDate.value ? endDate.value : fiveYearsLater.toISOString().split("T")[0];
                 if(name && type) {
+                    showLoader(true);
                     const response = await fetch("http://localhost:3000/category/add", {
                         method: "POST",
                         headers: {
@@ -174,6 +178,7 @@
                         })
                     });
                     const data = await response.json();
+                    showLoader(false);
                     console.log(data); // Kiểm tra phản hồi từ server
                     if(data.message === "success") alert("Thêm danh mục thành công!");
                     else alert("Thêm danh mục thất bại!");
@@ -212,6 +217,7 @@
         const categorySelect = document.getElementById("danhMuc");
         const submitButton = form.querySelector(".btn btn-primary");
         categorySelect.addEventListener("focus", async function() {
+            showLoader(true);
             const response = await fetch("http://localhost:3000/category/getall", {
                 method: "POST",
                 headers: {
@@ -222,6 +228,7 @@
                 }),
             });
             const categories = await response.json();
+            showLoader(false);
             //gắn danh sách danh mục vào select
             categorySelect.innerHTML = '<option value="" selected disabled>Chọn danh mục</option>';
             categories.forEach(category => {
@@ -259,6 +266,7 @@
             console.log(userId, categoryId, transactionType, transactionName, transactionAmount, transactionDate);
             //
             if(userId && categoryId && transactionType && transactionName && transactionAmount) {
+                showLoader(true);
                 const response = await fetch("http://localhost:3000/transaction/add", {
                     method: "POST",
                     headers: {
@@ -274,6 +282,7 @@
                     }),
                 });
                 const result = await response.json();
+                showLoader(false);
                 if (result.message === "success") {
                     alert("Giao dịch đã được lưu thành công!");
                     window.location.href = "transaction.html";

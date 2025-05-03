@@ -2,8 +2,16 @@ function loadPartials() {
     fetch('partials/header.html')
         .then(response => response.text())
         .then(data => {
+            
             document.getElementById('header').innerHTML = data;
-
+            // Gán sự kiện cho các phần tử trong header sau khi đã được chèn vào DOM
+            const navLinks = document.querySelectorAll("a.nav-link");
+            const currentPath = window.location.pathname.split("/").pop(); // Lấy tên file hiện tại
+            navLinks.forEach(link => {
+                if (link.getAttribute("href") === currentPath) {
+                    link.classList.add("active"); // Thêm lớp 'active' vào liên kết hiện tại
+                }
+            });
             // Gán sự kiện dropdown và sidebar sau khi header đã được load
             attachDropdownEvents();
             attachSidebarEvents();
@@ -240,4 +248,12 @@ function attachSidebarEvents() {
         sideMenu.style.left = "-250px";
         menuOverlay.style.display = "none";
     });
+}
+
+function showLoader(enable) {
+    if (enable) {
+        document.getElementById('loader-container').style.display = 'flex';
+    } else {
+        document.getElementById('loader-container').style.display = 'none';
+    }
 }

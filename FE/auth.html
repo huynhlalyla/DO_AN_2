@@ -7,6 +7,11 @@
     <link rel="stylesheet" href="../FE/css/auth.css">
 </head>
 <body>
+    <div id="loader-container">
+        <span class="loader"></span>
+    </div>
+
+
     <div class="container d-flex justify-content-center align-items-center vh-100">
         <div class="ms-5" style="padding-top: 90px; padding-bottom:60px">
             <div class="row w-75 d-flex justify-content-between">
@@ -81,7 +86,16 @@
     </div>
     
 <script>
+    function showLoader(enable) {
+        if (enable) {
+            document.getElementById('loader-container').style.display = 'flex';
+        } else {
+            document.getElementById('loader-container').style.display = 'none';
+        }
+    }
+    showLoader(true); // Hiện loader khi trang đang tải
     document.addEventListener("DOMContentLoaded", function() {
+        showLoader(false); // Ẩn loader khi trang đã tải xong
         const switchLinks = document.querySelectorAll(".switch-form");
 
         switchLinks.forEach(link => {
@@ -157,6 +171,8 @@
         });
     
         registerForm.addEventListener('submit', async (e) => {
+            // Hiện loader khi bắt đầu gửi yêu cầu
+            showLoader(true);
             e.preventDefault();
             const formData = new FormData(registerForm);
             const data = Object.fromEntries(formData.entries());
@@ -168,7 +184,7 @@
             });
     
             const result = await response.json();
-    
+            showLoader(false); // Ẩn loader sau khi nhận được phản hồi
             if (result.success) {
                 alert('Đăng ký thành công! Nhấn OK để chuyển đến trang đăng nhập.');
                 registerForm.reset();
@@ -194,6 +210,8 @@
         });
     
         loginForm.addEventListener('submit', async (e) => {
+            // Hiện loader khi bắt đầu gửi yêu cầu
+            showLoader(true);
             e.preventDefault();
             const formData = new FormData(loginForm);
             const data = Object.fromEntries(formData.entries());
@@ -205,7 +223,7 @@
             });
         
             const result = await response.json();
-        
+            showLoader(false); // Ẩn loader sau khi nhận được phản hồi
             if (result.success && result.redirectUrl) {
                 // Lưu trạng thái đăng nhập vào sessionStorage
                 sessionStorage.setItem('user', JSON.stringify(result.user));

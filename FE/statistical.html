@@ -25,6 +25,9 @@
     
 </style>
 <body>
+    <div id="loader-container" style="display: none;">
+        <span class="loader"></span>
+    </div>
 <div id="header"></div>
     <div class="container mt-4">
         <div class="row text-center" style="padding-bottom: 30px;">
@@ -109,6 +112,7 @@
 
             //call API để lấy dữ liệu giao dịch của người dùng bằng đối tương report
             //call API dựa trên user_id(lúc đăng nhập có)
+            showLoader(true); // Hiện loader khi bắt đầu gửi yêu cầu
             const response = await fetch('http://localhost:3000/report/create', {
                 method: 'POST',
                 headers: {
@@ -121,6 +125,7 @@
             });
             
             const data = await response.json();
+            showLoader(false); // Ẩn loader khi nhận được phản hồi từ server
             console.log(data);
             //cập nhật dữ liệu thu nhập và chi tiêu của người dùng từ server
             let TOTAL_INCOME = data.total_income;
@@ -153,15 +158,17 @@
             balanceElement.innerText = balance.toLocaleString() + ' đ';
 
             //date
-            const startDate = document.getElementById('start-date');
-            const endDate = document.getElementById('end-date');
-            console.log(data.startDate, data.endDate);
-            if(data.startDate && data.endDate) {
-                startDate.innerText = new Date(data.startDate).toLocaleDateString('vi-VN');
-                endDate.innerText = new Date(data.endDate).toLocaleDateString('vi-VN');
-            } else {
-                startDate.innerText = new Date(TRANSACTIONS[0].date).toLocaleDateString('vi-VN');
-                endDate.innerText = new Date().toLocaleDateString('vi-VN');
+            if(TRANSACTIONS.length > 0) {
+                const startDate = document.getElementById('start-date');
+                const endDate = document.getElementById('end-date');
+                console.log(data.startDate, data.endDate);
+                if(data.startDate && data.endDate) {
+                    startDate.innerText = new Date(data.startDate).toLocaleDateString('vi-VN');
+                    endDate.innerText = new Date(data.endDate).toLocaleDateString('vi-VN');
+                } else {
+                    startDate.innerText = new Date(TRANSACTIONS[0].date).toLocaleDateString('vi-VN');
+                    endDate.innerText = new Date().toLocaleDateString('vi-VN');
+                }
             }
             
 
@@ -219,7 +226,8 @@
                 currentChart.destroy();
             }
 
-            currentChart = new Chart(ctx, {
+            if(TRANSACTIONS.length > 0) {
+                currentChart = new Chart(ctx, {
                 type: 'doughnut',
                 data: {
                     labels: ['Thu Nhập', 'Chi Tiêu'],
@@ -254,6 +262,42 @@
                 },
                 plugins: [ChartDataLabels]
             });
+            } else {
+                currentChart = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Không có dữ liệu'],
+                        datasets: [{
+                            data: [100],
+                            backgroundColor: ['gray'],
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        layout: {
+                            padding: 20
+                        },
+                        plugins: {
+                            legend: { position: 'top' },
+                            tooltip: {
+                                callbacks: {
+                                    label: function (context) {
+                                        return context.label + ': ' + context.raw.toFixed(2) + '%';
+                                    }
+                                }
+                            },
+                            datalabels: {
+                                color: 'white',
+                                font: { weight: 'bold', size: 14 },
+                                formatter: (value) => {
+                                    return value.toFixed(2) + '%';
+                                }
+                            }
+                        }
+                    }
+                });
+            }
         }
     chartRendering(0); // Gọi hàm với giá trị mặc định là 30 ngày
 });

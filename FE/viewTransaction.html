@@ -29,6 +29,9 @@
     }
 </style>
 <body>
+    <div id="loader-container" style="display: none;">
+        <div class="loader"></div>
+    </div>
     <div id="header"></div>
     <div class="container mt-4">
         <h3 class="text-center">Thống kê chi tiêu & thu nhập</h3>
@@ -142,6 +145,7 @@
 
                 //khi focus vào category thi hien cac danh muc hien co ra
                 editCategory.addEventListener("focus", async function () {
+                    showLoader(true); // Hiện loader khi bắt đầu gửi yêu cầu
                     const response = await fetch("http://localhost:3000/category/getAll", {
                         method: "POST",
                         headers: {
@@ -152,6 +156,7 @@
                         }),
                     });
                     const data = await response.json();
+                    showLoader(false); // Ẩn loader khi nhận được phản hồi từ server
                     console.log(data);
                     let options = ""
                     data.forEach(category => {
@@ -190,6 +195,7 @@
                 submitEditBtn.setAttribute("data-id", transaction_id);
                 submitEditBtn.addEventListener("click", async function (event) {
                     event.preventDefault(); // Ngăn chặn hành vi mặc định của nút submit
+                    showLoader(true); // Hiện loader khi bắt đầu gửi yêu cầu
                     const response = await fetch(`http://localhost:3000/transaction/edit/${transaction_id}`, {
                         method: "PUT",
                         headers: {
@@ -204,6 +210,7 @@
                         }),
                     });
                     const data = await response.json();
+                    showLoader(false); // Ẩn loader khi nhận được phản hồi từ server
                     console.log(data);
                     window.location.reload(); // Tải lại trang sau khi chỉnh sửa thành công
                 });
@@ -211,6 +218,7 @@
             window.deleteTransaction = async function(transaction_id) {
                 window.confirm("Bạn có chắc chắn muốn xóa giao dịch này không?");
                 if (confirm) {
+                    showLoader(true); // Hiện loader khi bắt đầu gửi yêu cầu
                     const response = await fetch(`http://localhost:3000/transaction/delete/${transaction_id}`, {
                         method: "DELETE",
                         headers: {
@@ -218,6 +226,7 @@
                         },
                     });
                     const data = await response.json();
+                    showLoader(false); // Ẩn loader khi nhận được phản hồi từ server
                     console.log(data);
                     window.location.reload(); // Tải lại trang sau khi xóa thành công
                 }
@@ -230,15 +239,17 @@
 
                 //thời gian bắt đầu và kết thúc
                 //date
-            const startDate = document.getElementById('start-date');
-            const endDate = document.getElementById('end-date');
-            console.log(data.startDate, data.endDate);
-            if(data.startDate && data.endDate) {
-                startDate.innerText = new Date(data.startDate).toLocaleDateString('vi-VN');
-                endDate.innerText = new Date(data.endDate).toLocaleDateString('vi-VN');
-            } else {
-                startDate.innerText = new Date(TRANSACTIONS[0].date).toLocaleDateString('vi-VN');
-                endDate.innerText = new Date().toLocaleDateString('vi-VN');
+            if(TRANSACTIONS.length > 0) {
+                const startDate = document.getElementById('start-date');
+                const endDate = document.getElementById('end-date');
+                console.log(data.startDate, data.endDate);
+                if(data.startDate && data.endDate) {
+                    startDate.innerText = new Date(data.startDate).toLocaleDateString('vi-VN');
+                    endDate.innerText = new Date(data.endDate).toLocaleDateString('vi-VN');
+                } else {
+                    startDate.innerText = new Date(TRANSACTIONS[0].date).toLocaleDateString('vi-VN');
+                    endDate.innerText = new Date().toLocaleDateString('vi-VN');
+                }
             }
 
                 //kiểm tra xem có giao dịch nào không
@@ -273,6 +284,7 @@
 
                 //call API để lấy dữ liệu giao dịch của người dùng bằng đối tương report
                 //call API dựa trên user_id(lúc đăng nhập có)
+                showLoader(true); // Hiện loader khi bắt đầu gửi yêu cầu
                 const response = await fetch('http://localhost:3000/report/create', {
                     method: 'POST',
                     headers: {
@@ -285,6 +297,7 @@
                 });
                 
                 const data = await response.json();
+                showLoader(false); // Ẩn loader khi nhận được phản hồi từ server
                 console.log(data);
                 //cập nhật dữ liệu thu nhập và chi tiêu của người dùng từ server
                 TOTAL_INCOME = data.total_income;
@@ -335,7 +348,8 @@
                     currentChart.destroy();
                 }
                 const ctx = document.getElementById("lineChart").getContext("2d");
-                currentChart = new Chart(ctx, {
+                if(TRANSACTIONS.length >0 ) {
+                    currentChart = new Chart(ctx, {
                     type: "line",
                     data: {
                         labels: labels,
@@ -376,6 +390,50 @@
                         }
                     }
                 });
+                } else {
+                    //taoh biểu đồ rỗng nếu không có giao dịch nào
+                    currentChart = new Chart(ctx, {
+                        type: "line",
+                        data: {
+                            labels: [],
+                            datasets: [
+                                {
+                                    label: "Chi tiêu",
+                                    data: [],
+                                    borderColor: "red",
+                                    backgroundColor: "rgba(255, 0, 0, 0.2)",
+                                    borderWidth: 2,
+                                    tension: 0.4,
+                                },
+                                {
+                                    label: "Thu nhập",
+                                    data: [],
+                                    borderColor: "blue",
+                                    backgroundColor: "rgba(0, 0, 255, 0.2)",
+                                    borderWidth: 2,
+                                    tension: 0.4,
+                                }
+                            ]
+                        },
+                        options: {
+                            responsive: true,
+                            plugins: {
+                                legend: {
+                                    position: "top",
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    title: {
+                                        display: true,
+                                        text: "Số tiền (VND)"
+                                    }
+                                },
+                            }
+                        }
+                    });
+                }
             }
             chartRendering(0);
             
