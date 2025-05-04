@@ -34,6 +34,14 @@
     </div>
     <div id="header"></div>
     <div class="container mt-4">
+        <div class="input-group mb-3">
+            <input type="text" id="searchInput" class="form-control" placeholder="Tìm kiếm giao dịch..." aria-label="Tìm kiếm giao dịch">
+            <button class="btn btn-primary" id="searchButton" type="button">
+                <i class="bi bi-search"></i> 
+            </button>
+        </div>
+    </div>
+    <div class="container mt-4">
         <h3 class="text-center">Thống kê chi tiêu & thu nhập</h3>
         <div class="line-chart">
             <canvas id="lineChart"></canvas>
@@ -436,7 +444,18 @@
                 }
             }
             chartRendering(0);
-            
+
+            document.getElementById("searchButton").addEventListener("click", function () {
+                const searchValue = document.getElementById("searchInput").value.trim();
+                if (searchValue) {
+                    // Lưu danh sách giao dịch vào sessionStorage để sử dụng trên trang kết quả
+                    sessionStorage.setItem("transactions", JSON.stringify(TRANSACTIONS));
+                    // Chuyển hướng đến trang kết quả tìm kiếm
+                    window.location.href = `searchResults.html?query=${encodeURIComponent(searchValue)}`;
+                } else {
+                    alert("Vui lòng nhập từ khóa tìm kiếm!");
+                }
+            });
         });
     </script>
 </body>
