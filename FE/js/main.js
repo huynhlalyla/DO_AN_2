@@ -27,7 +27,7 @@ function loadPartials() {
             });
             // Gán sự kiện dropdown và sidebar sau khi header đã được load
             attachDropdownEvents();
-            attachSidebarEvents();
+            // attachSidebarEvents();
 
             // Sau khi header được chèn, thực thi script
             const user = JSON.parse(sessionStorage.getItem("user"));
@@ -141,6 +141,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 //kiểm tra đăng nhập chưa hay là tuồng
 function checkLogin() {
+    console.log("đã vào checkLogin");
     const user = JSON.parse(sessionStorage.getItem("user"));
     if (!user) {
         // Nếu chưa đăng nhập, chuyển hướng đến trang đăng nhập
@@ -246,35 +247,35 @@ function attachDropdownEvents() {
 }
 
 
-function attachSidebarEvents() {
-    const menuToggle = document.getElementById("menuToggle");
-    const closeMenu = document.getElementById("closeMenu");
-    const sideMenu = document.getElementById("sideMenu");
-    const menuOverlay = document.getElementById("menuOverlay");
+// function attachSidebarEvents() {
+//     const menuToggle = document.getElementById("menuToggle");
+//     const closeMenu = document.getElementById("closeMenu");
+//     const sideMenu = document.getElementById("sideMenu");
+//     const menuOverlay = document.getElementById("menuOverlay");
 
-    if (!menuToggle || !closeMenu || !sideMenu || !menuOverlay) {
-        console.error("Không tìm thấy các phần tử sidebar cần thiết!");
-        return;
-    }
+//     if (!menuToggle || !closeMenu || !sideMenu || !menuOverlay) {
+//         console.error("Không tìm thấy các phần tử sidebar cần thiết!");
+//         return;
+//     }
 
-    // Mở menu
-    menuToggle.addEventListener("click", function () {
-        sideMenu.style.left = "0";
-        menuOverlay.style.display = "block";
-    });
+//     // Mở menu
+//     menuToggle.addEventListener("click", function () {
+//         sideMenu.style.left = "0";
+//         menuOverlay.style.display = "block";
+//     });
 
-    // Đóng menu khi nhấn nút X
-    closeMenu.addEventListener("click", function () {
-        sideMenu.style.left = "-250px";
-        menuOverlay.style.display = "none";
-    });
+//     // Đóng menu khi nhấn nút X
+//     closeMenu.addEventListener("click", function () {
+//         sideMenu.style.left = "-250px";
+//         menuOverlay.style.display = "none";
+//     });
 
-    // Đóng menu khi click ra ngoài lớp phủ
-    menuOverlay.addEventListener("click", function () {
-        sideMenu.style.left = "-250px";
-        menuOverlay.style.display = "none";
-    });
-}
+//     // Đóng menu khi click ra ngoài lớp phủ
+//     menuOverlay.addEventListener("click", function () {
+//         sideMenu.style.left = "-250px";
+//         menuOverlay.style.display = "none";
+//     });
+// }
 
 function showLoader(enable) {
     if (enable) {

@@ -8,10 +8,14 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </head>
 <body>
+    
+    <div id="loader-container" style="display: none;">
+        <span class="loader"></span>
+    </div>
     <!-- Header -->
     <div id="header"></div>
 
-    <div class="container mt-4">
+    <div class="container container-body mt-4">
         <h3 class="text-center">Kết quả tìm kiếm</h3>
         <div class="table-container">
             <table class="table table-bordered table-striped text-center">
@@ -32,35 +36,75 @@
         </div>
     </div>
 
+
+    <!-- modal sửa -->
+    <div class="modal fade" id="editTransactionModal" tabindex="-1" aria-labelledby="editTransactionLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title text-center w-100" id="editTransactionLabel">Chỉnh sửa giao dịch</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editTransactionForm">
+                        <div class="mb-3">
+                            <label class="form-label">Tên giao dịch</label>
+                            <input type="text" class="form-control" id="editTransactionName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Danh mục</label>
+                            <select class="form-control" id="editCategory" required>
+                                <option value=""></option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Loại danh mục</label>
+                            <select disabled class="form-control" id="editCategoryType">
+                                <option value="Chi tiêu">Chi tiêu</option>
+                                <option value="Thu nhập">Thu nhập</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Số tiền</label>
+                            <input type="text" class="form-control" id="editAmount" required oninput="formatCurrency(this)">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Ngày</label>
+                            <input type="date" class="form-control" id="editDate" required>
+                        </div>
+                        <button data-id="" type="submit" class="btn btn-primary text-center w-100">Lưu thay đổi</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Footer -->
     <div id="footer"></div>
-
+    <script src="./js/main.js"></script>
     <script>
         // Tải header và footer từ các tệp HTML riêng biệt
-        document.addEventListener("DOMContentLoaded", function () {
-            // Tải header
-            fetch("../FE/partials/header.html")
-                .then(response => response.text())
-                .then(data => {
-                    document.getElementById("header").innerHTML = data;
-                });
-
-            // Tải footer
-            fetch("../FE/partials/footer.html")
-                .then(response => response.text())
-                .then(data => {
-                    document.getElementById("footer").innerHTML = data;
-                });
+        document.addEventListener("DOMContentLoaded", async function () {
             
             // Lấy dữ liệu tìm kiếm từ URL
             const params = new URLSearchParams(window.location.search);
-            const searchQuery = params.get("query");
-            const transactions = JSON.parse(sessionStorage.getItem("transactions")) || [];
+            const searchQuery = params.get("q");
+            const user = JSON.parse(sessionStorage.getItem("user")).id;
+            console.log(searchQuery, user);
+            
 
-            // Lọc kết quả theo từ khóa tìm kiếm
-            const results = transactions.filter(transaction =>
-                transaction.name.toLowerCase().includes(searchQuery.toLowerCase())
-            );
+            showLoader(true);
+            const response = await fetch(`http://localhost:3000/transaction/search?q=${searchQuery}`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ user: user })
+            });
+            const data = await response.json();
+            showLoader(false);
+            const results = data.transactions; 
+            console.log(results);
 
             // Hiển thị kết quả trong bảng
             const tableBody = document.getElementById("searchResultsTableBody");
@@ -69,23 +113,124 @@
             } else {
                 results.forEach(transaction => {
                     const row = document.createElement("tr");
+                    row.setAttribute("data-id", transaction._id); // Thêm thuộc tính data-id vào hàng
                     row.innerHTML = `
-                        <td>${transaction.name}</td>
-                        <td>${transaction.category_id.name}</td>
-                        <td>${transaction.type === "expense" ? "Chi tiêu" : "Thu nhập"}</td>
-                        <td>${parseFloat(transaction.amount).toLocaleString()} đ</td>
-                        <td>${new Date(transaction.date).toLocaleDateString("vi-VN")}</td>
+                        <td id="transaction-name">${transaction.name}</td>
+                        <td id="transaction-category" data-id="${transaction.category_id._id}">${transaction.category_id.name}</td>
+                        <td id="transaction-type">${transaction.type === "expense" ? "Chi tiêu" : "Thu nhập"}</td>
+                        <td id="transaction-amount">${parseFloat(transaction.amount).toLocaleString()} đ</td>
+                        <td id="transaction-date">${new Date(transaction.date).toLocaleDateString()}</td>
                         <td>
                             <button onclick="editSetup('${transaction._id}')" class="btn btn-warning btn-sm me-1 edit-btn" data-bs-toggle="modal" data-bs-target="#editTransactionModal">
                                 <i class="bi bi-pencil-square"></i>
-                            </button>
-                            <button onclick="deleteTransaction('${transaction._id}')" class="btn btn-danger btn-sm">
-                                <i class="bi bi-trash"></i>
-                            </button>
-                        </td>
-                    `;
-                    tableBody.appendChild(row);
+                            </button>                            
+                            <button onclick="deleteTransaction('${transaction._id}')" class="btn btn-danger btn-sm"><i class="bi bi-trash"></i></button>
+                        </td>`;
+                        tableBody.appendChild(row);
                 });
+            }
+            //sửa giao dịch
+            window.editSetup = async function (transaction_id) {
+                const editTransactionForm = document.getElementById("editTransactionForm");
+                const editTransactionName = document.getElementById("editTransactionName");
+                const editCategory = document.getElementById("editCategory");
+                const editCategoryType = document.getElementById("editCategoryType");
+                const editAmount = document.getElementById("editAmount");
+                const editDate = document.getElementById("editDate");
+                const submitEditBtn = document.querySelector("#editTransactionForm button[type='submit']");
+                
+
+                //khi focus vào category thi hien cac danh muc hien co ra
+                editCategory.addEventListener("focus", async function () {
+                    showLoader(true); // Hiện loader khi bắt đầu gửi yêu cầu
+                    const response = await fetch("http://localhost:3000/category/getAll", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({
+                            user_id: JSON.parse(sessionStorage.getItem('user')).id,
+                        }),
+                    });
+                    const data = await response.json();
+                    showLoader(false); // Ẩn loader khi nhận được phản hồi từ server
+                    console.log(data);
+                    let options = ""
+                    data.forEach(category => {
+                        options += `<option data-type="${category.type == "income" ? "Thu nhập" : "Chi tiêu"}" value="${category._id}">${category.name}</option>`;
+                    });
+                    editCategory.innerHTML = options;
+
+                    editCategory.addEventListener("change", () => {
+                        const selectedOption = editCategory.options[editCategory.selectedIndex];
+                        if (selectedOption.getAttribute("data-type") === "Thu nhập") {
+                            editCategoryType.querySelector("option[value='Chi tiêu']").selected = false;
+                            editCategoryType.querySelector("option[value='Thu nhập']").selected = true;
+                        } else {
+                            editCategoryType.querySelector("option[value='Chi tiêu']").selected = true;
+                            editCategoryType.querySelector("option[value='Thu nhập']").selected = false;
+                        }
+                    });
+                });
+
+                
+
+                //gắn dữ liệu cũ vào form chỉnh sửa
+                const currentRow = document.querySelector(`tr[data-id="${transaction_id}"]`);
+                console.log(currentRow);
+                editTransactionName.value = currentRow.querySelector("#transaction-name").innerText;
+                editCategory.querySelector("option").innerText = currentRow.querySelector("#transaction-category").innerText;
+                editCategory.querySelector("option").value = currentRow.querySelector("#transaction-category").getAttribute("data-id");
+                const allOptionType = editCategoryType.querySelectorAll("option");
+                allOptionType.forEach(option => {
+                    if (option.value === currentRow.querySelector("#transaction-type").innerText) {
+                        option.selected = true;
+                    }
+                });
+                editAmount.value = currentRow.querySelector("#transaction-amount").innerText.replace(/[^0-9]/g, "");
+                editDate.value = new Date(currentRow.querySelector("#transaction-date").innerText).toLocaleDateString('en-CA'); // Định dạng YYYY-MM-DD
+
+                submitEditBtn.setAttribute("data-id", transaction_id);
+                submitEditBtn.addEventListener("click", async function (event) {
+                    event.preventDefault(); // Ngăn chặn hành vi mặc định của nút submit
+                    showLoader(true); // Hiện loader khi bắt đầu gửi yêu cầu
+                    const response = await fetch(`http://localhost:3000/transaction/edit/${transaction_id}`, {
+                        method: "PUT",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({
+                            name: editTransactionName.value,
+                            category_id: editCategory.value,
+                            type: editCategoryType.value,
+                            amount: editAmount.value,
+                            date: editDate.value,
+                        }),
+                    });
+                    const data = await response.json();
+                    showLoader(false); // Ẩn loader khi nhận được phản hồi từ server
+                    console.log(data);
+                    window.location.reload(); // Tải lại trang sau khi chỉnh sửa thành công
+                });
+            }
+
+            //xóa giao dịch
+            window.deleteTransaction = async function(transaction_id) {
+                window.confirm("Bạn có chắc chắn muốn xóa giao dịch này không?");
+                if (confirm) {
+                    showLoader(true); // Hiện loader khi bắt đầu gửi yêu cầu
+                    const response = await fetch(`http://localhost:3000/transaction/delete/${transaction_id}`, {
+                        method: "DELETE",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                    });
+                    const data = await response.json();
+                    showLoader(false); // Ẩn loader khi nhận được phản hồi từ server
+                    console.log(data);
+                    window.location.reload(); // Tải lại trang sau khi xóa thành công
+                }
+                
             }
         });
     </script>

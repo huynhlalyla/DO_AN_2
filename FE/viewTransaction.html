@@ -34,12 +34,12 @@
     </div>
     <div id="header"></div>
     <div class="container mt-4">
-        <div class="input-group mb-3">
-            <input type="text" id="searchInput" class="form-control" placeholder="Tìm kiếm giao dịch..." aria-label="Tìm kiếm giao dịch">
-            <button class="btn btn-primary" id="searchButton" type="button">
+        <form method="GET" action="searchResults.html" class="input-group mb-3">
+            <input name="q" type="text" id="searchInput" class="form-control" placeholder="Tìm kiếm giao dịch..." aria-label="Tìm kiếm giao dịch">
+            <button class="btn btn-primary" id="searchButton" type="submit">
                 <i class="bi bi-search"></i> 
             </button>
-        </div>
+        </form>
     </div>
     <div class="container mt-4">
         <h3 class="text-center">Thống kê chi tiêu & thu nhập</h3>
