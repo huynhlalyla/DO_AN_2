@@ -12,6 +12,8 @@ const transactionController = require('../app/controllers/transactionController'
 route.post('/add', transactionController.addTransaction)
 // Lấy tất cả giao dịch hiện có ra xem
 route.get('/view-all', transactionController.viewAllTransactions)
+//tim kiem
+route.post('/search', transactionController.searchTransaction)
 //chinh sua giao dich
 route.put('/edit/:transaction_id', transactionController.editTransaction)
 //xoa giao dich

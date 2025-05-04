@@ -162,9 +162,26 @@ async function deleteTransaction(req, res) {
     return res.status(200).json({ message: 'Da xoa giao dich' });
 }
 
+async function searchTransaction(req, res) {
+    try {
+        const { user } = req.body;
+        const searchData = req.query.q;
+        console.log(user, searchData);
+        const transactions = await Transactions.find({ $text: { $search: searchData }, user_id: user })
+            .populate('user_id')
+            .populate('category_id');
+        if (!transactions) {
+            return res.status(404).json({ message: 'failed' });
+        }
+        return res.status(200).json({transactions, message: 'success'});
+    } catch (error) {
+        return res.status(500).json({ message: 'failed', error: error.message });
+    }
+}
 module.exports = {
     addTransaction,
     viewAllTransactions,
     editTransaction,
-    deleteTransaction
+    deleteTransaction,
+    searchTransaction
 };
