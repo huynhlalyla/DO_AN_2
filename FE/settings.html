@@ -47,6 +47,9 @@
     </div>
 </div>
 <div id="footer"></div>
+<div id="chart-container" style="display: none;">
+    <canvas id="incomeExpenseChart" width="400" height="400"></canvas>
+</div>
 
 <!-- Modal Đổi Mật Khẩu -->
 <div class="modal fade" id="passwordModal" tabindex="-1" aria-labelledby="passwordModalLabel" aria-hidden="true">
@@ -218,6 +221,54 @@
         reader.readAsDataURL(logoBlob);
     });
     showLoader(false);
+
+    document.getElementById("chart-container").style.display = "block"; // Hiện biểu đồ trước khi xuất PDF
+    const ctx = document.getElementById("incomeExpenseChart").getContext("2d");
+    const chart = new Chart(ctx, {
+        type: "doughnut",
+        data: {
+            labels: ["Thu nhập", "Chi tiêu"],
+            datasets: [
+                {
+                    data: [totalIncome, totalExpense],
+                    backgroundColor: ["#4CAF50", "#F44336"],
+                },
+            ],
+        },
+        options: {
+            plugins: {
+                legend: {
+                    labels: {
+                        font: {
+                            size: 16, // 👈 Tăng cỡ chữ của legend
+                            weight: 'bold' // 👈 Đậm chữ
+                        },
+                        padding: 20,
+                    },
+                    position: "right",
+                },
+                datalabels: {
+                    color: '#fff',
+                    font: {
+                        weight: 'bold',
+                        size: 16 // 👈 Tăng cỡ chữ trên lát cắt (nếu đang bật datalabels)
+                    },
+                    formatter: (value, ctx) => {
+                        let label = ctx.chart.data.labels[ctx.dataIndex];
+                        return `${label}: ${value.toLocaleString()} đ`;
+                    }
+                }
+            }
+        },
+        plugins: [ChartDataLabels] // Nếu bạn đang dùng chartjs-plugin-datalabels
+    });
+    // Chờ biểu đồ được vẽ xong
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+
+    // Chuyển đổi biểu đồ thành hình ảnh Base64
+    const chartBase64 = await chart.toBase64Image();
+    document.getElementById("chart-container").style.display = "none"; // Ẩn biểu đồ sau khi xuất PDF
+
     // Kiểm tra nếu không có giao dịch
     if (transactions.length === 0) {
         const docDefinition = {
@@ -267,9 +318,32 @@
             { text: `Ngày tạo tài khoản: ${new Date(user.createdAt).toLocaleDateString("vi-VN")}`, margin: [0, 5] },
             { text: `Cập nhật lần cuối: ${new Date(user.updatedAt).toLocaleDateString("vi-VN")}`, margin: [0, 5] },
             { text: "Tổng Quan Tài Chính", style: "subheader", margin: [0, 10] },
-            { text: `Tổng Thu Nhập: ${totalIncome.toLocaleString()} đ`, margin: [0, 5] },
-            { text: `Tổng Chi Tiêu: ${totalExpense.toLocaleString()} đ`, margin: [0, 5] },
-            { text: `Số dư: ${balance.toLocaleString()} đ`, margin: [0, 5] },
+            {
+            columns: [
+                {
+                    width: '*',
+                    stack: [
+                        { text: `Tổng Thu Nhập: ${totalIncome.toLocaleString()} đ`, margin: [0, 5] },
+                        { text: `Tổng Chi Tiêu: ${totalExpense.toLocaleString()} đ`, margin: [0, 5] },
+                        { text: `Số dư: ${balance.toLocaleString()} đ`, margin: [0, 5] },
+                    ]
+                },
+                {
+                    width: 'auto',
+                    stack: [
+                        { text: 'Biểu đồ tài chính', alignment: 'center', margin: [0, 0, 0, 5], bold: true },
+                        {
+                            image: chartBase64,
+                            width: 200,
+                            margin: [5, 0, 0, 0]
+                        },
+                        { text: 'Nguồn: Biểu đồ tổng hợp', fontSize: 9, alignment: 'center', margin: [0, 5, 0, 0], italics: true }
+                    ]
+                }
+            ],
+            columnGap: 5,
+        },
+
             { text: "Danh Sách Giao Dịch", style: "subheader", margin: [0, 10] },
             {
                 table: {
