@@ -50,10 +50,20 @@ async function readAll (req, res) {
     }
 }
 
+async function deleteAll (req, res) {
+    try {
+        const user_id = req.body.user_id;
+        await Notify.deleteMany({ user_id });
+        return res.status(200).json({ message: 'success' });
+    } catch (error) {
+        return res.status(500).json({ message: 'failed', error });
+    }
+}
+
 module.exports = {
     create,
     getAll,
     updateRead,
-    readAll
-
+    readAll,
+    deleteAll
 }

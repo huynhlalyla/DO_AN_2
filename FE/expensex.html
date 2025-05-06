@@ -17,13 +17,14 @@
     .category-item .category-actions {
         display: none;
     }
-
+    
     /* Hiển thị các nút khi hover vào danh mục */
     .category-item:hover .category-actions {
         display: flex;
         justify-content: center;
         align-items: center;
     }
+    
     
 </style>
 <body>
@@ -100,7 +101,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="categoryName" class="form-label">Ngân sách (không bắt buộc)</label>
-                            <input type="number" class="form-control" id="budgetValue" placeholder="Số tiền" oninput="formatCurrency(this)">
+                            <input type="text" class="form-control" id="budgetValue" placeholder="Số tiền" oninput="formatCurrency(this)">
                         </div>
                         <div class="row">
                             <div class="col mb-3">
@@ -122,12 +123,62 @@
         </div>
     </div>
 
+    <!-- modal them giao dich -->
+    <div class="modal fade" id="addTransactionModal" tabindex="-1" aria-labelledby="addTransactionModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title text-center w-100" id="addTransactionModalLabel">Thêm Giao Dịch</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addTransactionForm" >
+                        <!-- Tên Giao Dịch -->
+                        <div class="mb-3">
+                            <label for="tenGiaoDich" class="form-label">Tên Giao Dịch</label>
+                            <input name="name" type="text" class="form-control" id="tenGiaoDich" placeholder="Nhập tên giao dịch" required>
+                        </div>
+
+                        <!-- Danh Mục -->
+                        <div class="mb-3">
+                            <label for="danhMuc" class="form-label">Danh Mục</label>
+                            <input type="text" id="danhMuc" name="category" class="form-control" disabled required>
+                        </div>
+
+                        <!-- Loại Giao Dịch -->
+                        <div class="mb-3">
+                            <label for="loaiGiaoDich" class="form-label">Loại Giao Dịch</label>
+                            <input type="text" name="type" id="loaiGiaoDich" class="form-control" disabled required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="soTien" class="form-label">Số Tiền</label>
+                            <div class="input-group">
+                                <input name="amount" type="text" class="form-control" id="soTien" placeholder="Nhập số tiền" required oninput="formatCurrency(this)">
+                                <span class="input-group-text">VNĐ</span>
+                            </div>
+                        </div>
+                        <!-- Ngày Giao Dịch -->
+                        <div class="mb-3">
+                            <label for="ngayGiaoDich" class="form-label">Ngày Giao Dịch</label>
+                            <input name="date" type="date" class="form-control" id="ngayGiaoDich" required>
+                        </div>
+
+                        <!-- Nút Lưu -->
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">Lưu</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer" style="margin:auto">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="container mt-3">
         <div class="category-container">
-            <div class="row justify-content-center">
                 <!-- render từ DB -->
-                 
-            </div>
         </div>
     </div>
 <div id="footer"></div> 
@@ -238,8 +289,75 @@
             
 
         });
+
+        //them giao dich
+        document.addEventListener("DOMContentLoaded", function () {
+            window.loadModalAddTransaction = async function(category_id) {
+                //lấy modal thêm giao dịch
+                const addTransactionModal = document.getElementById("addTransactionModal");
+                const addTransactionForm = addTransactionModal.querySelector("#addTransactionForm");
+                const categorySelect = addTransactionForm.querySelector("#danhMuc"); // Danh sách danh mục
+                const transactionTypeSelect = addTransactionForm.querySelector("#loaiGiaoDich"); // Loại giao dịch
+                const transactionDateInput = addTransactionForm.querySelector("#ngayGiaoDich"); // Ngày giao dịch
+                const transactionAmountInput = addTransactionForm.querySelector("#soTien"); // Số tiền giao dịch
+
+                //lấy dữ liệu từ server
+                showLoader(true); // Hiện loader
+                const response = await fetch(`http://localhost:3000/category/${category_id}`, {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json"
+                    }
+                });
+                const data = await response.json();
+                showLoader(false); // Ẩn loader
+                console.log(data);
+                
+                //gán dữ liệu vào modal
+                categorySelect.value = data.name; // Gán giá trị danh mục
+                transactionTypeSelect.value = data.type == "expense" ? "Chi tiêu" : "Thu nhập"; // Gán giá trị loại giao dịch
+                
+                //thêm sự kiện submit cho form thêm giao dịch
+                addTransactionForm.addEventListener("submit", async function (event) {
+                    event.preventDefault(); // Ngăn chặn hành vi mặc định của form
+
+                    const transactionName = addTransactionForm.querySelector("#tenGiaoDich").value; // Tên giao dịch
+                    const transactionCategory = categorySelect.value; // Danh mục giao dịch
+                    const transactionType = transactionTypeSelect.value; // Loại giao dịch
+                    const transactionAmount = transactionAmountInput.value.replace(/\D/g, ""); // Số tiền giao dịch (chuyển đổi sang số thực)
+                    const transactionDate = new Date(transactionDateInput.value).toISOString(); // Ngày giao dịch (chuyển đổi sang định dạng ISO)
+
+                    console.log(transactionName, transactionCategory, transactionType, transactionAmount, transactionDate); // Kiểm tra giá trị nhập vào
+                    const user_id = JSON.parse(sessionStorage.getItem('user')).id; // Lấy user_id từ sessionStorage
+                    showLoader(true); // Hiện loader
+                    const response = await fetch("http://localhost:3000/transaction/add", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            user_id: user_id, // Gửi user_id để xác định người dùng
+                            name: transactionName,
+                            category_id: category_id, // Gửi ID danh mục
+                            type: transactionType === "Chi tiêu" ? "expense" : "income", // Chuyển đổi loại giao dịch sang định dạng server yêu cầu
+                            amount: transactionAmount,
+                            date: transactionDate
+                        })
+                    });
+                    const data = await response.json();
+                    showLoader(false); // Ẩn loader
+                    if(data.message == "success") alert("Thêm giao dịch thành công!");
+                    else alert("Thêm giao dịch thất bại!");
+                        // Đóng modal sau khi thêm
+                        const addTransactionModalInstance = bootstrap.Modal.getInstance(addTransactionModal);
+                        addTransactionModalInstance.hide();
+                        // Reset form
+                        addTransactionForm.reset();
+                })
+            }
+        });
         
-        //thêm danh mục
+        //load danh muc
         document.addEventListener("DOMContentLoaded", async function () {
             const addCategoryForm = document.getElementById("addCategoryForm");
             const addCategoryButton = document.querySelector(".btn-primary"); // Nút Lưu trong modal thêm danh mục
@@ -265,27 +383,36 @@
             data.forEach(category => {
                 if(category.type === "expense") { // Chỉ hiển thị danh mục có type là "expense"
                     const newCategory = document.createElement("div");
-                    newCategory.classList.add("col-6", "col-md-4", "col-lg-3", "d-flex", "flex-column", "align-items-center");
+                    newCategory.classList.add("category", "col-4");
 
                     newCategory.innerHTML = `
                         <!-- Thay đổi phần render danh mục -->
-                        <div class="category">
                             <div class="category-item position-relative">
-                                <p class="category-text">${category.name}</p>
+                                <h3 class="category-text">${category.name}</h3>
+                                <div class="category-text">Ngân sách: ${category.budget_id.limit_amount.toLocaleString()} VNĐ</div>
+                                <div class="category-text">Giao dịch hiện có: ${category.transactions.length}</div>
+                                <div id="categoryDate">
+                                    <span class="category-text">Start: ${new Date(category.budget_id.start_date).toLocaleDateString("en-CA")}</span>
+                                    <span class="category-text">End: ${new Date(category.budget_id.end_date).toLocaleDateString("en-CA")}</span>    
+                                </div>
                                 <!-- Nút Sửa và Xóa -->
+                                <span class="add-transaction position-absolute w-100 h-100" data-bs-toggle="modal" data-bs-target="#addTransactionModal" onclick="loadModalAddTransaction('${category._id}')">
+                                    <i class="bi bi-plus-circle"></i>
+                                </span>
                                 <div class="category-actions position-absolute top-0 start-50 translate-middle">
                                     <button onclick="loadModalEdit('${category._id}')" id="editCategoryBtn" data-bs-toggle="modal" data-bs-target="#editCategoryModal" class="btn btn-warning btn-sm me-1"><i class="bi bi-pencil-square"></i></button>
                                     <button onclick="loadModalDelete('${category._id}')" id="deleteCategoryBtn" class="btn btn-danger btn-sm"><i class="bi bi-trash"></i></button>
                                 </div>
                             </div>
-                        </div>
                     `;
                     // Thêm danh mục mới vào container
-                    document.querySelector(".category-container .row").appendChild(newCategory);
+                    document.querySelector(".category-container").appendChild(newCategory);
                 } // Chỉ hiển thị danh mục có type là "income"
             });
             console.log(data); // Kiểm tra phản hồi từ server
 
+
+            //them danh muc
             addCategoryButton.addEventListener("click", async function () {
                 const categoryName = categoryNameInput.value;
                 const budgetValue = budgetValueInput.value; // Lấy giá trị ngân sách

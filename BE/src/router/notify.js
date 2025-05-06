@@ -14,6 +14,8 @@ route.post('/update', notifyController.updateRead);
 route.post('/getall', notifyController.getAll);
 //đọc tất cả
 route.post('/readall', notifyController.readAll);
+// xóa tất cả
+route.post('/deleteall', notifyController.deleteAll);
 
 
 module.exports = route;

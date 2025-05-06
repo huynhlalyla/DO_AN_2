@@ -102,7 +102,7 @@ function loadPartials() {
             const clearNotiBtn = document.getElementById("clearNotifications");
             clearNotiBtn.addEventListener("click", async function () {
                 const user = JSON.parse(sessionStorage.getItem("user")).id;
-                const response = await fetch("http://localhost:3000/notify/readall", {
+                const response = await fetch("http://localhost:3000/notify/deleteall", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
@@ -188,7 +188,6 @@ async function updatenotify(id) {
 formatCurrency = function(input) {
     // Loại bỏ tất cả ký tự không phải số
     let value = input.value.replace(/\D/g, "");
-
     // Nếu giá trị rỗng thì không cần định dạng
     if (value === "") {
         input.value = "";
@@ -196,7 +195,11 @@ formatCurrency = function(input) {
     }
 
     // Định dạng số có dấu chấm phân cách hàng nghìn
-    input.value = new Intl.NumberFormat("vi-VN").format(value);
+    input.value = new Intl.NumberFormat("vi-VN", {
+        style: "decimal",
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+    }).format(value);
 }
 
 

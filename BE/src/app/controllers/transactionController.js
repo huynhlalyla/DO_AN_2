@@ -38,10 +38,10 @@ async function addTransaction(req, res) {
                     category: category.name
                 });
                 if (total > parseFloat(currentBudget.limit_amount)) {
-                    const formattedLimit = new Intl.NumberFormat('vi-VN').format(currentBudget.limit_amount); // Định dạng số tiền
+                    // const formattedLimit = new Intl.NumberFormat('vi-VN').format(currentBudget.limit_amount); // Định dạng số tiền
                     const notify = new Notifies({
                         user_id: transaction.user_id,
-                        message: `Bạn đã vượt quá ngân sách ${formattedLimit} VND của ${category.name}`,
+                        message: `Bạn đã vượt quá ngân sách ${currentBudget.limit_amount} VND của ${category.name}`,
                         type: 'warning',
                         date: new Date()
                     });
