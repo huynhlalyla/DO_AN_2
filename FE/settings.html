@@ -280,11 +280,22 @@
     if (transactions.length === 0) {
         const docDefinition = {
             content: [
-                {
-                    image: logoBase64,
-                    width: 50, // Kích thước logo
-                    alignment: "left",
-                    margin: [0, 0, 0, 10], // Căn lề
+                        {
+                    columns: [
+                        {
+                            image: logoBase64,
+                            width: 50, // Kích thước logo
+                            margin: [0, 0, 10, 0], // Căn lề
+                        },
+                        {
+                            text: "Quản lý chi tiêu cá nhân QHA",
+                            fontSize: 10,
+                            color: "#FF69B4", // Màu đỏ-hồng
+                            bold: true,
+                            alignment: "left",
+                            margin: [0, 25, 0, 0], // Căn lề chữ
+                        },
+                    ],
                 },
                 { text: "Báo Cáo Tài Chính", style: "header" },
                 { text: "Ngày: " + new Date().toLocaleDateString(), margin: [0, 10] },
@@ -310,11 +321,22 @@
     // Tạo nội dung PDF khi có giao dịch
     const docDefinition = {
         content: [
-            {
-                image: logoBase64,
-                width: 50, // Kích thước logo
-                alignment: "left",
-                margin: [0, 0, 0, 10], // Căn lề
+                    {
+                columns: [
+                    {
+                        image: logoBase64,
+                        width: 50, // Kích thước logo
+                        margin: [0, 0, 10, 0], // Căn lề
+                    },
+                    {
+                        text: "Quản lý chi tiêu cá nhân QHA",
+                        fontSize: 10,
+                        color: "#FF69B4", // Màu đỏ-hồng
+                        bold: true,
+                        alignment: "left",
+                        margin: [0, 25, 0, 0], // Căn lề chữ
+                    },
+                ],
             },
             { text: "Báo Cáo Tài Chính", style: "header" },
             { text: "Ngày: " + new Date().toLocaleDateString(), margin: [0, 10] },

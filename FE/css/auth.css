@@ -4,13 +4,20 @@ body {
     background: url('../css/image/nen1.jpg') no-repeat center center fixed;
     background-size: cover; 
 }
-
-.logo {
+.logo-container {
     position: absolute;
     top: 10px;  /* Điều chỉnh khoảng cách với mép trên */
     left: 20px; /* Đưa logo về góc trái */
+}
+.logo {
     width: 90px; /* Tăng kích thước logo */
     height: auto; /* Giữ tỷ lệ ảnh */
+}
+.logo-name {
+    font-size: 24px; /* Kích thước chữ lớn hơn */
+    color: #cc1285; /* Màu chữ */
+    font-weight: bold; /* Chữ đậm */
+    margin-left: 10px; /* Khoảng cách giữa logo và tên */
 }
 
 .form-wrapper {

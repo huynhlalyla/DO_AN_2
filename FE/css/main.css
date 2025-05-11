@@ -80,10 +80,13 @@ body {
     }
 }
 .logo {
-    position: relative;
-    top: 10px;
     width: 50px; 
     height: auto;
+}
+.logo-name {
+    font-size: 20px;
+    font-weight: bold;
+    color: rgb(225, 22, 56); /* Đỏ */
 }
 .main-content {
     flex: 1; /* Đẩy footer xuống nếu nội dung ít */
