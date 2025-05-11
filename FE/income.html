@@ -169,7 +169,7 @@
         </div>
     </div>
 
-    <div class="container mt-3">
+    <div class="container mt-3 container-body">
         <div class="category-container">
                 <!-- render từ DB -->
         </div>
@@ -369,36 +369,54 @@
             });
             const data = await response.json();
             showLoader(false); // Ẩn loader
-
+            const categoryContainer = document.querySelector(".category-container");
+            let countIncome = 0; // Biến đếm số lượng danh mục chi tiêu
             data.forEach(category => {
-                if(category.type === "income") {
-                    const newCategory = document.createElement("div");
-                    newCategory.classList.add("category", "col-4");
-
-                    newCategory.innerHTML = `
-                        <!-- Thay đổi phần render danh mục -->
-                            <div class="category-item position-relative">
-                                <h3 class="category-text">${category.name}</h3>
-                                <div class="category-text">Giao dịch hiện có: ${category.transactions.length}</div>
-                                <div id="categoryDate">
-                                    <span class="category-text">Start: ${new Date(category.budget_id.start_date).toLocaleDateString("en-CA")}</span>
-                                    <span class="category-text">End: ${new Date(category.budget_id.end_date).toLocaleDateString("en-CA")}</span>    
-                                </div>
-                                <!-- Nút Sửa và Xóa -->
-                                <span class="add-transaction position-absolute w-100 h-100" data-bs-toggle="modal" data-bs-target="#addTransactionModal" onclick="loadModalAddTransaction('${category._id}')">
-                                    <i class="bi bi-plus-circle"></i>
-                                </span>
-                                <div class="category-actions position-absolute top-0 start-50 translate-middle">
-                                    <button onclick="loadModalEdit('${category._id}')" id="editCategoryBtn" data-bs-toggle="modal" data-bs-target="#editCategoryModal" class="btn btn-warning btn-sm me-1"><i class="bi bi-pencil-square"></i></button>
-                                    <button onclick="loadModalDelete('${category._id}')" id="deleteCategoryBtn" class="btn btn-danger btn-sm"><i class="bi bi-trash"></i></button>
-                                </div>
-                            </div>
-                    `;
-                    // Thêm danh mục mới vào container
-                    document.querySelector(".category-container").appendChild(newCategory);
-                } // Chỉ hiển thị danh mục có type là "income"
-                
+                if(category.type === "income") { // Chỉ đếm danh mục có type là "expense"
+                    countIncome++;
+                }
             });
+            if(countIncome == 0) {
+
+                const noCategoryMessage = document.createElement("div");
+                noCategoryMessage.classList.add("text-center", "mt-3");
+                noCategoryMessage.innerHTML = `
+                    <h5 class="text-danger">Chưa có danh mục thu nhập nào!</h5>
+                    <p class="text-muted">Hãy thêm danh mục thu nhập đầu tiên của bạn.</p>
+                `;
+                categoryContainer.appendChild(noCategoryMessage);
+            } else {
+                data.forEach(category => {
+                    if(category.type === "income") {
+                        const newCategory = document.createElement("div");
+                        newCategory.classList.add("category", "col-4");
+
+                        newCategory.innerHTML = `
+                            <!-- Thay đổi phần render danh mục -->
+                                <div class="category-item position-relative">
+                                    <h3 class="category-text">${category.name}</h3>
+                                    <div class="category-text">Giao dịch hiện có: ${category.transactions.length}</div>
+                                    <div id="categoryDate">
+                                        <span class="category-text">Start: ${new Date(category.budget_id.start_date).toLocaleDateString("en-CA")}</span>
+                                        <span class="category-text">End: ${new Date(category.budget_id.end_date).toLocaleDateString("en-CA")}</span>    
+                                    </div>
+                                    <!-- Nút Sửa và Xóa -->
+                                    <span class="add-transaction position-absolute w-100 h-100" data-bs-toggle="modal" data-bs-target="#addTransactionModal" onclick="loadModalAddTransaction('${category._id}')">
+                                        <i class="bi bi-plus-circle"></i>
+                                    </span>
+                                    <div class="category-actions position-absolute top-0 start-50 translate-middle">
+                                        <button onclick="loadModalEdit('${category._id}')" id="editCategoryBtn" data-bs-toggle="modal" data-bs-target="#editCategoryModal" class="btn btn-warning btn-sm me-1"><i class="bi bi-pencil-square"></i></button>
+                                        <button onclick="loadModalDelete('${category._id}')" id="deleteCategoryBtn" class="btn btn-danger btn-sm"><i class="bi bi-trash"></i></button>
+                                    </div>
+                                </div>
+                        `;
+                        // Thêm danh mục mới vào container
+                        document.querySelector(".category-container").appendChild(newCategory);
+                    } // Chỉ hiển thị danh mục có type là "income"
+                    
+                });
+            }
+            
             console.log(data); // Kiểm tra phản hồi từ server
 
             addCategoryButton.addEventListener("click", async function () {
