@@ -129,6 +129,13 @@
             const data = await respone.json();
             showLoader(false);
             alert(data.message);
+            //cập nhật sessionStorage
+            const user = JSON.parse(sessionStorage.getItem("user"));
+            user.name = userName;
+            user.email = userEmail;
+            user.phone = userPhone;
+            sessionStorage.setItem("user", JSON.stringify(user));
+            window.location.reload();
         });
 
         //change password
