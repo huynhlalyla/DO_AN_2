@@ -198,8 +198,6 @@ async function resetPassword(req, res) {
 async function updateUser(req, res) {
     try {
         const {userId, newName, newEmail, newPhone} = req.body;
-        console.log(req.body);
-        console.log(userId, newName, newEmail, newPhone);
         const user = await Users.findByIdAndUpdate(userId, {name: newName, email: newEmail, phone: newPhone}, {new: true});
         if (!user) {
             return res.status(404).json({ message: 'Có lỗi trong việc xác nhận người dùng!' });

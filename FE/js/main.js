@@ -4,27 +4,40 @@ function loadPartials() {
         .then(data => {
             
             document.getElementById('header').innerHTML = data;
-            // Gán sự kiện cho các phần tử trong header sau khi đã được chèn vào DOM
+
             const navLinks = document.querySelectorAll("a.nav-link");
-            const dropdownBtn = document.querySelector("#categoryMenu");
-            // console.log(dropdownBtn);
+            const categoryMenu = document.getElementById("categoryMenu");
+            const dropdownItems = document.querySelectorAll(".dropdown-menu.dropdown-menu-start .dropdown-item");
             const currentPath = window.location.pathname.split("/").pop(); // Lấy tên file hiện tại
             console.log(currentPath);
-            navLinks.forEach(link => {
-                // console.log(link.getAttribute("href"));
-                if (link.getAttribute("href") === currentPath) {
-                    link.classList.add("active"); // Thêm lớp 'active' vào liên kết hiện tại
-                }
-            });
-            const dropdownItems = document.querySelectorAll(".dropdown-item");
-            const categoryMenu = document.getElementById("categoryMenu");
 
-            dropdownItems.forEach(item => {
-                if (item.getAttribute("href") === currentPath) {
-                    item.classList.add("active"); // Tô đậm mục con
-                    categoryMenu.classList.add("active"); // Tô đỏ nút "Danh mục"
+            // Xử lý nav-links
+            navLinks.forEach(link => {
+                const linkPath = link.getAttribute("href");
+                if (currentPath === linkPath || currentPath.includes(linkPath)) {
+                    link.classList.add("active"); // Thêm lớp 'active' vào liên kết hiện tại
+                } else {
+                    link.classList.remove("active"); // Xóa lớp 'active' nếu không khớp
                 }
             });
+
+            // Xử lý dropdown-items
+            let isActive = false;
+            dropdownItems.forEach(item => {
+                const itemPath = item.getAttribute("href");
+                if (currentPath === itemPath || currentPath.includes(itemPath)) {
+                    item.classList.add("active"); // Tô đậm mục con
+                    isActive = true; // Đánh dấu là có ít nhất một mục con đang hoạt động
+                } else {
+                    item.classList.remove("active"); // Xóa lớp 'active' nếu không khớp
+                }
+            });
+            console.log(isActive);
+            if (isActive) {
+                categoryMenu.classList.add("active"); // Tô đậm menu cha nếu có ít nhất một mục con đang hoạt động
+            } else {
+                categoryMenu.classList.remove("active"); // Xóa lớp 'active' nếu không có mục con nào đang hoạt động
+            }
             // Gán sự kiện dropdown và sidebar sau khi header đã được load
             attachDropdownEvents();
             // attachSidebarEvents();

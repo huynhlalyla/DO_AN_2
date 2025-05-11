@@ -111,15 +111,19 @@ async function deleteCategory(req, res) {
         if (!deletedCategory) {
             return res.status(404).json({ message: 'Category not found' });
         }
-        await Users.findByIdAndUpdate(deletedCategory.user_id, {
-            $pull: { created_categories: deletedCategory._id },
-            $pull: { created_budgets: deletedCategory.budget_id },
-            $pull: { created_transactions: deletedCategory._id }
-        });
+        
         // Xóa budget liên quan
         await Budgets.findByIdAndDelete(deletedCategory.budget_id);
         // Xóa tất cả các giao dịch liên quan đến danh mục
         await Transactions.deleteMany({ category_id: deletedCategory._id });
+
+        await Users.findByIdAndUpdate(deletedCategory.user_id, {
+            $pull: {
+                created_categories: deletedCategory._id, // Xóa category khỏi danh sách created_categories
+                created_budgets: deletedCategory.budget_id, // Xóa budget khỏi danh sách created_budgets
+                created_transactions: { category_id: deletedCategory._id } // Xóa tất cả giao dịch liên quan đến category
+            }
+        });
         return res.status(200).json({ message: 'success' });
     } catch (error) {
         return res.status(500).json({ message: 'Error deleting category', error });

@@ -56,7 +56,7 @@ async function deleteAll (req, res) {
         await Notify.deleteMany({ user_id });
         //xoá notify khỏi user
         await Users.findByIdAndUpdate(user_id, {
-            $pull: { notifies: { user_id } }
+            $set: { notifies: [] }
         });
         return res.status(200).json({ message: 'success' });
     } catch (error) {
