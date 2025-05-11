@@ -140,13 +140,37 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 //kiểm tra đăng nhập chưa hay là tuồng
-function checkLogin() {
+async function checkLogin() {
     console.log("đã vào checkLogin");
     const user = JSON.parse(sessionStorage.getItem("user"));
     if (!user) {
         // Nếu chưa đăng nhập, chuyển hướng đến trang đăng nhập
         window.location.href = "/FE/auth.html";
-    } else {
+        return;
+    }
+
+    try {
+        // Gửi yêu cầu đến server để kiểm tra xem user có tồn tại không
+        const response = await fetch("http://localhost:3000/user/check", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ user_id: user.id }),
+        });
+
+        const data = await response.json();
+        if (data.message === "failed") {
+            // Nếu user không tồn tại, xóa session và chuyển hướng đến trang đăng nhập
+            console.warn("Người dùng không tồn tại trong cơ sở dữ liệu.");
+            sessionStorage.removeItem("user");
+            window.location.href = "/FE/auth.html";
+        }
+    } catch (error) {
+        console.error("Lỗi khi kiểm tra người dùng:", error);
+        // Trong trường hợp lỗi, cũng chuyển hướng đến trang đăng nhập
+        sessionStorage.removeItem("user");
+        window.location.href = "/FE/auth.html";
     }
 }
 

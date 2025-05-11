@@ -33,6 +33,19 @@ const authenticateUser = async (req, res) => {
         res.status(500).json({ message: 'Lỗi server', error });
     }
 };
+const checkUser = async (req, res) => {
+    try {
+        const {user_id} = req.body;
+        const user = await Users.findById(user_id);
+        if (!user) {
+            return res.status(404).json({ message: 'failed' });
+        }
+        return res.status(200).json({ message: 'success', user });
+    } catch
+        (error) {
+        res.status(500).json({ message: 'Lỗi server', error });
+    }
+}
 // Đăng ký người dùng
 const registerUser = async (req, res) => {
     console.log(req.body);
@@ -242,4 +255,5 @@ module.exports = {
     updateUser,
     getUser,
     changePassword,
+    checkUser
 };
