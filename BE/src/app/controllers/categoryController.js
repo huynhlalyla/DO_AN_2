@@ -44,6 +44,10 @@ async function addCategory(req, res) {
             user.created_categories.push(savedCategory._id);
             await user.save();
         }
+        //thêm budget vào user
+        await Users.findByIdAndUpdate(user_id, {
+            $push: { created_budgets: newBudget._id }
+        });
 
         return res.status(200).json({ message: "success", category: savedCategory });
     } catch (error) {
@@ -108,7 +112,9 @@ async function deleteCategory(req, res) {
             return res.status(404).json({ message: 'Category not found' });
         }
         await Users.findByIdAndUpdate(deletedCategory.user_id, {
-            $pull: { created_categories: deletedCategory._id }
+            $pull: { created_categories: deletedCategory._id },
+            $pull: { created_budgets: deletedCategory.budget_id },
+            $pull: { created_transactions: deletedCategory._id }
         });
         // Xóa budget liên quan
         await Budgets.findByIdAndDelete(deletedCategory.budget_id);
