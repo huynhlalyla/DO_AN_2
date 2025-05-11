@@ -155,6 +155,10 @@ async function deleteTransaction(req, res) {
             { $pull: { transactions: transaction._id } }
         );
     }
+    //xoá transaction khỏi user
+    await Users.findByIdAndUpdate(transaction.user_id, {
+        $pull: { created_transactions: transaction._id }
+    });
 
     // Xóa transaction
     await Transactions.findByIdAndDelete(transactionId);
