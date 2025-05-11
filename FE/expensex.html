@@ -429,7 +429,7 @@
                             <!-- Thay đổi phần render danh mục -->
                                 <div class="category-item position-relative">
                                     <h3 class="category-text">${category.name}</h3>
-                                    <div class="category-text">Ngân sách: ${category.budget_id.limit_amount.toLocaleString()} VNĐ</div>
+                                    <div class="category-text">Ngân sách: ${new Intl.NumberFormat('vi-VN').format(category.budget_id.limit_amount)} VNĐ</div>
                                     <div class="category-text">Giao dịch hiện có: ${category.transactions.length}</div>
                                     <div id="categoryDate">
                                         <span class="category-text">Start: ${new Date(category.budget_id.start_date).toLocaleDateString("en-CA")}</span>
@@ -458,7 +458,7 @@
             //them danh muc
             addCategoryButton.addEventListener("click", async function () {
                 const categoryName = categoryNameInput.value;
-                const budgetValue = budgetValueInput.value; // Lấy giá trị ngân sách
+                const budgetValue = budgetValueInput.value.replace(/\D/g, ""); // Loại bỏ tất cả ký tự không phải số
                 const today = new Date();
                 const start_date = startDate.value ? startDate.value : today.toISOString().split("T")[0];
 

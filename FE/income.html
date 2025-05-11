@@ -444,8 +444,13 @@
 
             addCategoryButton.addEventListener("click", async function () {
                 const categoryName = categoryNameInput.value;
-                const startDate = startDateInput.value; // Lấy giá trị ngày bắt đầu
-                const endDate = endDateInput.value; // Lấy giá trị ngày kết thúc
+                const today = new Date();
+                const start_date = startDate.value ? startDate.value : today.toISOString().split("T")[0];
+
+                // Lấy ngày của 5 năm sau
+                const fiveYearsLater = new Date();
+                fiveYearsLater.setFullYear(today.getFullYear() + 5);
+                const end_date = endDate.value ? endDate.value : fiveYearsLater.toISOString().split("T")[0];
 
                     showLoader(true); // Hiện loader
                     const response = await fetch("http://localhost:3000/category/add", {
@@ -456,8 +461,8 @@
                         body: JSON.stringify({
                             name: categoryName,
                             type: "income",
-                            start_date: startDate, // Gửi ngày bắt đầu
-                            end_date: endDate, // Gửi ngày kết thúc
+                            start_date: start_date, // Gửi ngày bắt đầu
+                            end_date: end_date, // Gửi ngày kết thúc
                             user_id: JSON.parse(sessionStorage.getItem('user')).id // Lấy user_id từ sessionStorage
                         })
                     });
