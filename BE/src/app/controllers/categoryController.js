@@ -1,6 +1,7 @@
 const Categories = require('../models/Categories');
 const Users = require('../models/Users');
 const Budgets = require('../models/Budgets');
+const Transactions = require('../models/Transactions');
 
 
 //GET: /category/add
@@ -111,6 +112,8 @@ async function deleteCategory(req, res) {
         });
         // Xóa budget liên quan
         await Budgets.findByIdAndDelete(deletedCategory.budget_id);
+        // Xóa tất cả các giao dịch liên quan đến danh mục
+        await Transactions.deleteMany({ category_id: deletedCategory._id });
         return res.status(200).json({ message: 'success' });
     } catch (error) {
         return res.status(500).json({ message: 'Error deleting category', error });

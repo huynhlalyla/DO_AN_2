@@ -176,6 +176,25 @@
             </div>
         </div>
     </div>
+    <!-- Modal Xác nhận Xóa -->
+    <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteConfirmModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteConfirmModalLabel">Xác nhận xóa</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Bạn có chắc muốn xóa không?</p>
+                    <p><strong>Nếu danh mục có tồn tại giao dịch thì <span style="color: red;">TẤT CẢ GIAO DỊCH</span> sẽ bị xóa!</strong></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Xóa</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="container mt-3 container-body">
         <div class="category-container">
                 <!-- render từ DB -->
@@ -190,10 +209,15 @@
         
         //xóa danh mục
         document.addEventListener("DOMContentLoaded", function () {
-            window.loadModalDelete = async function(category_id) {
-                //hiện confirm xác định xóa
-                //lấy dữ liệu từ server
-                if(window.confirm("Bạn có chắc muốn xóa không?")) {
+            window.loadModalDelete = function (category_id) {
+                // Hiển thị modal xác nhận xóa
+                const deleteConfirmModal = new bootstrap.Modal(document.getElementById("deleteConfirmModal"));
+                deleteConfirmModal.show();
+
+                // Xử lý khi người dùng nhấn nút "Xóa"
+                const confirmDeleteBtn = document.getElementById("confirmDeleteBtn");
+                confirmDeleteBtn.onclick = async function () {
+                    deleteConfirmModal.hide(); // Ẩn modal
                     showLoader(true); // Hiện loader
                     const response = await fetch(`http://localhost:3000/category/delete/${category_id}`, {
                         method: "DELETE",
@@ -205,7 +229,7 @@
                     showLoader(false); // Ẩn loader
                     console.log(data); // Kiểm tra phản hồi từ server
 
-                    if(data.message === "success") {
+                    if (data.message === "success") {
                         alert("Xóa danh mục thành công!");
                         // Xóa danh mục khỏi giao diện
                         const categoryElement = document.querySelector(`.category[data-category-id="${category_id}"]`);
@@ -216,8 +240,8 @@
                     } else {
                         alert("Xóa danh mục thất bại!");
                     }
-                }
-            }
+                };
+            };
         });
 
         //sửa danh mục
