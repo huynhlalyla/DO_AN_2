@@ -27,5 +27,5 @@ const Category = new Schema({
 }, {
     timestamps: true
 });
-    
+Category.index({ name: 'text', type: 'text' });
 module.exports = mongoose.model('Category', Category);

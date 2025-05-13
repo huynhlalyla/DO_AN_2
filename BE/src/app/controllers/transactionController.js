@@ -171,13 +171,28 @@ async function searchTransaction(req, res) {
         const { user } = req.body;
         const searchData = req.query.q;
         console.log(user, searchData);
+        const categories = await Categories.find({$text: { $search: searchData }, user_id: user })
         const transactions = await Transactions.find({ $text: { $search: searchData }, user_id: user })
             .populate('user_id')
             .populate('category_id');
-        if (!transactions) {
+        if (!transactions && !categories) {
             return res.status(404).json({ message: 'failed' });
         }
-        return res.status(200).json({transactions, message: 'success'});
+        console.log(categories, transactions);
+        let result = [];
+        if (transactions.length > 0) {
+            result = transactions;
+        } else if (categories.length > 0) {
+            for (let i = 0; i < categories.length; i++) {
+                const category = categories[i];
+                const categoryTransactions = await Transactions.find({ category_id: category._id })
+                    .populate('user_id')
+                    .populate('category_id');
+                result.push(...categoryTransactions);
+            }
+        }
+        console.log(result);
+        return res.status(200).json({result, message: 'success'});
     } catch (error) {
         return res.status(500).json({ message: 'failed', error: error.message });
     }
