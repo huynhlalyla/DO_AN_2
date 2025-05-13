@@ -24,9 +24,9 @@ async function createReport(req, res) {
         const currentDate = new Date();
         const currentDay = currentDate.getDay();
         const countDay = day;
-        const lastSunday = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() - (currentDay === 0 ? 7 : currentDay));
+        const lastSunday = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() - (currentDay === 0 ? 7 : currentDay - 1));
         startDate = new Date(Date.UTC(lastSunday.getFullYear(), lastSunday.getMonth(), lastSunday.getDate() - countDay));
-        endDate = new Date(lastSunday);
+        endDate = new Date(lastSunday - 1);
         transactions = await Transactions.find({
             user_id: user_id,
             date: {
