@@ -213,7 +213,7 @@
                             name: editTransactionName.value,
                             category_id: editCategory.value,
                             type: editCategoryType.value,
-                            amount: editAmount.value,
+                            amount: editAmount.value.replace(/\D/g, ""), // Số tiền giao dịch (chuyển đổi sang số thực),
                             date: editDate.value,
                         }),
                     });

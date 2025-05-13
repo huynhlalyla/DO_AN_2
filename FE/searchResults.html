@@ -103,7 +103,7 @@
             });
             const data = await response.json();
             showLoader(false);
-            const results = data.transactions; 
+            const results = data.result; 
             console.log(results);
 
             // Hiển thị kết quả trong bảng
@@ -203,7 +203,7 @@
                             name: editTransactionName.value,
                             category_id: editCategory.value,
                             type: editCategoryType.value,
-                            amount: editAmount.value,
+                            amount: editAmount.value.replace(/[^0-9]/g, ""),
                             date: editDate.value,
                         }),
                     });

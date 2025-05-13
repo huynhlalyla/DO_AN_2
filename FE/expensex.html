@@ -62,7 +62,7 @@
                             <input type="text" class="form-control" id="categoryName" placeholder="Nhập tên danh mục">
                         </div>
                         <div class="mb-3">
-                            <label for="categoryName" class="form-label">Ngân sách (không bắt buộc)</label>
+                            <label for="categoryName" class="form-label">Ngân sách</label>
                             <input type="text" class="form-control" id="budgetValue" placeholder="Nhập giá trị ngân sách" oninput="formatCurrency(this)">
                         </div>
                         <div class="row">
@@ -461,7 +461,10 @@
                 const budgetValue = budgetValueInput.value.replace(/\D/g, ""); // Loại bỏ tất cả ký tự không phải số
                 const today = new Date();
                 const start_date = startDate.value ? startDate.value : today.toISOString().split("T")[0];
-
+                if (!budgetValue || categoryName === "") {
+                    alert("Vui lòng nhập đầy đủ thông tin!");
+                    return;
+                }
                 // Lấy ngày của 5 năm sau
                 const fiveYearsLater = new Date();
                 fiveYearsLater.setFullYear(today.getFullYear() + 5);
