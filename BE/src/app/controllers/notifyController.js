@@ -3,7 +3,12 @@ const Users = require('../models/Users');
 
 async function create (req, res) {
     try {
+        //tìm xem có notify nào cùng message không
         const { message, type, user_id } = req.body;
+        const sameNotify = await Notify.findOne({ message: message });
+        if (sameNotify) {
+            return res.status(500).json({ message: 'failed', notify: sameNotify });
+        }
         const notify = new Notify({ message, type, user_id });
         await notify.save();
         res.status(201).json({ message: 'success', notify });
