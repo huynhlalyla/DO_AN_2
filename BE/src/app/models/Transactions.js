@@ -27,5 +27,5 @@ const Transaction = new Schema({
 {
     timestamps: true
 });
-Transaction.index({ name: 'text' });
+Transaction.index({ name: 'text'});
 module.exports = mongoose.model('Transaction', Transaction);

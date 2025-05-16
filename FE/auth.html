@@ -101,6 +101,7 @@
         showLoader(false); // Ẩn loader khi trang đã tải xong
         const switchLinks = document.querySelectorAll(".switch-form");
 
+        // Lắng nghe sự kiện click cho các liên kết chuyển đổi giữa các form
         switchLinks.forEach(link => {
             link.addEventListener("click", function(event) {
                 event.preventDefault();
@@ -114,6 +115,7 @@
             });
         });
     });
+
     document.addEventListener("DOMContentLoaded", function () {
         const phoneInputs = document.querySelectorAll('input[name="phone"]'); // Lấy tất cả các phần tử input có name="phone"
     
@@ -125,13 +127,16 @@
             });
         });
     });
+
+    // Lắng nghe sự kiện DOMContentLoaded để đảm bảo rằng DOM đã được tải xong
     document.addEventListener('DOMContentLoaded', function () { 
         const loginForm = document.getElementById('loginForm');
         const registerForm = document.getElementById('registerForm');
         const passwordInputs = document.querySelectorAll('.password-input');
         const passwordToggles = document.querySelectorAll('.password-toggle');
         const errorMessages = {}; // Lưu thông báo lỗi để quản lý dễ dàng
-    
+        
+        // Hàm hiển thị thông báo lỗi
         function showError(input, message) {
             let error = errorMessages[input.name];
             if (!error) {

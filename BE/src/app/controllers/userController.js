@@ -160,7 +160,6 @@ async function createTokenResetpassword(req, res) {
 async function verifyToken(req, res) {
     try {
         const { email, token } = req.body;
-        console.log("haha");
         // console.table(email, token);
         const user = await Users.findOne({ email });
         if (!user) {

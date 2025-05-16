@@ -170,7 +170,6 @@ async function searchTransaction(req, res) {
     try {
         const { user } = req.body;
         const searchData = req.query.q;
-        console.log(user, searchData);
         const categories = await Categories.find({$text: { $search: searchData }, user_id: user })
         const transactions = await Transactions.find({ $text: { $search: searchData }, user_id: user })
             .populate('user_id')

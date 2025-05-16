@@ -11,6 +11,7 @@ async function addCategory(req, res) {
         // Kiểm tra xem category đã tồn tại chưa
         const allCategories = await Categories.find({ user_id: user_id });
         const existingCategory = allCategories.find(category => category.name === name);
+        console.log("danh mục mới", existingCategory);
         if (existingCategory) {
             return res.status(400).json({ message: "Danh mục đã tồn tại" });
         }
@@ -49,7 +50,7 @@ async function addCategory(req, res) {
             $push: { created_budgets: newBudget._id }
         });
 
-        return res.status(200).json({ message: "success", category: savedCategory });
+        return res.status(200).json({ message: "Thêm danh mục thành công", category: savedCategory });
     } catch (error) {
         // Xử lý lỗi
         console.error(error);

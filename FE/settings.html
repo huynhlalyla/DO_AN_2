@@ -184,6 +184,7 @@
     
 
     document.getElementById("export-pdf").addEventListener("click", async function () {
+        //lấy thông tin người dùng từ sessionStorage    
     const userId = JSON.parse(sessionStorage.getItem("user")).id;
 
     // Lấy thông tin người dùng
@@ -197,6 +198,7 @@
     });
     const userData = await userResponse.json();
     showLoader(false);
+    //lấy dữ liệu người dùng
     const user = userData.user;
 
     // Lấy dữ liệu tài chính
@@ -208,8 +210,10 @@
         },
         body: JSON.stringify({ user_id: userId, day: 30 }),
     });
+    //tạo một báo cáo tài chính 30 ngày
     const reportData = await reportResponse.json();
     showLoader(false);
+    //tính toán số liệu thu nhập chi tiêu
     const totalIncome = parseFloat(reportData.total_income.reduce((sum, t) => sum + parseFloat(t.amount), 0));
     const totalExpense = parseFloat(reportData.total_expense.reduce((sum, t) => sum + parseFloat(t.amount), 0));
     const balance = totalIncome - totalExpense;
@@ -220,6 +224,7 @@
 
     // Tải logo và chuyển đổi thành Base64
     showLoader(true);
+    //chuyên đổi logo thành base64 để gắn vào pdf
     const logoResponse = await fetch(logoUrl);
     const logoBlob = await logoResponse.blob();
     const logoBase64 = await new Promise((resolve) => {
@@ -229,6 +234,7 @@
     });
     showLoader(false);
 
+    //vẽ biểu đồ dựa trên dữ liệu thu nhập và chi tiêu
     document.getElementById("chart-container").style.display = "block"; // Hiện biểu đồ trước khi xuất PDF
     const ctx = document.getElementById("incomeExpenseChart").getContext("2d");
     const chart = new Chart(ctx, {
@@ -237,7 +243,7 @@
             labels: ["Thu nhập", "Chi tiêu"],
             datasets: [
                 {
-                    data: [totalIncome, totalExpense],
+                    data: [totalIncome, totalExpense],//thu nhập và chi tiêu
                     backgroundColor: ["#4CAF50", "#F44336"],
                 },
             ],

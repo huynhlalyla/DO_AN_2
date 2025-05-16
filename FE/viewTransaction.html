@@ -258,6 +258,11 @@
                     startDate.innerText = new Date(TRANSACTIONS[0].date).toLocaleDateString('vi-VN');
                     endDate.innerText = new Date().toLocaleDateString('vi-VN');
                 }
+            } else {
+                const startDate = document.getElementById('start-date');
+                const endDate = document.getElementById('end-date');
+                startDate.innerText = '';
+                endDate.innerText = 'Không có dữ liệu';
             }
 
                 //kiểm tra xem có giao dịch nào không

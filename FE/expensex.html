@@ -457,7 +457,7 @@
 
             //them danh muc
             addCategoryButton.addEventListener("click", async function () {
-                const categoryName = categoryNameInput.value;
+                const categoryName = categoryNameInput.value.toLowerCase(); // Lấy tên danh mục
                 const budgetValue = budgetValueInput.value.replace(/\D/g, ""); // Loại bỏ tất cả ký tự không phải số
                 const today = new Date();
                 const start_date = startDate.value ? startDate.value : today.toISOString().split("T")[0];
@@ -494,11 +494,11 @@
                     // Reset form
                     addCategoryForm.reset();
 
-                    if(data.message === "success") {
-                        alert("Thêm danh mục thành công!");
+                    if(data.status === 200) {
+                        alert(data.message);
                         window.location.reload(); // Tải lại trang để cập nhật danh sách danh mục
                     } else {
-                        alert("Thêm danh mục thất bại!");
+                        alert(data.message);
                     }
             });
         });
